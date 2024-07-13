@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\User;
+use App\Filament\Resources\MarketingSourceResource\Pages;
+use App\Filament\Resources\MarketingSourceResource\RelationManagers;
+use App\Models\MarketingSource;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -15,26 +15,21 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class UserResource extends Resource
+class MarketingSourceResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static ?string $model = MarketingSource::class;
 
-    protected static ?int $navigationSort = 99;
+    protected static ?int $navigationSort = 97;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     protected static ?string $navigationGroup = 'Pengaturan Sistem';
-
-
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('name')->label('Nama')->required(),
-                TextInput::make('email')->label('Alamat Email')->email()->required(),
-                TextInput::make('password')->label('Password')->password()->visibleOn('create'),
-                TextInput::make('repeat_password')->label('Ulangi Password')->password()->minLength(8)->visibleOn('create')
+                TextInput::make('name')->label('Channel Marketing')->required()
             ]);
     }
 
@@ -42,10 +37,7 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Nama'),
-                TextColumn::make('email')->label('Alamat Email'),
-                TextColumn::make('peran')->label('Peranan'),
-                TextColumn::make('created_at')->label('Tanggal Dibuat')->dateTime('d-M-Y H:i:s'),
+                TextColumn::make('name')->label('Channel Marketing')
             ])
             ->filters([
                 //
@@ -70,9 +62,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ListMarketingSources::route('/'),
+            // 'create' => Pages\CreateMarketingSource::route('/create'),
+            // 'edit' => Pages\EditMarketingSource::route('/{record}/edit'),
         ];
     }
 }

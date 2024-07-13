@@ -30,8 +30,8 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('storage/images/logo-light.png'))
             ->brandLogoHeight('72px')
             ->colors([
-                // 'primary' => Color::Zinc,
-                'primary' => Color::rgb('rgb(9,9,11)')
+                'primary' => Color::Amber,
+                // 'primary' => Color::rgb('rgb(9,9,11)')
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -57,6 +57,6 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->topNavigation(true);
+            ->topNavigation(false);
     }
 }
