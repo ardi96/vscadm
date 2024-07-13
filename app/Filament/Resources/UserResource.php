@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -34,7 +35,8 @@ class UserResource extends Resource
                 TextInput::make('name')->label('Nama')->required(),
                 TextInput::make('email')->label('Alamat Email')->email()->required(),
                 TextInput::make('password')->label('Password')->password()->visibleOn('create'),
-                TextInput::make('repeat_password')->label('Ulangi Password')->password()->minLength(8)->visibleOn('create')
+                TextInput::make('mobile_no')->label('No. Handphone')->required(),
+                Checkbox::make('is_admin')->label('VSC Admin')->default(true)
             ]);
     }
 
@@ -44,7 +46,7 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('name')->label('Nama'),
                 TextColumn::make('email')->label('Alamat Email'),
-                TextColumn::make('peran')->label('Peranan'),
+                TextColumn::make('is_admin')->label('Peranan')->formatStateUsing(fn($state) : string => ( $state == 1) ? 'Admin' : 'Public'),
                 TextColumn::make('created_at')->label('Tanggal Dibuat')->dateTime('d-M-Y H:i:s'),
             ])
             ->filters([

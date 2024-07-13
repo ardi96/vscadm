@@ -2,8 +2,12 @@
 
 namespace App\Filament\Resources\MemberResource\Pages;
 
+use App\Models\User;
 use Filament\Actions;
 use Filament\Infolists\Infolist;
+use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\Auth;
+use App\Notifications\MemberAccepted;
 use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Resources\MemberResource;
 use Filament\Infolists\Components\TextEntry;
@@ -12,7 +16,22 @@ class ViewMember extends ViewRecord
 {
     protected static string $resource = MemberResource::class;
 
-        
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\Action::make('activate')->label('Aktifkan Keanggotaan')
+                ->visible(fn() => $this->getRecord()->status == 'pending')
+                ->action(function() {
+                    $this->getRecord()->status = 'active';
+                    $this->getRecord()->save();
+
+                    $user = User::find($this->getRecord()->parent_id);
+
+                    $user->notify(new MemberAccepted());
+                })
+                ->after(fn() => $this->refreshFormData(['status'])),
+        ];
+    }
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -30,7 +49,7 @@ class ViewMember extends ViewRecord
             TextEntry::make('instagram')->label('Akun Instagram'),
             TextEntry::make('package.name')->label('Nama Kelas'),
             TextEntry::make('start_date')->label('Bergabung Mulai')->date('d-M-Y'),
-            TextEntry::make('status')->label('Status Keanggotaan'),
+            TextEntry::make('status')->label('Status Keanggotaan')->badge()->color(Color::Amber),
         ])
         ->inlineLabel(false);
     }

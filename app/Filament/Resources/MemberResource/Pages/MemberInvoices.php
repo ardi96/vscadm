@@ -13,6 +13,8 @@ use Filament\Infolists\Infolist;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\MemberResource;
+use App\Jobs\GenerateInvoiceJob;
+use Filament\Actions\DeleteAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
 
@@ -23,13 +25,6 @@ class MemberInvoices extends ManageRelatedRecords
     protected static string $relationship = 'invoices';
 
     protected static ?string $navigationIcon = 'heroicon-m-banknotes';
-
-    // protected function getHeaderActions(): array
-    // {
-    //     return [
-    //         Actions\CreateAction::make()->label('Buat Invoice Baru'),
-    //     ];
-    // }
 
     public function form(Form $form): Form
     {
@@ -45,13 +40,26 @@ class MemberInvoices extends ManageRelatedRecords
     {
         return $table
             ->columns([
-                TextColumn::make('invoice_no'),
-                TextColumn::make('invoice_date')->date('d-M-Y'),
-                TextColumn::make('amount')->money('IDR')
+                TextColumn::make('invoice_no')->label('No. Invoice')->alignCenter(),
+                TextColumn::make('invoice_date')->date('d-M-Y')->label('Tanggal Invoice'),
+                TextColumn::make('item_description')->label('Deskripsi'),
+                TextColumn::make('amount')->money('IDR')->label('Jumlah'),
+                TextColumn::make('status')->label('Status')
             ])
+            ->poll('10s')
             ->headerActions([
                 Tables\Actions\Action::make('Create New Invoice')
-                    ->action(fn() => '')
+                    ->action(function() {
+                       GenerateInvoiceJob::dispatch($this->getRecord());
+                    })
+            ])
+            ->actions([
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('paid')->label('Telah Dibayar')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('primary'),
+                    Tables\Actions\DeleteAction::make()
+                ])
             ]);
     }
 }

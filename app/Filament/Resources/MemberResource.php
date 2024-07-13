@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Models\User;
 use Filament\Tables;
 use App\Models\Member;
 use Filament\Forms\Form;
@@ -10,14 +11,15 @@ use App\Models\CostumeSize;
 use App\Models\ClassPackage;
 use App\Models\MarketingSource;
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
 use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use App\Filament\Resources\MemberResource\Pages;
-use Filament\Resources\Pages\Page;
 
 class MemberResource extends Resource
 {
@@ -55,7 +57,13 @@ class MemberResource extends Resource
                     ->options(
                         ClassPackage::all()->pluck('name','id')
                     )->required(),
-                DatePicker::make('start_date')->label('Mulai Tanggal')->required()
+                DatePicker::make('start_date')->label('Mulai Tanggal')->required(),
+                Section::make('Parent')->schema([
+                    Select::make('parent_id')->options(
+                        User::all()->pluck('name','id')
+                    )->required()
+                    ->label('Link ke Orang Tua')
+                ])->columnSpanFull()
             ])->inlineLabel();
     }
 

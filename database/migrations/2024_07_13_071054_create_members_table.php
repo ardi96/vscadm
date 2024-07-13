@@ -30,6 +30,7 @@ return new class extends Migration
             $table->date('last_invoice_date')->nullable();
             $table->date('last_payment_date')->nullable();
             $table->decimal('balance',9,2)->nullable();
+            $table->foreignId('parent_id');
             $table->timestamps();
         });
     }
