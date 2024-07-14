@@ -77,7 +77,7 @@ class MemberResource extends Resource
                 TextColumn::make('school_name')->label('Asal Sekolah'),
                 TextColumn::make('parent.name')->label('Nama Orang Tua'),
                 TextColumn::make('parent.mobile_no')->label('WA Orang Tua'),
-                TextColumn::make('balance')->label('Saldo')->money('IDR'),
+                TextColumn::make('balance')->label('Outstanding')->money('IDR'),
                 TextColumn::make('status')->label('Status'),
             ])
             ->filters([

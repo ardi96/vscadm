@@ -33,9 +33,8 @@ class MemberInvoices extends ManageRelatedRecords
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('invoice_no')
-                    ->required()
-                    ->maxLength(40),
+                Forms\Components\TextInput::make('amount')->required()->label('Jumlah'),
+                Forms\Components\TextInput::make('item_description')->required()->label('Keterangan'),
             ]);
     }
     
@@ -56,26 +55,37 @@ class MemberInvoices extends ManageRelatedRecords
 
                        $invoice = InvoiceService::generate($this->getRecord());
 
-                       SendInvoiceMail::dispatch($invoice);
-
                     })
                     ->requiresConfirmation()
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
+
                     Tables\Actions\Action::make('Cancel')->action(function(Invoice $record) {
-                        $record->cancel();
-                    })
+                        $record->cancel();})
                     ->requiresConfirmation()
                     ->label('Batalkan Invoice')
-                    ->visible(fn(Invoice $record) => ( $record->status == 'unpaid' )),
+                    ->visible(fn(Invoice $record) => ( $record->status == 'unpaid' || $record->status == 'draft' ))
+                    ->icon('heroicon-o-x-circle'),
                     
+                    Tables\Actions\Action::make('send')->label('Kirim Invoice')
+                    ->requiresConfirmation()
+                    ->visible(fn($record) => ($record->status=='unpaid'))
+                    ->action(function(Invoice $record) {
+                        SendInvoiceMail::dispatch($record);})
+                    ->icon('heroicon-o-envelope'),
+
                     Tables\Actions\Action::make('pay')->label('Telah dibayar')
                     ->requiresConfirmation()
                     ->visible(fn($record) => ($record->status=='unpaid'))
                     ->action(function(Invoice $record) {
-                        $record->payNow(); 
-                    })
+                        $record->payNow(); })
+                    ->icon('heroicon-o-check-circle'),
+                    
+                    Tables\Actions\EditAction::make()->label('Edit Invoice')
+                    ->visible(fn($record) => ($record->status =='unpaid'))
+                    ->icon('heroicon-o-pencil'),
+
                 ])
             ]);
     }

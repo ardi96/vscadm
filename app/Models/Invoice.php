@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Observers\InvoiceObserver;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
+#[ObservedBy([InvoiceObserver::class])]
 class Invoice extends Model
 {
     use HasFactory;
@@ -28,7 +31,7 @@ class Invoice extends Model
         $this->payment_date = Date::now();
         $this->save();
 
-        $this->member->balance = $this->member->balance + $this->amount;
+        $this->member->balance = $this->member->balance - $this->amount;
         $this->member->last_payment_date = Date::now();
         $this->member->save();
                        
@@ -40,7 +43,7 @@ class Invoice extends Model
         $this->status = 'void';
         $this->save();
 
-        $this->member->balance = $this->member->balance + $this->amount;
+        $this->member->balance = $this->member->balance - $this->amount;
         $this->member->save();
     }
 }

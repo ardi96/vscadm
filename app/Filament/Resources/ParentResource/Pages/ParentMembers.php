@@ -61,7 +61,7 @@ class ParentMembers extends ManageRelatedRecords
                 Tables\Columns\TextColumn::make('date_of_birth')->label('Tanggal Lahir')->date('d-M-Y'),
                 Tables\Columns\TextColumn::make('school_name')->label('Asal Sekolah'),
                 Tables\Columns\TextColumn::make('status')->label('Status'),
-                Tables\Columns\TextColumn::make('balance')->label('Saldo')->money('IDR'),
+                Tables\Columns\TextColumn::make('balance')->label('Outstanding')->money('IDR'),
             ])
             ->filters([
                 //

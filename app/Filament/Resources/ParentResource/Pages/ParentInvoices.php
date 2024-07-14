@@ -8,6 +8,7 @@ use Filament\Actions;
 use App\Models\Invoice;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Jobs\SendInvoiceMail;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\ParentResource;
@@ -33,9 +34,8 @@ class ParentInvoices extends ManageRelatedRecords
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('invoice_no')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\TextInput::make('amount')->required()->label('Jumlah'),
+                Forms\Components\TextInput::make('item_description')->required()->label('Keterangan'),
             ]);
     }
 
@@ -45,7 +45,7 @@ class ParentInvoices extends ManageRelatedRecords
             ->recordTitleAttribute('invoice_no')
             ->columns([
                 Tables\Columns\TextColumn::make('member.name')->label('Nama Anggota'),
-                Tables\Columns\TextColumn::make('invoice_no')->label('No. Invoice'),
+                Tables\Columns\TextColumn::make('invoice_no')->label('No. Invoice')->sortable(),
                 Tables\Columns\TextColumn::make('invoice_date')->label('Tgl. Invoice')->date('d-M-Y'),
                 Tables\Columns\TextColumn::make('item_description')->label('Nama Paket'),
                 Tables\Columns\TextColumn::make('amount')->label('Jumlah')->money('IDR'),
@@ -58,22 +58,31 @@ class ParentInvoices extends ManageRelatedRecords
                 // Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
-                // Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('Cancel')->action(function(Invoice $record) {
-                        $record->cancel();
-                    })
+                        $record->cancel();})
                     ->requiresConfirmation()
                     ->label('Batalkan Invoice')
-                    ->visible(fn(Invoice $record) => ( $record->status == 'unpaid' )),
+                    ->visible(fn(Invoice $record) => ( $record->status == 'unpaid' || $record->status == 'draft' ))
+                    ->icon('heroicon-o-x-circle'),
                     
+                    Tables\Actions\Action::make('send')->label('Kirim Invoice')
+                    ->requiresConfirmation()
+                    ->visible(fn($record) => ($record->status=='unpaid'))
+                    ->action(function(Invoice $record) {
+                        SendInvoiceMail::dispatch($record);})
+                    ->icon('heroicon-o-envelope'),
+
                     Tables\Actions\Action::make('pay')->label('Telah dibayar')
                     ->requiresConfirmation()
                     ->visible(fn($record) => ($record->status=='unpaid'))
                     ->action(function(Invoice $record) {
-                        $record->payNow(); 
-                    })
+                        $record->payNow(); })
+                    ->icon('heroicon-o-check-circle'),
+                    
+                    Tables\Actions\EditAction::make()->label('Edit Invoice')
+                    ->visible(fn($record) => ($record->status =='unpaid'))
+                    ->icon('heroicon-o-pencil'),
                 ])
             ])
             ->bulkActions([

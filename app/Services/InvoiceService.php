@@ -31,7 +31,7 @@ class InvoiceService
             'item_description' => $member->package->name,
         ]);
 
-        $member->balance = $member->balance - $invoice->amount;
+        $member->balance = $member->balance + $invoice->amount;
         $member->last_invoice_date = Date::now();
         $member->save();
 

@@ -2,20 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\InvoiceResource\Pages;
-use App\Filament\Resources\InvoiceResource\RelationManagers;
-use App\Filament\Resources\MemberResource\Pages\MemberInvoices;
-use App\Models\Invoice;
-use DeepCopy\Filter\Filter;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Invoice;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use DeepCopy\Filter\Filter;
+use App\Jobs\SendInvoiceMail;
+use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\InvoiceResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\InvoiceResource\RelationManagers;
+use App\Filament\Resources\MemberResource\Pages\MemberInvoices;
+use Filament\Forms\Components\TextInput;
 
 class InvoiceResource extends Resource
 {
@@ -27,7 +29,8 @@ class InvoiceResource extends Resource
     {
         return $form
             ->schema([
-                //
+                TextInput::make('amount')->required()->label('Jumlah'),
+                TextInput::make('item_description')->required()->label('Keterangan'),
             ]);
     }
 
@@ -35,12 +38,13 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('invoice_no')->label('No. Invoice'),
-                TextColumn::make('member.name')->label('Atas Nama'),
+                TextColumn::make('invoice_no')->label('No. Invoice')->sortable(),
+                TextColumn::make('member.name')->label('Atas Nama')->searchable(),
                 TextColumn::make('invoice_date')->label('Tgl. Invoice')->date('d-M-Y'),
                 TextColumn::make('item_description')->label('Nama Paket'),
                 TextColumn::make('amount')->label('Jumlah')->money('IDR'),
                 TextColumn::make('status')->label('Status'),
+                TextColumn::make('payment_date')->label('Tgl. Pembayaran')->date('d-M-Y'),
             ])
             ->filters([
                 SelectFilter::make('status')->options([
@@ -54,18 +58,29 @@ class InvoiceResource extends Resource
                 
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('Cancel')->action(function(Invoice $record) {
-                        $record->cancel();
-                    })
+                        $record->cancel();})
                     ->requiresConfirmation()
                     ->label('Batalkan Invoice')
-                    ->visible(fn(Invoice $record) => ( $record->status == 'unpaid' )),
+                    ->visible(fn(Invoice $record) => ( $record->status == 'unpaid' || $record->status == 'draft' ))
+                    ->icon('heroicon-o-x-circle'),
                     
+                    Tables\Actions\Action::make('send')->label('Kirim Invoice')
+                    ->requiresConfirmation()
+                    ->visible(fn($record) => ($record->status=='unpaid'))
+                    ->action(function(Invoice $record) {
+                        SendInvoiceMail::dispatch($record);})
+                    ->icon('heroicon-o-envelope'),
+
                     Tables\Actions\Action::make('pay')->label('Telah dibayar')
                     ->requiresConfirmation()
                     ->visible(fn($record) => ($record->status=='unpaid'))
                     ->action(function(Invoice $record) {
-                        $record->payNow(); 
-                    })
+                        $record->payNow(); })
+                    ->icon('heroicon-o-check-circle'),
+                    
+                    Tables\Actions\EditAction::make()->label('Edit Invoice')
+                    ->visible(fn($record) => ($record->status =='unpaid'))
+                    ->icon('heroicon-o-pencil'),
                 ])
             ])
             ->bulkActions([
@@ -89,8 +104,8 @@ class InvoiceResource extends Resource
     {
         return [
             'index' => Pages\ListInvoices::route('/'),
-            'create' => Pages\CreateInvoice::route('/create'),
-            'edit' => Pages\EditInvoice::route('/{record}/edit'),
+            // 'create' => Pages\CreateInvoice::route('/create'),
+            // 'edit' => Pages\EditInvoice::route('/{record}/edit'),
         ];
     }
 }
