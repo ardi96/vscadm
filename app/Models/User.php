@@ -7,19 +7,35 @@ namespace App\Models;
 use Filament\Panel;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasAvatar
 { 
     use HasFactory, Notifiable;
 
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar_url;
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
-        return str_ends_with($this->email, '@veins-skatingclub.com') 
-                   && $this->hasVerifiedEmail()
-                   && $this->is_admin;
+        if ( $panel->getId() === 'admin')
+        {
+            return str_ends_with($this->email, '@veins-skatingclub.com') 
+                       && $this->hasVerifiedEmail()
+                       && $this->is_admin;
+        }
+        else 
+        {
+            return !str_ends_with($this->email, '@veins-skatingclub.com') 
+                       && $this->hasVerifiedEmail()
+                       && !$this->is_admin;
+        }
     }
     
     /**

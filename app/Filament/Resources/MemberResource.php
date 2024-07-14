@@ -20,6 +20,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use App\Filament\Resources\MemberResource\Pages;
+use Filament\Tables\Filters\SelectFilter;
 
 class MemberResource extends Resource
 {
@@ -81,7 +82,10 @@ class MemberResource extends Resource
                 TextColumn::make('status')->label('Status'),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')->options([
+                    'inactive' => 'Inactive',
+                    'active' => 'Active',
+                ])
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

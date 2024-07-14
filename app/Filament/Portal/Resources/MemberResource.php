@@ -1,0 +1,108 @@
+<?php
+
+namespace App\Filament\Portal\Resources;
+
+use Filament\Forms;
+use Filament\Tables;
+use App\Models\Member;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use App\Models\CostumeSize;
+use App\Models\ClassPackage;
+use App\Models\MarketingSource;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Radio;
+use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Portal\Resources\MemberResource\Pages;
+use App\Filament\Portal\Resources\MemberResource\RelationManagers;
+
+class MemberResource extends Resource
+{
+    protected static ?string $model = Member::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationLabel = 'Registrasi';
+
+    public static function form(Form $form): Form
+    {
+        return $form->schema([
+            TextInput::make('name')->label('Nama Lengkap')->required()->maxLength(40),
+            Radio::make('gender')->label('Jenis Kelamin')->required()->options([
+                'L' => 'L', 
+                'P' => 'P'
+            ]),
+            TextInput::make('parent_name')->label('Nama Orang Tua')->required(),
+            TextInput::make('parent_mobile_no')->label('Nomor Whatsapp Aktif Orang Tua')->required(),
+            DatePicker::make('date_of_birth')->label('Tanggal Lahir')->required(),
+            TextInput::make('school_name')->label('Asal Sekolah')->maxLength(40),
+            TextInput::make('costume_label')->label('Nama Tertera di Baju')->maxLength(40),
+            Select::make('costume_size_id')->label('Ukuran Baju')->required()->options(
+                CostumeSize::all()->pluck('name','id')
+            )->required(),
+            Select::make('marketing_source_id')->label('Channel Marketing')->options(
+                MarketingSource::all()->pluck('name','id')
+            ),
+            TextInput::make('marketing_source_other')->label('Lainnya '),
+            TextInput::make('instagram')->label('Nama Akun Instagram'),
+            Select::make('class_package_id')->label('Paket Yang Dipilih')
+                ->options(
+                    ClassPackage::all()->pluck('name','id')
+                )->required(),
+            DatePicker::make('start_date')->label('Mulai Tanggal')->required(),
+        ])->inlineLabel();
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+        ->columns([
+            TextColumn::make('name')->label('Nama Lengkap'),
+            TextColumn::make('gender')->label('J/K')->alignCenter(),
+            TextColumn::make('date_of_birth')->label('Tanggal Lahir')->date('d-M-Y'),
+            TextColumn::make('school_name')->label('Asal Sekolah'),
+            TextColumn::make('parent.name')->label('Nama Orang Tua'),
+            TextColumn::make('parent.mobile_no')->label('WA Orang Tua'),
+            TextColumn::make('balance')->label('Outstanding')->money('IDR'),
+            TextColumn::make('status')->label('Status'),
+        ])
+        ->filters([
+            //
+        ])
+        ->actions([
+            Tables\Actions\ActionGroup::make([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+            ])
+        ])
+        ->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                // Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\Action::make('Generate Invoice')->icon('heroicon-m-banknotes')->color(Color::Amber),
+            ]),
+        ])
+        ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', Auth::user()->id));
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListMembers::route('/'),
+            'create' => Pages\CreateMember::route('/create'),
+            'edit' => Pages\EditMember::route('/{record}/edit'),
+        ];
+    }
+}

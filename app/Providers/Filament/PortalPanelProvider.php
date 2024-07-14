@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Portal\Widgets\FamilyMemberStatistic;
 use App\Filament\Widgets\MyAccountWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -19,30 +20,28 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class AdminPanelProvider extends PanelProvider
+class PortalPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
-            ->id('admin')
-            ->path('vscadmin')
-            ->login()
+            ->id('portal')
+            ->path('portal')
+            ->brandName('Veins Skating Member Portal')
             ->brandLogo(asset('storage/images/logo-light.png'))
             ->brandLogoHeight('72px')
             ->colors([
                 'primary' => Color::Amber,
-                // 'primary' => Color::rgb('rgb(9,9,11)')
             ])
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverResources(in: app_path('Filament/Portal/Resources'), for: 'App\\Filament\\Portal\\Resources')
+            ->discoverPages(in: app_path('Filament/Portal/Pages'), for: 'App\\Filament\\Portal\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Portal/Widgets'), for: 'App\\Filament\\Portal\\Widgets')
             ->widgets([
                 MyAccountWidget::class,
-                // Widgets\AccountWidget::class,
+                FamilyMemberStatistic::class,
                 // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
@@ -59,7 +58,10 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->topNavigation(false)
-            ->profile();
+            ->login()
+            ->registration()
+            ->passwordReset()
+            ->emailVerification()
+            ->profile();;
     }
 }
