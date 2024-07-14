@@ -87,6 +87,7 @@ class MemberInvoices extends ManageRelatedRecords
                     ->icon('heroicon-o-pencil'),
 
                 ])
-            ]);
+            ])
+            ->defaultSort('invoice_no','desc');;
     }
 }

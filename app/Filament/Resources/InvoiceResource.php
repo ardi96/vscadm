@@ -90,7 +90,8 @@ class InvoiceResource extends Resource
             ])
             ->recordUrl( fn(Invoice $record): string => 
                 MemberInvoices::getUrl(['record' => $record->member])
-            );
+            )
+            ->defaultSort('invoice_no','desc');
     }
 
     public static function getRelations(): array
