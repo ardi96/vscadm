@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use Throwable;
 use App\Models\User;
-use App\Models\Member;
+use App\Models\Invoice;
 use App\Services\InvoiceService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
 
-class GenerateInvoiceJob implements ShouldQueue
+class SendInvoiceMail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -24,7 +24,7 @@ class GenerateInvoiceJob implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public Member $member)
+        public Invoice $invoice)
     {}
 
     /**
@@ -32,22 +32,19 @@ class GenerateInvoiceJob implements ShouldQueue
      */
     public function handle(): void
     {
-        DB::beginTransaction();
 
         try 
         {
-            $invoice = InvoiceService::generate($this->member);
+            // $invoice = InvoiceService::generate($this->member);
             
-            $user = User::find($this->member->parent_id);
+            $user = User::find($this->invoice->parent_id);
             
-            $user->notify(new InvoiceAvailable());
+            $user->notify(new InvoiceAvailable( $this->invoice ));
 
-            DB::commit();
         }
         catch(Throwable $e )
         {
             report($e);
-            DB::rollBack();
         }
     }
 

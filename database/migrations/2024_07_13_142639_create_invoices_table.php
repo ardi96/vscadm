@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id');
+            $table->foreignId('parent_id');
             $table->string('invoice_no')->unique();
             $table->date('invoice_date');
             $table->string('description',40);
             $table->string('item_description',140);
             $table->decimal('amount',14,2);
-            $table->enum('status',['unpaid','paid']);
+            $table->enum('status',['unpaid','paid','void']);
             $table->dateTime('payment_date')->nullable();
             $table->timestamps();
         });

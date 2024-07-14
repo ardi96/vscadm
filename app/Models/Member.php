@@ -26,4 +26,9 @@ class Member extends Model
     {
         return $this->hasMany(Invoice::class,'member_id');
     }
+
+    public function parent() : BelongsTo
+    {
+        return $this->belongsTo(User::class,'parent_id');
+    }   
 }

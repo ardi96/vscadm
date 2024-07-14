@@ -29,7 +29,7 @@ return new class extends Migration
             $table->enum('status',['pending','active','inactive']);
             $table->date('last_invoice_date')->nullable();
             $table->date('last_payment_date')->nullable();
-            $table->decimal('balance',9,2)->nullable();
+            $table->decimal('balance',9,2)->default(0);
             $table->foreignId('parent_id');
             $table->timestamps();
         });

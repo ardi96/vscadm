@@ -8,6 +8,7 @@ use Filament\Panel;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser
@@ -54,4 +55,15 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
         ];
     }
+
+    public function members() : HasMany
+    {
+        return $this->hasMany(Member::class,'parent_id');
+    }
+
+    public function invoices() : HasMany
+    {
+        return $this->hasMany(Invoice::class,'parent_id');
+    }
+
 }

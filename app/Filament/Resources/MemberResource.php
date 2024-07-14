@@ -72,11 +72,13 @@ class MemberResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->label('Nama Lengkap'),
-                TextColumn::make('gender')->label('Jenis Kelamin'),
+                TextColumn::make('gender')->label('J/K')->alignCenter(),
                 TextColumn::make('date_of_birth')->label('Tanggal Lahir')->date('d-M-Y'),
                 TextColumn::make('school_name')->label('Asal Sekolah'),
-                TextColumn::make('parent_name')->label('Nama Orang Tua'),
-                TextColumn::make('parent_mobile_no')->label('WA Orang Tua'),
+                TextColumn::make('parent.name')->label('Nama Orang Tua'),
+                TextColumn::make('parent.mobile_no')->label('WA Orang Tua'),
+                TextColumn::make('balance')->label('Saldo')->money('IDR'),
+                TextColumn::make('status')->label('Status'),
             ])
             ->filters([
                 //
@@ -85,7 +87,6 @@ class MemberResource extends Resource
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
-                    Tables\Actions\Action::make('Invoices')->icon('heroicon-m-banknotes')
                 ])
             ])
             ->bulkActions([

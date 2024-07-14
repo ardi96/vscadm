@@ -2,10 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Models\Invoice;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 
 class InvoiceAvailable extends Notification
 {
@@ -14,7 +15,7 @@ class InvoiceAvailable extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public Invoice $invoice)
     {
         //
     }
@@ -36,7 +37,12 @@ class InvoiceAvailable extends Notification
     {
         return (new MailMessage)
                     ->line('Tagihan bulan ini telah tersedia.')
-                    ->action('Notification Action', url('/'))
+                    ->line('No. Invoice: '. $this->invoice->invoice_no)
+                    ->line('Tgl. Invoice: '. date_format(date_create($this->invoice->invoice_date),'d-M-Y'))
+                    ->line('Jumlah: IDR '. number_format($this->invoice->amount,0,',','.'))
+                    ->line('Nama Anggota: '. $this->invoice->member->name)
+                    ->line('Nama Paket: '. $this->invoice->item_description)
+                    ->action('Check Invoice Di Sini', url('/'))
                     ->line('Terima Kasih');
     }
 
