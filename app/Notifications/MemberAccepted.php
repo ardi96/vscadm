@@ -2,10 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Models\Member;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 
 class MemberAccepted extends Notification
 {
@@ -14,7 +15,7 @@ class MemberAccepted extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public Member $member)
     {
         //
     }
@@ -35,7 +36,7 @@ class MemberAccepted extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('Selamat, keanggotaan Anda telah aktif')
+                    ->line('Selamat '. $this->member->name .', keanggotaan Anda telah aktif')
                     ->action('Notification Action', url('/'))
                     ->line('Terima kasih telah bergabung dengan kami, semoga sukses !!!');
     }

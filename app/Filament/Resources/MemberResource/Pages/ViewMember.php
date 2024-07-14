@@ -27,7 +27,7 @@ class ViewMember extends ViewRecord
 
                     $user = User::find($this->getRecord()->parent_id);
 
-                    $user->notify(new MemberAccepted());
+                    $user->notify(new MemberAccepted( $this->getRecord() ));
                 })
                 ->after(fn() => $this->refreshFormData(['status'])),
         ];
