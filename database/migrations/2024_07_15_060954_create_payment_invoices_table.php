@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('payment_invoices', function (Blueprint $table) {
             $table->id();
-            $table->decimal('amount',14,2);
-            $table->date('payment_date');
-            $table->string('bank');
-            $table->string('file_name');
-            $table->string('notes',255);
-            $table->enum('status',['pending','accepted','rejected']);
+            $table->foreignId('payment_id');
+            $table->foreignId('invoice_id');
             $table->timestamps();
         });
     }
@@ -28,6 +24,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('payment_invoices');
     }
+    
 };

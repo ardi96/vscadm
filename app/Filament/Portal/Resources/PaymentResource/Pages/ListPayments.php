@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\PaymentResource\Pages;
+namespace App\Filament\Portal\Resources\PaymentResource\Pages;
 
-use App\Filament\Resources\PaymentResource;
+use App\Filament\Portal\Resources\PaymentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -10,10 +10,11 @@ class ListPayments extends ListRecords
 {
     protected static string $resource = PaymentResource::class;
 
+
     protected function getHeaderActions(): array
     {
         return [
-            // Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Pembayaran Baru'),
         ];
     }
 }

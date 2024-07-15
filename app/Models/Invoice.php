@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[ObservedBy([InvoiceObserver::class])]
 class Invoice extends Model
@@ -45,5 +46,10 @@ class Invoice extends Model
 
         $this->member->balance = $this->member->balance - $this->amount;
         $this->member->save();
+    }
+
+    public function payment() : BelongsToMany
+    {
+        return $this->belongsToMany(Payment::class,PaymentInvoice::class);
     }
 }
