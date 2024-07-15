@@ -26,7 +26,7 @@ class PaymentResource extends Resource
 {
     protected static ?string $model = Payment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
     
     protected static ?string $navigationLabel = 'Pembayaran';
 
@@ -41,8 +41,9 @@ class PaymentResource extends Resource
                 DatePicker::make('payment_date')->label('Tanggal Pembayaran')->required(),
                 TextInput::make('bank')->label('Nama Bank Anda')->required(),
                 Textinput::make('notes')->label('Keterangan'),
-                FileUpload::make('file_name')->label('Upload Bukti Pembayaran'),
+                FileUpload::make('file_name')->label('Upload Bukti Pembayaran')->required(),
                 CheckboxList::make('invoices')
+                    ->required()
                     ->label('Pembayaran untuk invoice')
                     ->relationship('invoices','invoice_no')
                     ->options(
