@@ -82,7 +82,8 @@ class PaymentResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', Auth::user()->id));
     }
 
     public static function getRelations(): array
