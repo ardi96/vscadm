@@ -33,7 +33,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         else 
         {
             return !str_ends_with($this->email, '@veins-skatingclub.com') 
-                       && $this->hasVerifiedEmail()
+                    //    && $this->hasVerifiedEmail()
                        && !$this->is_admin;
         }
     }
