@@ -18,6 +18,17 @@ class EditMember extends EditRecord
         ];
     }
 
+    protected function getRedirectUrl(): ?string
+    {
+        $resource = static::getResource();
+
+        if ($resource::hasPage('view') && $resource::canView($this->getRecord())) {
+            return $resource::getUrl('view', ['record' => $this->getRecord()]);
+        }
+
+        return $resource::getUrl('index');
+    }
+
     // protected function getFormActions(): array
     // {
     //     return [

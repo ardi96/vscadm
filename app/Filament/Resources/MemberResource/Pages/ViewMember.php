@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Notifications\MemberAccepted;
 use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Resources\MemberResource;
+use Filament\Forms\Components\Actions as ComponentsActions;
 use Filament\Infolists\Components\TextEntry;
 
 class ViewMember extends ViewRecord
@@ -19,6 +20,7 @@ class ViewMember extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\EditAction::make()->label('Edit Anggota'),
             Actions\Action::make('activate')->label('Aktifkan Keanggotaan')
                 ->visible(fn() => $this->getRecord()->status == 'pending')
                 ->action(function() {

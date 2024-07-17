@@ -5,12 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Member extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'schedules' => 'array',
+    ];
 
     public function marketingSource() : BelongsTo
     {
@@ -31,4 +36,10 @@ class Member extends Model
     {
         return $this->belongsTo(User::class,'parent_id');
     }   
+
+
+    public function schedules() : BelongsToMany
+    {
+        return $this->belongsToMany(ClassSchedule::class, MemberSchedule::class);
+    }
 }

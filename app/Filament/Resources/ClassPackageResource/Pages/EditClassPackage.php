@@ -16,4 +16,15 @@ class EditClassPackage extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function getRedirectUrl(): ?string
+    {
+        $resource = static::getResource();
+
+        if ($resource::hasPage('view') && $resource::canView($this->getRecord())) {
+            return $resource::getUrl('view', ['record' => $this->getRecord()]);
+        }
+
+        return $resource::getUrl('index');
+    }
 }

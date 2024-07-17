@@ -24,13 +24,13 @@ class ClassScheduleResource extends Resource
 
     protected static ?string $navigationGroup = 'Atur Jadwal dan Lokasi';
 
-    protected static ?string $navigationLabel = 'Jadual';
+    protected static ?string $navigationLabel = 'Jadwal';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('name')->label('Nama Jadual')->required()->maxLength(40),
+                TextInput::make('name')->label('Nama Jadwal')->required()->maxLength(40),
                 
                 Select::make('location_id')->label('Lokasi')->options(ClassLocation::all()->pluck('name','id'))->required(),
                 Select::make('schedule_day')->label('Hari')->options([

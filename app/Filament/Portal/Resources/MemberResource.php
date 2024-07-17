@@ -11,16 +11,22 @@ use App\Models\CostumeSize;
 use App\Models\ClassPackage;
 use App\Models\MarketingSource;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\DB;
 use Filament\Forms\Components\Radio;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\CheckboxList;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Portal\Resources\MemberResource\Pages;
 use App\Filament\Portal\Resources\MemberResource\RelationManagers;
+use App\Models\ClassPackageSchedule;
+use App\Models\ClassSchedule;
+use Livewire\Component as Livewire;
 
 class MemberResource extends Resource
 {
@@ -37,9 +43,9 @@ class MemberResource extends Resource
             Radio::make('gender')->label('Jenis Kelamin')->required()->options([
                 'L' => 'L', 
                 'P' => 'P'
-            ]),
+            ])->columns(2),
             TextInput::make('parent_name')->label('Nama Orang Tua')->required(),
-            TextInput::make('parent_mobile_no')->label('Nomor Whatsapp Aktif Orang Tua')->required(),
+            TextInput::make('parent_mobile_no')->label('Nomor WA Aktif Orang Tua')->required(),
             DatePicker::make('date_of_birth')->label('Tanggal Lahir')->required(),
             TextInput::make('school_name')->label('Asal Sekolah')->maxLength(40),
             TextInput::make('costume_label')->label('Nama Tertera di Baju')->maxLength(40),
@@ -51,10 +57,34 @@ class MemberResource extends Resource
             ),
             TextInput::make('marketing_source_other')->label('Lainnya '),
             TextInput::make('instagram')->label('Nama Akun Instagram'),
-            Select::make('class_package_id')->label('Paket Yang Dipilih')
-                ->options(
-                    ClassPackage::all()->pluck('name','id')
-                )->required(),
+            Section::make('Pilih Paket')->schema([
+                Radio::make('class_package_id')->label('')
+                    ->options(
+                        ClassPackage::all()->pluck('name','id')
+                    )
+                    ->descriptions(
+                        ClassPackage::all()
+                            ->pluck('description','id')
+                    )
+                    ->required()
+                    ->live()
+                    // ->afterStateUpdated(function (Livewire $livewire) {
+                    //     $livewire->reset('data.schedules');
+                    // })
+                    ,
+            ]),
+            Section::make('jadwal')
+                ->schema([
+                    CheckboxList::make('schedules')->label('')
+                    ->options(function (Forms\Get $get) {
+
+                        return ClassSchedule::whereIn(
+                            'id',ClassPackageSchedule::where('class_package_id', $get('class_package_id'))->pluck('class_schedule_id')
+                            )->pluck('name','id');
+                        
+                        })
+                    ->columns(3)
+                ]),
             DatePicker::make('start_date')->label('Mulai Tanggal')->required(),
         ])->inlineLabel();
     }

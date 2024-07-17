@@ -23,4 +23,10 @@ class ClassSchedule extends Model
             ClassPackageSchedule::class
         );
     }
+
+
+    public function members() : BelongsToMany
+    {
+        return $this->belongsToMany(member::class, MemberSchedule::class);
+    }
 }

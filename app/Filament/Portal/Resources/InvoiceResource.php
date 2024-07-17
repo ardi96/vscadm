@@ -50,7 +50,10 @@ class InvoiceResource extends Resource
                 ])
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('Bayar')->icon('heroicon-m-banknotes')->label('Bayar')
+                        ->url(PaymentResource\Pages\CreatePayment::getUrl())
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

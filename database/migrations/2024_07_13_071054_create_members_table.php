@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('marketing_source_other')->nullable();
             $table->string('instagram')->nullable();
             $table->foreignId('class_package_id');
+            $table->json('schedules')->nullable();
             $table->date('start_date');
             $table->enum('status',['pending','active','inactive']);
             $table->date('last_invoice_date')->nullable();

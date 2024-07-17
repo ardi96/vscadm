@@ -18,6 +18,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
+use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 
 class ClassPackageResource extends Resource
 {
@@ -39,14 +40,20 @@ class ClassPackageResource extends Resource
             ->schema([
                 TextInput::make('name')->label('Nama Paket')->required()->maxLength(40),
                 Textarea::make('description')->label('Deskripsi Paket')->required()->maxLength(140),
-                TextInput::make('session_per_week')->label('Sesi per Minggu')->required()->maxValue(21)->suffix('x pertemuan')->numeric(),
                 Select::make('type')->label('Tipe Kelas')->options([
                     'private' => 'Private',
                     'regular' => 'Regular',
-                    'per Sesi' => 'Per Sesi'
-                ]),
+                    'per sesi' => 'Per Sesi'
+                ])->live(),
+                TextInput::make('session_per_week')->label('Sesi per Minggu')
+                    ->hidden(fn(Forms\Get $get): bool => $get('type') == 'private' || $get('type') =='per sesi')
+                    ->requiredIf('type','regular')
+                    ->maxValue(21)->suffix('x pertemuan')
+                    ->numeric(),
                 TextInput::make('price')->label('Harga')->numeric()->required()->suffix('IDR'),
-                CheckboxList::make('schedules')->relationship('schedules','name')->label('Jadual Kelas')
+                CheckboxList::make('schedules')->relationship('schedules','name')->label('Jadwal Tersedia')
+                    ->columns(1)
+                    ->bulkToggleable()
             ])
             ->inlineLabel()
             ;
@@ -59,7 +66,7 @@ class ClassPackageResource extends Resource
                 TextColumn::make('name')->label('Nama Paket'),
                 TextColumn::make('description')->label('Deskripsi')->wrap(),
                 TextColumn::make('type')->label('Tipe Kelas'),
-                TextColumn::make('schedules.name')->label('Jadual')->bulleted(),
+                TextColumn::make('schedules.name')->label('Jadwal Tersedia')->bulleted(),
                 TextColumn::make('price')->label('Harga')->money('IDR'),
             ])
             ->filters([

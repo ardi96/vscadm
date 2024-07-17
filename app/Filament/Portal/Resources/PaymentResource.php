@@ -41,8 +41,12 @@ class PaymentResource extends Resource
                 DatePicker::make('payment_date')->label('Tanggal Pembayaran')->required(),
                 TextInput::make('bank')->label('Nama Bank Anda')->required(),
                 Textinput::make('notes')->label('Keterangan'),
-                FileUpload::make('file_name')->label('Upload Bukti Pembayaran')->required(),
+                FileUpload::make('file_name')->label('Upload Bukti Pembayaran')
+                    ->required()
+                    ->acceptedFileTypes(['application/pdf','mime:jpg, jpeg, png'])
+                    ->maxSize(1024*2),
                 CheckboxList::make('invoices')
+                    ->bulkToggleable()
                     ->required()
                     ->label('Pembayaran untuk invoice')
                     ->relationship('invoices','invoice_no')
@@ -50,8 +54,7 @@ class PaymentResource extends Resource
                         Invoice::where('parent_id',Auth::user()->id)
                         ->where('status','unpaid')
                         ->select(DB::raw(' concat(invoice_no, \' : \', format(amount,2)) as no, id '))
-                        ->pluck('no','id')
-                )
+                        ->pluck('no','id'))
             ]);
     }
 
@@ -74,7 +77,7 @@ class PaymentResource extends Resource
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\Action::make('lihat attachment')->icon('heroicon-m-arrow-top-right-on-square')
                     ->url(fn(Payment $record):string => url('storage/'. $record->file_name))
-                    ->openUrlInNewTab(),
+                        ->openUrlInNewTab(),
                     Tables\Actions\DeleteAction::make(),
                 ])
             ])
