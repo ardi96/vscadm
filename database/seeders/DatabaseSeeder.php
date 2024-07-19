@@ -36,10 +36,10 @@ class DatabaseSeeder extends Seeder
 
         (new MarketingSourceSeeder())->run();
         
-        (new ClassLocationSeeder())->run();
+        // (new ClassLocationSeeder())->run();
         
-        (new ClassScheduleSeeder())->run();
+        // (new ClassScheduleSeeder())->run();
         
-        (new ClassPackageSeeder())->run();
+        // (new ClassPackageSeeder())->run();
     }
 }
