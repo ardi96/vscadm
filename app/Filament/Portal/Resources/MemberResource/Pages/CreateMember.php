@@ -46,6 +46,7 @@ class CreateMember extends CreateRecord
         if ( $record->payment_file_name != null && $record->payment_amount != null )
         {
             Payment::create([
+                'user_id' => Auth::user()->id,
                 'amount' => $record->payment_amount,
                 'payment_date' => Date::now(),
                 'notes' => 'Pendaftaran a.n. ' . $record->name ,
