@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\PaymentResource\Pages;
 
+use App\Models\User;
 use Filament\Actions;
+use App\Models\Member;
 use App\Models\Payment;
 use Filament\Infolists\Infolist;
+use App\Notifications\MemberAccepted;
 use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Resources\PaymentResource;
 use Filament\Infolists\Components\TextEntry;
@@ -41,6 +44,15 @@ class ViewPayment extends ViewRecord
                     {
                         $invoice->payNow();
                     }
+
+                    $member = Member::find( $payment->member_id );
+
+                    $member->status = 'active';
+                    $member->save();
+
+                    $user = User::find($member->parent_id);
+                    $user->notify(new MemberAccepted( $this->getRecord() ));
+
                 })
                 ->icon('heroicon-m-check-circle')
                 ->requiresConfirmation()

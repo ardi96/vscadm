@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('payments', function (Blueprint $table) {
             $table->foreignId('user_id');
+            $table->foreignId('member_id');
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('payments', function (Blueprint $table) {
             $table->dropColumn('user_id');
+            $table->dropColumn('member_id');
         });
     }
 };
