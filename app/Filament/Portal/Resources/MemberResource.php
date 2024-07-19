@@ -75,9 +75,7 @@ class MemberResource extends Resource
                     ->required()
                     ->live()
                     ,
-            ])
-            ->columnSpan(1),
-           
+            ]),
             Section::make('Pilih Jadwal')
                 ->schema([
                     CheckboxList::make('schedules')->label('')
@@ -90,8 +88,7 @@ class MemberResource extends Resource
                         })
                     ->columns(2)
                     ->rules([new ClassScheduleValidation()])
-                ])
-                ->columnSpan(1),
+                ]),
             Section::make('Bukti Pembayaran Registrasi')->schema([
                 TextInput::make('payment_amount')->label('Jumlah')->suffix('IDR')->numeric()->required()->default(150000),
                 
