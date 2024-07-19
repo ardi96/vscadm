@@ -53,6 +53,7 @@ class InvoiceResource extends Resource
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('Bayar')->icon('heroicon-m-banknotes')->label('Bayar')
                         ->url(PaymentResource\Pages\CreatePayment::getUrl())
+                        ->visible(fn($record) => $record->status == 'unpaid')
                 ]),
             ])
             ->bulkActions([

@@ -60,6 +60,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->topNavigation(false)
+            ->passwordReset()
             ->profile();
     }
 }

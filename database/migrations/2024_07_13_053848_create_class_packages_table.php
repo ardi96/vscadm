@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('class_packages', function (Blueprint $table) {
             $table->id();
             $table->string('name',40);
-            $table->string('description',140);
+            $table->string('description',255);
             $table->unsignedSmallInteger('session_per_week')->nullable();
             $table->enum('type',['private','regular','per sesi']);
             $table->decimal('price',14,2);

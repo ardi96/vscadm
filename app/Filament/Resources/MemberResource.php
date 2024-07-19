@@ -62,7 +62,7 @@ class MemberResource extends Resource
                     ->options(
                         ClassPackage::all()->pluck('name','id')
                     )->required()->live(),
-                DatePicker::make('start_date')->label('Mulai Tanggal')->required(),
+                // DatePicker::make('start_date')->label('Mulai Tanggal')->required(),
                 Select::make('status')->options([
                         'pending' => 'Pending',
                         'inactive' => 'Inactive',

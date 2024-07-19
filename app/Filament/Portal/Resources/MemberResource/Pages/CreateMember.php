@@ -2,10 +2,12 @@
 
 namespace App\Filament\Portal\Resources\MemberResource\Pages;
 
-use App\Filament\Portal\Resources\MemberResource;
 use Filament\Actions;
-use Filament\Resources\Pages\CreateRecord;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
+use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Portal\Resources\MemberResource;
 
 class CreateMember extends CreateRecord
 {
@@ -36,4 +38,22 @@ class CreateMember extends CreateRecord
 
         return $resource::getUrl('index');
     }
+
+    public function afterCreate() : void 
+    {
+        $record = $this->record;
+
+        if ( $record->payment_file_name != null && $record->payment_amount != null )
+        {
+            Payment::create([
+                'amount' => $record->payment_amount,
+                'payment_date' => Date::now(),
+                'notes' => 'Pendaftaran a.n. ' . $record->name ,
+                'bank' => 'N/A',
+                'file_name' => $record->payment_file_name,
+                'status' => 'pending'
+            ]);
+        }
+    }
+    
 }

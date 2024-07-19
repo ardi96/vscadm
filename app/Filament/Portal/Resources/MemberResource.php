@@ -26,6 +26,8 @@ use App\Filament\Portal\Resources\MemberResource\Pages;
 use App\Filament\Portal\Resources\MemberResource\RelationManagers;
 use App\Models\ClassPackageSchedule;
 use App\Models\ClassSchedule;
+use App\Rules\ClassScheduleValidation;
+use Filament\Forms\Components\FileUpload;
 use Livewire\Component as Livewire;
 
 class MemberResource extends Resource
@@ -54,9 +56,13 @@ class MemberResource extends Resource
             )->required(),
             Select::make('marketing_source_id')->label('Channel Marketing')->options(
                 MarketingSource::all()->pluck('name','id')
-            ),
-            TextInput::make('marketing_source_other')->label('Lainnya '),
+            )->live()->required(),
+            TextInput::make('marketing_source_other')->label('Lainnya ')
+                ->visible(fn(Forms\Get $get) => ($get('marketing_source_id') ===  '4'))
+                ->requiredIf('marketing_source_id','4')
+                ->validationMessages(['required_if' => 'Isi channel marketing lainnya']),
             TextInput::make('instagram')->label('Nama Akun Instagram'),
+            
             Section::make('Pilih Paket')->schema([
                 Radio::make('class_package_id')->label('')
                     ->options(
@@ -68,24 +74,32 @@ class MemberResource extends Resource
                     )
                     ->required()
                     ->live()
-                    // ->afterStateUpdated(function (Livewire $livewire) {
-                    //     $livewire->reset('data.schedules');
-                    // })
                     ,
-            ]),
-            Section::make('jadwal')
+            ])
+            ->columnSpan(1),
+           
+            Section::make('Pilih Jadwal')
                 ->schema([
                     CheckboxList::make('schedules')->label('')
-                    ->options(function (Forms\Get $get) {
+                        ->options(function (Forms\Get $get) {
 
                         return ClassSchedule::whereIn(
                             'id',ClassPackageSchedule::where('class_package_id', $get('class_package_id'))->pluck('class_schedule_id')
                             )->pluck('name','id');
                         
                         })
-                    ->columns(3)
-                ]),
-            DatePicker::make('start_date')->label('Mulai Tanggal')->required(),
+                    ->columns(2)
+                    ->rules([new ClassScheduleValidation()])
+                ])
+                ->columnSpan(1),
+            Section::make('Bukti Pembayaran Registrasi')->schema([
+                TextInput::make('payment_amount')->label('Jumlah')->suffix('IDR')->numeric()->required()->default(150000),
+                
+                FileUpload::make('payment_file_name')->label('Upload File')
+                        ->acceptedFileTypes(['image/jpeg','image/png','application/pdf'])
+                        ->maxSize(1024*2)->required()
+            ])
+            // DatePicker::make('start_date')->label('Mulai Tanggal')->required(),
         ])->inlineLabel();
     }
 
@@ -117,6 +131,7 @@ class MemberResource extends Resource
                 // Tables\Actions\Action::make('Generate Invoice')->icon('heroicon-m-banknotes')->color(Color::Amber),
             ]),
         ])
+        ->emptyStateHeading('Anda belum mendaftar. Silakan klik tombol Registrasi Baru di kanan atas')
         ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', Auth::user()->id));
     }
 

@@ -26,10 +26,12 @@ return new class extends Migration
             $table->string('instagram')->nullable();
             $table->foreignId('class_package_id');
             $table->json('schedules')->nullable();
-            $table->date('start_date');
+            $table->date('start_date')->nullable();
             $table->enum('status',['pending','active','inactive']);
             $table->date('last_invoice_date')->nullable();
             $table->date('last_payment_date')->nullable();
+            $table->string('payment_file_name')->nullable();
+            $table->decimal('payment_amount',14,2)->nullable();
             $table->decimal('balance',9,2)->default(0);
             $table->foreignId('parent_id');
             $table->timestamps();

@@ -39,8 +39,10 @@ class ClassPackageResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')->label('Nama Paket')->required()->maxLength(40),
-                Textarea::make('description')->label('Deskripsi Paket')->required()->maxLength(140),
-                Select::make('type')->label('Tipe Kelas')->options([
+                Textarea::make('description')->label('Deskripsi Paket')->required()->maxLength(255),
+                Select::make('type')->label('Tipe Kelas')
+                    ->required()
+                    ->options([
                     'private' => 'Private',
                     'regular' => 'Regular',
                     'per sesi' => 'Per Sesi'
