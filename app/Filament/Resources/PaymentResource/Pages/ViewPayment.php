@@ -51,7 +51,8 @@ class ViewPayment extends ViewRecord
                     $member->save();
 
                     $user = User::find($member->parent_id);
-                    $user->notify(new MemberAccepted( $this->getRecord() ));
+                    
+                    $user->notify(new MemberAccepted( $member ));
 
                 })
                 ->icon('heroicon-m-check-circle')
