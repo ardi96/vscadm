@@ -37,8 +37,8 @@ class MemberAccepted extends Notification
     {
         return (new MailMessage)
                     ->line('Selamat '. $this->member->name .', keanggotaan Anda telah aktif')
-                    ->action('Notification Action', url('/'))
-                    ->line('Terima kasih telah bergabung dengan kami, semoga sukses !!!');
+                    // ->action('Notification Action', url('/'))
+                    ->line('Terima kasih telah bergabung bersama VEINS, No VEINS No GAINS !!!');
     }
 
     /**

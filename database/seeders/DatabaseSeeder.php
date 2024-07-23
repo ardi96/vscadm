@@ -32,6 +32,24 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true
         ]);
 
+        User::create([
+            'name' => 'Adhib Veins',
+            'email' => 'adhib@veins-skatingclub.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => Date::now(),
+            'mobile_no' => '08228898989',
+            'is_admin' => true
+        ]);
+
+        User::create([
+            'name' => 'Ardiansyah Tester',
+            'email' => 'ardi96@gmail.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => Date::now(),
+            'mobile_no' => '081111111',
+            'is_admin' => false
+        ]);
+
         (new CostumeSizeSeeder())->run();
 
         (new MarketingSourceSeeder())->run();

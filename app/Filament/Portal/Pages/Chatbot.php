@@ -11,7 +11,9 @@ class Chatbot extends Page
 
     protected static string $view = 'filament.portal.pages.chatbot';
 
+    protected static bool $shouldRegisterNavigation = false;
 
+    
     public $question;
     public $response;
 

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Portal\Widgets;
 
+use App\Filament\Portal\Resources\InvoiceResource;
+use App\Filament\Portal\Resources\MemberResource;
 use App\Models\Member;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
@@ -28,16 +30,17 @@ class FamilyMemberStatistic extends BaseWidget
             ->color('success')
             ->extraAttributes([
                 'class' => 'cursor-pointer',
-                // 'wire:click' => "\$dispatch('setStatusFilter', { filter: 'processed' })",
+                // 'wire:click' => "window.location.href='". MemberResource::getUrl('create'). "'",
+                'onclick' => "window.location.href='". MemberResource::getUrl('create'). "'",
             ])
-            ->description('Terdaftar dengan akun Anda.')
+            ->description('Terdaftar dengan akun Anda. Klik untuk registrasi baru.')
             ->descriptionIcon('heroicon-m-user'),
 
             Stat::make('Outstanding', 'IDR '. number_format(Invoice::where('parent_id',Auth()->user()->id)->where('status','unpaid')->sum('amount'),0,',','.'))
             ->color('success')
             ->extraAttributes([
                 'class' => 'cursor-pointer',
-                // 'wire:click' => "\$dispatch('setStatusFilter', { filter: 'processed' })",
+                'onclick' => "window.location.href='". InvoiceResource::getUrl('index'). "'",
             ])
             ->description('Total Outstanding Fee')
             ->descriptionIcon('heroicon-m-banknotes'),

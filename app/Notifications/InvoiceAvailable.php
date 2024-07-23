@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Filament\Portal\Resources\InvoiceResource;
 use App\Models\Invoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -42,7 +43,7 @@ class InvoiceAvailable extends Notification
                     ->line('Jumlah: IDR '. number_format($this->invoice->amount,0,',','.'))
                     ->line('Nama Anggota: '. $this->invoice->member->name)
                     ->line('Nama Paket: '. $this->invoice->item_description)
-                    ->action('Check Invoice Di Sini', url('/'))
+                    ->action('Check Invoice Di Sini', url('/portal/invoices'))
                     ->line('Terima Kasih');
     }
 

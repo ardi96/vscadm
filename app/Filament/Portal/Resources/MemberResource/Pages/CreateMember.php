@@ -4,9 +4,11 @@ namespace App\Filament\Portal\Resources\MemberResource\Pages;
 
 use Filament\Actions;
 use App\Models\Payment;
+use Filament\Actions\Action;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Portal\Resources\MemberResource;
 
 class CreateMember extends CreateRecord
@@ -27,14 +29,6 @@ class CreateMember extends CreateRecord
     protected function getRedirectUrl(): string
     {
         $resource = static::getResource();
-
-        // if ($resource::hasPage('view') && $resource::canView($this->getRecord())) {
-        //     return $resource::getUrl('view', ['record' => $this->getRecord(), ...$this->getRedirectUrlParameters()]);
-        // }
-
-        // if ($resource::hasPage('edit') && $resource::canEdit($this->getRecord())) {
-        //     return $resource::getUrl('edit', ['record' => $this->getRecord(), ...$this->getRedirectUrlParameters()]);
-        // }
 
         return $resource::getUrl('index');
     }
@@ -57,5 +51,33 @@ class CreateMember extends CreateRecord
             ]);
         }
     }
+
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getCreateFormAction(),
+            // ...(static::canCreateAnother() ? [$this->getCreateAnotherFormAction()] : []),
+            $this->getCancelFormAction(),
+        ];
+    }
+
+    protected function getCreateFormAction(): Action
+    {
+        return Action::make('create')
+            ->label('Kirim Data Registrasi')
+            // ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
+            ->submit('create')
+            ->keyBindings(['mod+s']);
+    }
+
+    public function getTitle(): string | Htmlable
+    {
+        return 'Registrasi Baru';
+    }
+    
     
 }

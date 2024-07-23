@@ -30,6 +30,9 @@ class PaymentResource extends Resource
     
     protected static ?string $navigationLabel = 'Pembayaran';
 
+    protected static ?int $navigationSort = 30;
+
+
     // protected static ?string $label = 'Pembayaran';
 
     
