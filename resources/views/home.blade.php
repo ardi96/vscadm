@@ -134,9 +134,6 @@
                                             memastikan mereka memiliki fondasi yang kuat untuk berkembang lebih lanjut.</p>
 
                                     </div>
-                                    <div class="card-footer bg-transparent border-top text-center">
-                                        <a href="#" class="text-primary">Learn more</a>
-                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-4">
@@ -152,9 +149,6 @@
                                             baik untuk tujuan hobi maupun prestasi.</p>
 
                                     </div>
-                                    <div class="card-footer bg-transparent border-top text-center">
-                                        <a href="#" class="text-primary">Learn more</a>
-                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-4">
@@ -169,9 +163,6 @@
                                             membantu mereka mengurangi ketergantungan pada gadget 
                                             dan memperkuat hubungan sosial mereka.</p>
 
-                                    </div>
-                                    <div class="card-footer bg-transparent border-top text-center">
-                                        <a href="#" class="text-primary">Learn more</a>
                                     </div>
                                 </div>
                             </div>
@@ -209,9 +200,6 @@
                                         <p class="text-muted mb-0">Untuk pemula yang ingin belajar teknik dasar sepatu roda.</p>
 
                                     </div>
-                                    <div class="card-footer bg-transparent border-top text-center">
-                                        <a href="#" class="text-primary">Learn more</a>
-                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -224,9 +212,6 @@
                                         <h5>Kelas Lanjutan</h5>
                                         <p class="text-muted mb-0">Untuk mereka yang ingin meningkatkan keterampilan mereka dan berkompetisi.</p>
 
-                                    </div>
-                                    <div class="card-footer bg-transparent border-top text-center">
-                                        <a href="#" class="text-primary">Learn more</a>
                                     </div>
                                 </div>
                             </div>
@@ -242,9 +227,6 @@
                                             termasuk orang tua yang ingin bermain sepatu roda bersama anak-anak mereka.
                                         </p>
                                     </div>
-                                    <div class="card-footer bg-transparent border-top text-center">
-                                        <a href="#" class="text-primary">Learn more</a>
-                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -258,9 +240,6 @@
                                         <p class="text-muted mb-0">Sesi latihan reguler yang dipimpin oleh pelatih berpengalaman.
                                         </p>
                                     </div>
-                                    <div class="card-footer bg-transparent border-top text-center">
-                                        <a href="#" class="text-primary">Learn more</a>
-                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -273,9 +252,6 @@
                                         <h5>Kompetisi dan Pertandingan</h5>
                                         <p class="text-muted mb-0">Kesempatan untuk berpartisipasi dalam kompetisi lokal dan nasional.
                                         </p>
-                                    </div>
-                                    <div class="card-footer bg-transparent border-top text-center">
-                                        <a href="#" class="text-primary">Learn more</a>
                                     </div>
                                 </div>
                             </div>
@@ -313,49 +289,6 @@
 
             <hr class="my-5">
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="owl-carousel owl-theme clients-carousel" id="clients-carousel" dir="ltr">
-                        <div class="item">
-                            <div class="client-images">
-                                <img src="{{ URL::asset('build/images/clients/1.png') }}" alt="client-img"
-                                    class="mx-auto img-fluid d-block">
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="client-images">
-                                <img src="{{ URL::asset('build/images/clients/2.png') }}" alt="client-img"
-                                    class="mx-auto img-fluid d-block">
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="client-images">
-                                <img src="{{ URL::asset('build/images/clients/3.png') }}" alt="client-img"
-                                    class="mx-auto img-fluid d-block">
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="client-images">
-                                <img src="{{ URL::asset('build/images/clients/4.png') }}" alt="client-img"
-                                    class="mx-auto img-fluid d-block">
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="client-images">
-                                <img src="{{ URL::asset('build/images/clients/5.png') }}" alt="client-img"
-                                    class="mx-auto img-fluid d-block">
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="client-images">
-                                <img src="{{ URL::asset('build/images/clients/6.png') }}" alt="client-img"
-                                    class="mx-auto img-fluid d-block">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- end row -->
         </div>
         <!-- end container -->
     </section>
@@ -445,10 +378,12 @@
                                     Rp 100.000/kedatangan : 1x Sesi kedatangan (hanya di Velodrome, dapat untuk trial dan tanpa harus mendaftar)
                                 </li>
                                 <li>
-                                    Priavet Coaching (by appointment) :
+                                    Private Coaching (by appointment) :
                                     <ul>
                                         <li>
                                             1 jam: Rp 150.000 / sesi 
+                                        </li>
+                                        <li>
                                             2 jam (one on one): Rp 250.000 / sesi 
                                         </li>
                                     </ul>

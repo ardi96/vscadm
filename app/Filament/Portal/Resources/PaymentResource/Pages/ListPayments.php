@@ -13,7 +13,7 @@ class ListPayments extends ListRecords
 
     public function getTitle(): string | Htmlable
     {
-        return "Daftar Pembayaran";
+        return "Riwayat Pembayaran";
     }
 
     protected function getHeaderActions(): array

@@ -17,7 +17,7 @@ class ListInvoices extends ListRecords
 
     public function getTitle(): string | Htmlable
     {
-        return "Daftar Invoice";
+        return "Daftar Tagihan";
     }
 
     protected function getHeaderActions(): array

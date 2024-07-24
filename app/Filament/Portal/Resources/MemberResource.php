@@ -132,7 +132,17 @@ class MemberResource extends Resource
 
                     FileUpload::make('payment_file_name')->label('Upload File')
                             ->acceptedFileTypes(['image/jpeg','image/png','application/pdf'])
-                            ->maxSize(1024*2)->required(),
+                            ->maxSize(1024*2)
+                            ->required()
+                            ->hintAction(
+                                Action::make('petunjuk')
+                                    ->label('Petunjuk Pembayaran')
+                                    ->modalContent(view('filament.portal.pages.petunjuk-pembayaran'))
+                                    ->modalSubmitAction(false)
+                                    ->modalCancelActionLabel('Close')
+                                    ->icon('heroicon-o-question-mark-circle')
+                                    ->tooltip('Petunjuk Pembayaran')
+                            ),
                 ])
             ])->columnSpanFull(),
         ])->inlineLabel();
