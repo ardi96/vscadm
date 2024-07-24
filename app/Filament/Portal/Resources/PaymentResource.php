@@ -69,6 +69,7 @@ class PaymentResource extends Resource
                 TextColumn::make('payment_date')->label('Tanggal Pembayaran')->date('d-M-Y'),
                 TextColumn::make('amount')->label('Jumlah Pembayaran')->money('IDR'),
                 TextColumn::make('bank')->label('Nama Bank'),
+                TextColumn::make('notes')->label('Keterangan'),
                 TextColumn::make('created_at')->label('Tanggal Upload'),
                 TextColumn::make('status')->label('status')
                     ->badge()

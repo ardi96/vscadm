@@ -50,8 +50,8 @@ class MemberInvoices extends ManageRelatedRecords
                 ->badge()
                 ->color(fn(string $state):string => match($state) {
                     'paid' => 'primary',
-                    'pending' => 'info',
-                    'unpaid' => 'secondary',
+                    'pending' => 'secondary',
+                    'unpaid' => 'info',
                     'void' => 'danger',
                 })
                 ->icon(fn(string $state):string => match($state) {

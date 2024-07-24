@@ -115,8 +115,9 @@ class MemberResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\Action::make('Generate Invoice')
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation(),
+                    Tables\Actions\BulkAction::make('Generate Invoice')
                         ->icon('heroicon-m-banknotes')
                         ->color(Color::Amber)
                         ->requiresConfirmation()

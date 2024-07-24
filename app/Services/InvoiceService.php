@@ -30,6 +30,7 @@ class InvoiceService
             'invoice_no' => env('INVOICE_PREFIX','VSC') . InvoiceService::getNextNumber(),
             'description' => 'Membership Fee '. Date::now()->format('M-Y'),
             'item_description' => $member->package->name,
+            'status' => 'unpaid',
         ]);
 
         $member->balance = $member->balance + $invoice->amount;
@@ -51,6 +52,7 @@ class InvoiceService
             'invoice_no' => env('INVOICE_PREFIX','VSC') . InvoiceService::getNextNumber(),
             'description' => 'Registration Fee',
             'item_description' => $member->package->name,
+            'status' => 'pending'
         ]);
 
         $member->balance = $member->balance + $invoice->amount;
