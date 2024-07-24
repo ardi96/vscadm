@@ -100,7 +100,7 @@ class PaymentResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->where('user_id', Auth::user()->id));
