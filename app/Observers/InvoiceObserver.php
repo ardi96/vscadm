@@ -22,8 +22,6 @@ class InvoiceObserver
     {
         $original_amount = $invoice->getOriginal('amount');
 
-        logger($original_amount);
-
         $diff = $invoice->amount - $original_amount; 
 
         $member = Member::find($invoice->member_id);

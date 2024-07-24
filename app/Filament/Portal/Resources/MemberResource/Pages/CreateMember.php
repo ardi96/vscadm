@@ -7,9 +7,13 @@ use App\Models\Payment;
 use Filament\Actions\Action;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Portal\Resources\MemberResource;
+use App\Models\Invoice;
+use App\Models\PaymentInvoice;
+use App\Services\InvoiceService;
 
 class CreateMember extends CreateRecord
 {
@@ -23,6 +27,8 @@ class CreateMember extends CreateRecord
     {
         $data['parent_id'] = Auth()->user()->id;
 
+        $data['payment_amount'] = $data['payment_amount'] * 1000;
+
         return $data; 
     }
 
@@ -31,25 +37,6 @@ class CreateMember extends CreateRecord
         $resource = static::getResource();
 
         return $resource::getUrl('index');
-    }
-
-    public function afterCreate() : void 
-    {
-        $record = $this->record;
-
-        if ( $record->payment_file_name != null && $record->payment_amount != null )
-        {
-            Payment::create([
-                'user_id' => Auth::user()->id,
-                'member_id' => $record->id,
-                'amount' => $record->payment_amount,
-                'payment_date' => Date::now(),
-                'notes' => 'Pendaftaran a.n. ' . $record->name ,
-                'bank' => 'N/A',
-                'file_name' => $record->payment_file_name,
-                'status' => 'pending'
-            ]);
-        }
     }
 
 
@@ -79,5 +66,47 @@ class CreateMember extends CreateRecord
         return 'Registrasi Baru';
     }
     
-    
+    protected function handleRecordCreation(array $data): Model
+    {
+
+
+        $payment_date = $data['payment_date'];
+        $bank = $data['bank'];
+        $notes = $data['notes'];
+        
+        unset($data['bank']);
+        unset($data['payment_date']);
+        unset($data['notes']);
+
+        //insert the member information
+        $record =  static::getModel()::create($data);
+
+        
+        
+        
+        // Create a new payment
+        $payment = new Payment();
+        $payment->amount = $data['payment_amount'];
+        $payment->payment_date = $payment_date;
+        $payment->bank = $bank;
+        $payment->notes  = $notes;
+        $payment->user_id = $data['parent_id'];
+        $payment->file_name = $record->payment_file_name;
+
+        // link the member_id with this payment
+        $payment->member_id = $record->id;
+
+        // Save the payment model to insert the data
+        $payment->save();
+
+        // generate invoice for registration fee
+        $invoice = InvoiceService::generateRegistrationInvoice($record , $payment);
+
+        PaymentInvoice::create([
+            'invoice_id' => $invoice->id,
+            'payment_id' => $payment->id 
+        ]);
+
+        return $record;
+    }
 }

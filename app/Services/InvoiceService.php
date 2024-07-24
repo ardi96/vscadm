@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Member;
 use App\Models\Invoice;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Date;
 
 class InvoiceService
@@ -27,7 +28,28 @@ class InvoiceService
             'amount' => $member->package->price,
             'invoice_date' => Date::now(),
             'invoice_no' => env('INVOICE_PREFIX','VSC') . InvoiceService::getNextNumber(),
-            'description' => 'Membership Fee',
+            'description' => 'Membership Fee '. Date::now()->format('M-Y'),
+            'item_description' => $member->package->name,
+        ]);
+
+        $member->balance = $member->balance + $invoice->amount;
+        $member->last_invoice_date = Date::now();
+        $member->save();
+
+        return $invoice;
+    }
+
+    public static function generateRegistrationInvoice(Member $member, Payment $payment) : ?Invoice
+    {
+
+        $invoice = Invoice::create([
+            'member_id' => $member->id,
+            'type' => 'registration',
+            'parent_id' => $member->parent->id,
+            'amount' => $payment->amount,
+            'invoice_date' => Date::now(),
+            'invoice_no' => env('INVOICE_PREFIX','VSC') . InvoiceService::getNextNumber(),
+            'description' => 'Registration Fee',
             'item_description' => $member->package->name,
         ]);
 

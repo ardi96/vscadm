@@ -15,6 +15,7 @@ use App\Models\MarketingSource;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Colors\Color;
+use Illuminate\Database\Eloquent\Collection;
 use App\Models\ClassPackageSchedule;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -25,6 +26,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Forms\Components\CheckboxList;
 use App\Filament\Resources\MemberResource\Pages;
+use App\Services\InvoiceService;
 
 class MemberResource extends Resource
 {
@@ -114,7 +116,18 @@ class MemberResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\Action::make('Generate Invoice')->icon('heroicon-m-banknotes')->color(Color::Amber),
+                    Tables\Actions\Action::make('Generate Invoice')
+                        ->icon('heroicon-m-banknotes')
+                        ->color(Color::Amber)
+                        ->requiresConfirmation()
+                        ->action(function(Collection $records) 
+                            { 
+                                foreach($records as $member)
+                                {
+                                    InvoiceService::generate( $member );
+                                }
+                            })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
     }

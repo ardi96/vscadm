@@ -2,14 +2,19 @@
 
 namespace App\Filament\Portal\Resources\PaymentResource\Pages;
 
-use App\Filament\Portal\Resources\PaymentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\Support\Htmlable;
+use App\Filament\Portal\Resources\PaymentResource;
 
 class ListPayments extends ListRecords
 {
     protected static string $resource = PaymentResource::class;
 
+    public function getTitle(): string | Htmlable
+    {
+        return "Daftar Pembayaran";
+    }
 
     protected function getHeaderActions(): array
     {

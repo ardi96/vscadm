@@ -47,6 +47,19 @@ class MemberInvoices extends ManageRelatedRecords
                 TextColumn::make('item_description')->label('Paket'),
                 TextColumn::make('amount')->money('IDR')->label('Jumlah'),
                 TextColumn::make('status')->label('Status')
+                ->badge()
+                ->color(fn(string $state):string => match($state) {
+                    'paid' => 'primary',
+                    'pending' => 'info',
+                    'unpaid' => 'secondary',
+                    'void' => 'danger',
+                })
+                ->icon(fn(string $state):string => match($state) {
+                    'paid' => 'heroicon-m-check-circle',
+                    'pending' => 'heroicon-m-question-mark-circle', 
+                    'unpaid' => 'heroicon-m-no-symbol',
+                    'void' => 'heroicon-m-x-circle',
+                })
             ])
             ->poll('10s')
             ->headerActions([

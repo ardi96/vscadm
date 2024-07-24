@@ -2,9 +2,10 @@
 
 namespace App\Filament\Portal\Resources\MemberResource\Pages;
 
-use App\Filament\Portal\Resources\MemberResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\Support\Htmlable;
+use App\Filament\Portal\Resources\MemberResource;
 
 class ListMembers extends ListRecords
 {
@@ -15,5 +16,10 @@ class ListMembers extends ListRecords
         return [
             Actions\CreateAction::make()->label('Registrasi Baru'),
         ];
+    }
+
+    public function getTitle(): string | Htmlable
+    {
+        return "Daftar Registrasi";
     }
 }

@@ -36,9 +36,23 @@ class PaymentResource extends Resource
             ->columns([
                 TextColumn::make('payment_date')->label('Tanggal Pembayaran')->date('d-M-Y'),
                 TextColumn::make('amount')->label('Jumlah Pembayaran')->money('IDR'),
+                TextColumn::make('notes')->label('Keterangan'),
                 TextColumn::make('bank')->label('Nama Bank'),
-                TextColumn::make('created_at')->label('Tanggal Upload'),
-                TextColumn::make('status')->label('status'),
+                TextColumn::make('invoices.invoice_no')->label('No. Invoices')->bulleted(),
+                TextColumn::make('member.name')->label('Nama Anak'),
+                TextColumn::make('created_at')->label('Tanggal Upload')->date('d-M-Y'),
+                TextColumn::make('status')->label('status')
+                ->badge()
+                ->color(fn(string $state):string => match($state) {
+                    'accepted' => 'primary',
+                    'pending' => 'secondary',
+                    'rejected' => 'danger',
+                })
+                ->icon(fn(string $state):string => match($state) {
+                    'accepted' => 'heroicon-m-check-circle',
+                    'pending' => 'heroicon-m-question-mark-circle',
+                    'rejected' => 'heroicon-m-x-circle',
+                }),
             ])
             ->filters([
                 //
@@ -55,7 +69,7 @@ class PaymentResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

@@ -13,6 +13,7 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 class FamilyMemberStatistic extends BaseWidget
 {
     private $latestPaidInvoiceAmount = 0;
+    
     private $latestPaidInvoiceDate = null ; 
 
     protected function getStats(): array

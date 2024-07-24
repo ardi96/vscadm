@@ -8,6 +8,7 @@ use App\Models\Member;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\CostumeSize;
+use Filament\Support\RawJs;
 use App\Models\ClassPackage;
 use App\Models\ClassSchedule;
 use App\Models\MarketingSource;
@@ -18,6 +19,7 @@ use Livewire\Component as Livewire;
 use App\Models\ClassPackageSchedule;
 use Filament\Forms\Components\Radio;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Wizard;
 use App\Rules\ClassScheduleValidation;
@@ -33,6 +35,7 @@ use Filament\Forms\Components\Actions\Action;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Portal\Resources\MemberResource\Pages;
 use App\Filament\Portal\Resources\MemberResource\RelationManagers;
+
 
 class MemberResource extends Resource
 {
@@ -115,13 +118,23 @@ class MemberResource extends Resource
                 ->columnSpanFull(),
 
                 Wizard\Step::make('Kirim Bukti Pembayaran')->schema([
-                    TextInput::make('payment_amount')->label('Jumlah')->suffix('IDR')->numeric()->required()->default(150000),
+                    TextInput::make('payment_amount')->label('Jumlah')
+                        ->suffix('IDR')
+                        ->numeric()
+                        ->required()
+                        ->default(150000)
+                        ->readOnly()
+                        ->mask(RawJs::make('$money($input,\',\',\'.\')')),
                 
+                    TextInput::make('bank')->label('Bank')->required(),
+                    TextInput::make('notes')->label('Keterangan')->required(),
+                    DatePicker::make('payment_date')->label('Tanggal Transfer')->required()->default(Date::now()),
+
                     FileUpload::make('payment_file_name')->label('Upload File')
                             ->acceptedFileTypes(['image/jpeg','image/png','application/pdf'])
-                            ->maxSize(1024*2)->required()
+                            ->maxSize(1024*2)->required(),
                 ])
-            ])->columnSpanFull()->skippable(),
+            ])->columnSpanFull(),
         ])->inlineLabel();
     }
 
@@ -144,13 +157,11 @@ class MemberResource extends Resource
         ->actions([
             Tables\Actions\ActionGroup::make([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->visible(fn($record) => $record->status == 'pending'),
             ])
         ])
         ->bulkActions([
             Tables\Actions\BulkActionGroup::make([
-                // Tables\Actions\DeleteBulkAction::make(),
-                // Tables\Actions\Action::make('Generate Invoice')->icon('heroicon-m-banknotes')->color(Color::Amber),
             ]),
         ])
         ->emptyStateHeading('Anda belum mendaftar. Silakan klik tombol Registrasi Baru di kanan atas')
@@ -169,7 +180,7 @@ class MemberResource extends Resource
         return [
             'index' => Pages\ListMembers::route('/'),
             'create' => Pages\CreateMember::route('/create'),
-            'edit' => Pages\EditMember::route('/{record}/edit'),
+            // 'edit' => Pages\EditMember::route('/{record}/edit'),
         ];
     }
 }

@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
@@ -41,12 +42,12 @@ class PaymentResource extends Resource
         return $form
             ->schema([
                 TextInput::make('amount')->label('Jumlah Pembayaran')->numeric()->suffix('Rupiah')->required(),
-                DatePicker::make('payment_date')->label('Tanggal Pembayaran')->required(),
+                DatePicker::make('payment_date')->label('Tanggal Pembayaran')->required()->default(Date::now()),
                 TextInput::make('bank')->label('Nama Bank Anda')->required(),
-                Textinput::make('notes')->label('Keterangan'),
+                Textinput::make('notes')->label('Keterangan')->required(),
                 FileUpload::make('file_name')->label('Upload Bukti Pembayaran')
                     ->required()
-                    ->acceptedFileTypes(['application/pdf','mime:jpg, jpeg, png'])
+                    ->acceptedFileTypes(['image/jpeg','image/png','application/pdf'])
                     ->maxSize(1024*2),
                 CheckboxList::make('invoices')
                     ->bulkToggleable()
@@ -69,7 +70,18 @@ class PaymentResource extends Resource
                 TextColumn::make('amount')->label('Jumlah Pembayaran')->money('IDR'),
                 TextColumn::make('bank')->label('Nama Bank'),
                 TextColumn::make('created_at')->label('Tanggal Upload'),
-                TextColumn::make('status')->label('status'),
+                TextColumn::make('status')->label('status')
+                    ->badge()
+                    ->color(fn(string $state):string => match($state) {
+                        'accepted' => 'primary',
+                        'pending' => 'secondary',
+                        'rejected' => 'danger',
+                    })
+                    ->icon(fn(string $state):string => match($state) {
+                        'accepted' => 'heroicon-m-check-circle',
+                        'pending' => 'heroicon-m-question-mark-circle',
+                        'rejected' => 'heroicon-m-x-circle',
+                    }),
             ])
             ->filters([
                 //
@@ -81,7 +93,8 @@ class PaymentResource extends Resource
                     Tables\Actions\Action::make('lihat attachment')->icon('heroicon-m-arrow-top-right-on-square')
                     ->url(fn(Payment $record):string => url('storage/'. $record->file_name))
                         ->openUrlInNewTab(),
-                    Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\DeleteAction::make()
+                        ->visible(fn($record) => $record->status == 'pending'),
                 ])
             ])
             ->bulkActions([

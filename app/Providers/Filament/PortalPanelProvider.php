@@ -14,6 +14,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use App\Filament\Portal\Widgets\FamilyMemberStatistic;
+use App\Filament\Portal\Widgets\InfoWidget;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -43,6 +44,7 @@ class PortalPanelProvider extends PanelProvider
             ->widgets([
                 MyAccountWidget::class,
                 FamilyMemberStatistic::class,
+                // InfoWidget::class,
                 // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([

@@ -39,14 +39,29 @@ class InvoiceResource extends Resource
                 TextColumn::make('invoice_no')->label('No. Invoice')->sortable(),
                 TextColumn::make('member.name')->label('Atas Nama')->searchable(),
                 TextColumn::make('invoice_date')->label('Tgl. Invoice')->date('d-M-Y'),
+                TextColumn::make('description')->label('Keterangan'),
                 TextColumn::make('item_description')->label('Nama Paket'),
                 TextColumn::make('amount')->label('Jumlah')->money('IDR'),
-                TextColumn::make('status')->label('Status'),
+                TextColumn::make('status')->label('Status')
+                    ->badge()
+                    ->color(fn(string $state):string => match($state) {
+                        'paid' => 'primary',
+                        'pending' => 'info',
+                        'unpaid' => 'secondary',
+                        'void' => 'danger',
+                    })
+                    ->icon(fn(string $state):string => match($state) {
+                        'paid' => 'heroicon-m-check-circle',
+                        'pending' => 'heroicon-m-question-mark-circle', 
+                        'unpaid' => 'heroicon-m-no-symbol',
+                        'void' => 'heroicon-m-x-circle',
+                    }),
                 TextColumn::make('payment_date')->label('Tgl. Pembayaran')->date('d-M-Y'),
             ])
             ->filters([
                 SelectFilter::make('status')->options([
                     'unpaid' => 'Unpaid',
+                    'pending' => 'Pending Verification',
                     'paid' => 'Paid',
                     'void' => 'Void',
                 ])

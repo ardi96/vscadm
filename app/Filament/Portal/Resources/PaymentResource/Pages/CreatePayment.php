@@ -2,10 +2,11 @@
 
 namespace App\Filament\Portal\Resources\PaymentResource\Pages;
 
-use App\Filament\Portal\Resources\PaymentResource;
 use Filament\Actions;
-use Filament\Resources\Pages\CreateRecord;
+use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
+use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Portal\Resources\PaymentResource;
 
 class CreatePayment extends CreateRecord
 {
@@ -16,5 +17,19 @@ class CreatePayment extends CreateRecord
         $data['user_id'] = Auth::user()->id;
 
         return $data;
+    }
+
+    protected function afterCreate(): void
+    {
+        // Runs after the form fields are saved to the database.
+
+        $invoices = $this->record->invoices; 
+
+        foreach( $invoices as $invoice)
+        {
+            $invoice->status = 'pending';
+            $invoice->save();
+        }
+        
     }
 }

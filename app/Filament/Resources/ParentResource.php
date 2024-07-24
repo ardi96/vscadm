@@ -62,9 +62,9 @@ class ParentResource extends Resource
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     // Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->where('is_admin', 0))
             ->recordUrl( fn(User $record): string => 

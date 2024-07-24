@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('payments', function (Blueprint $table) {
-            $table->foreignId('user_id');
-            $table->foreignId('member_id')->nullable();
+        Schema::create('general_infos', function (Blueprint $table) {
+            $table->id();
+            $table->longText('info');
+            $table->timestamps();
         });
     }
 
@@ -22,9 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('payments', function (Blueprint $table) {
-            $table->dropColumn('user_id');
-            $table->dropColumn('member_id');
-        });
+        Schema::dropIfExists('general_infos');
     }
 };
