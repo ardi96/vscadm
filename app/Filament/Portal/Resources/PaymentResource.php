@@ -41,7 +41,12 @@ class PaymentResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('amount')->label('Jumlah Pembayaran')->numeric()->suffix('Rupiah')->required(),
+                TextInput::make('amount')->label('Jumlah Pembayaran')
+                    ->numeric()->suffix('Rupiah'
+                    )->required()->default(
+                        Invoice::where('parent_id',Auth::user()->id)
+                                ->where('status','unpaid')->sum('amount')
+                    ),
                 DatePicker::make('payment_date')->label('Tanggal Pembayaran')->required()->default(Date::now()),
                 TextInput::make('bank')->label('Nama Bank Anda')->required(),
                 Textinput::make('notes')->label('Keterangan')->required(),
@@ -54,6 +59,16 @@ class PaymentResource extends Resource
                     ->required()
                     ->label('Pembayaran untuk invoice')
                     ->relationship('invoices','invoice_no')
+                    ->afterStateHydrated(function ($component, $state) {
+                        if (! filled($state)) {
+                            $component->state(
+                                Invoice::where('parent_id',Auth::user()->id)
+                                ->where('status','unpaid')
+                                ->select(DB::raw(' concat(invoice_no, \' : \', format(amount,2)) as no, id '))
+                                ->pluck('id')
+                            );
+                        }
+                    })
                     ->options(
                         Invoice::where('parent_id',Auth::user()->id)
                         ->where('status','unpaid')
