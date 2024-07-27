@@ -44,10 +44,11 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Nama'),
-                TextColumn::make('email')->label('Alamat Email'),
-                TextColumn::make('is_admin')->label('Peranan')->formatStateUsing(fn($state) : string => ( $state == 1) ? 'Admin' : 'Public'),
-                TextColumn::make('created_at')->label('Tanggal Dibuat')->dateTime('d-M-Y H:i:s'),
+                TextColumn::make('name')->label('Nama')->searchable()->sortable(),
+                TextColumn::make('email')->label('Alamat Email')->searchable()->sortable(),
+                TextColumn::make('is_admin')->label('Peranan')->searchable()->sortable()
+                    ->formatStateUsing(fn($state) : string => ( $state == 1) ? 'Admin' : 'Public'),
+                TextColumn::make('created_at')->label('Tanggal Dibuat')->dateTime('d-M-Y H:i:s')->searchable()->sortable(),
             ])
             ->filters([
                 //

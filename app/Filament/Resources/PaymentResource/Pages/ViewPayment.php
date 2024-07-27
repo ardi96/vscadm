@@ -14,6 +14,8 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use App\Infolists\Components\ViewPaymentAttachment;
+use App\Jobs\SendPaymentRejectionEmail;
+use Filament\Forms\Components\TextInput;
 
 class ViewPayment extends ViewRecord
 {
@@ -25,13 +27,26 @@ class ViewPayment extends ViewRecord
             Actions\Action::make('reject')->label('Reject Pembayaran')
                 ->color('danger')
                 ->visible(fn() => $this->getRecord()->status == 'pending')
-                ->action(function() {
+                ->action(function($data) {
                     $this->getRecord()->status = 'rejected';
+                    $this->getRecord()->rejection_note = $data['rejection_note'];
                     $this->getRecord()->save();
+
+                    SendPaymentRejectionEmail::dispatch( $this->getRecord() );
+
+                    foreach( $this->getRecord()->invoices as $invoice)
+                    {
+                        $invoice->cancelPayment();
+                    }
+
                 })
                 ->icon('heroicon-m-x-circle')
                 ->requiresConfirmation()
+                ->form([
+                    TextInput::make('rejection_note')->label('Alasan')->required()
+                ])
                 ->after(fn() => $this->refreshFormData(['status'])),
+
             Actions\Action::make('accept')->label('Terima Pembayaran')
                 ->visible(fn() => $this->getRecord()->status == 'pending')
                 ->action(function() {
@@ -72,7 +87,6 @@ class ViewPayment extends ViewRecord
             TextEntry::make('amount')->label('Jumlah Pembayaran')->money('IDR'),
             TextEntry::make('notes')->label('Keterangan'),
             TextEntry::make('bank')->label('Dari Bank'),
-            TextEntry::make('member.name')->label('Nama Member'),
             TextEntry::make('created_at')->label('Tanggal Upload')->dateTime('d-M-Y H:i:s'),
             TextEntry::make('status')->label('Status Konfirmasi')
                 ->badge()

@@ -19,7 +19,8 @@ class ListPayments extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Pembayaran Baru'),
+            Actions\CreateAction::make()->label('Upload Bukti Pembayaran')
+                ->visible(true),
         ];
     }
 }

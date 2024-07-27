@@ -2,23 +2,21 @@
 
 namespace App\Notifications;
 
-use App\Filament\Portal\Resources\InvoiceResource;
-use App\Models\Invoice;
+use App\Models\Payment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class InvoiceAvailable extends Notification
+class PaymentRejected extends Notification
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Invoice $invoice)
+    public function __construct(public Payment $payment)
     {
-        //
     }
 
     /**
@@ -37,14 +35,11 @@ class InvoiceAvailable extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('Invoice Anda telah tersedia. ')
-                    ->line('No. Invoice: '. $this->invoice->invoice_no)
-                    ->line('Tgl. Invoice: '. date_format(date_create($this->invoice->invoice_date),'d-M-Y'))
-                    ->line('Jumlah: IDR '. number_format($this->invoice->amount,0,',','.'))
-                    ->line('Nama Anggota: '. $this->invoice->member->name)
-                    ->line('Nama Paket/Keterangan : '. $this->invoice->item_description)
-                    ->action('Check Invoice Di Sini', url('/portal/invoices'))
-                    ->line('Terima Kasih');
+                    ->subject('Bukti Pembayaran Ditolak')
+                    ->line('Bukti pembayaran Anda tanggal ' . date_format(date_create($this->payment->payment_date),'d-M-Y') .' untuk ' . $this->payment->notes . ' tidak dapat diverifikasi.')
+                    ->line('Silakan mengupload ulang melalui halaman portal Veins Skating Club.')
+                    ->action('Klik di sini untuk login', url('/portal/payments'))
+                    ->line('Terima Kasih.');
     }
 
     /**

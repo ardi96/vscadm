@@ -34,14 +34,14 @@ class PaymentResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('payment_date')->label('Tanggal Pembayaran')->date('d-M-Y'),
-                TextColumn::make('amount')->label('Jumlah Pembayaran')->money('IDR'),
-                TextColumn::make('notes')->label('Keterangan'),
-                TextColumn::make('bank')->label('Nama Bank'),
-                TextColumn::make('invoices.invoice_no')->label('No. Invoices')->bulleted(),
-                TextColumn::make('member.name')->label('Nama Anak'),
-                TextColumn::make('created_at')->label('Tanggal Upload')->date('d-M-Y'),
-                TextColumn::make('status')->label('status')
+                TextColumn::make('payment_date')->label('Tanggal Pembayaran')->date('d-M-Y')->searchable()->sortable(),
+                TextColumn::make('amount')->label('Jumlah Pembayaran')->money('IDR')->searchable()->sortable(),
+                TextColumn::make('notes')->label('Keterangan')->searchable()->sortable(),
+                TextColumn::make('bank')->label('Nama Bank')->searchable()->sortable(),
+                TextColumn::make('invoices.invoice_no')->label('No. Invoices')->bulleted()->searchable()->sortable(),
+                TextColumn::make('member.name')->label('Nama Anak')->searchable()->sortable(),
+                TextColumn::make('created_at')->label('Tanggal Upload')->date('d-M-Y')->searchable()->sortable(),
+                TextColumn::make('status')->label('status')->searchable()->sortable()
                 ->badge()
                 ->color(fn(string $state):string => match($state) {
                     'accepted' => 'primary',

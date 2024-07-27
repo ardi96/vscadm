@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('description',40);
             $table->string('item_description',140);
             $table->decimal('amount',14,2);
-            $table->enum('type',['registration','membership']);
+            $table->enum('type',['registration','membership','other']);
             $table->enum('status',['unpaid','pending','paid','void']);
             $table->dateTime('payment_date')->nullable();
             $table->timestamps();

@@ -49,10 +49,10 @@ class ParentResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Nama Lengkap')->searchable(),
-                TextColumn::make('email')->label('Email'),
-                TextColumn::make('mobile_no')->label('No. WA Aktif'),
-                TextColumn::make('created_at')->label('Tanggal Akun Terdaftar')->dateTime('d-M-Y H:i:s'),
+                TextColumn::make('name')->label('Nama Lengkap')->searchable()->searchable()->sortable(),
+                TextColumn::make('email')->label('Email')->searchable()->sortable(),
+                TextColumn::make('mobile_no')->label('No. WA Aktif')->searchable()->sortable(),
+                TextColumn::make('created_at')->label('Tanggal Akun Terdaftar')->dateTime('d-M-Y H:i:s')->searchable()->sortable(),
             ])
             ->filters([
                 //

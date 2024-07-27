@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Member;
 use App\Models\Invoice;
 use App\Models\Payment;
+use App\Jobs\SendInvoiceMail;
 use Illuminate\Support\Facades\Date;
 
 class InvoiceService
@@ -37,6 +38,8 @@ class InvoiceService
         $member->last_invoice_date = Date::now();
         $member->save();
 
+        SendInvoiceMail::dispatch($invoice);
+        
         return $invoice;
     }
 
@@ -59,6 +62,8 @@ class InvoiceService
         $member->last_invoice_date = Date::now();
         $member->save();
 
+        SendInvoiceMail::dispatch($invoice);
+        
         return $invoice;
     }
 

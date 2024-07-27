@@ -38,13 +38,13 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('invoice_no')->label('No. Invoice')->sortable(),
-                TextColumn::make('member.name')->label('Atas Nama')->searchable(),
-                TextColumn::make('invoice_date')->label('Tgl. Invoice')->date('d-M-Y'),
-                TextColumn::make('description')->label('Keterangan'),
-                TextColumn::make('item_description')->label('Nama Paket'),
-                TextColumn::make('amount')->label('Jumlah')->money('IDR'),
-                TextColumn::make('status')->label('Status')
+                TextColumn::make('invoice_no')->label('No. Invoice')->sortable()->searchable(),
+                TextColumn::make('member.name')->label('Atas Nama')->searchable()->searchable(),
+                TextColumn::make('invoice_date')->label('Tgl. Invoice')->date('d-M-Y')->searchable()->sortable(),
+                TextColumn::make('description')->label('Keterangan')->searchable()->sortable(),
+                TextColumn::make('item_description')->label('Nama Paket')->searchable()->sortable(),
+                TextColumn::make('amount')->label('Jumlah')->money('IDR')->searchable()->sortable(),
+                TextColumn::make('status')->label('Status')->searchable()->sortable()
                 ->badge()
                 ->color(fn(string $state):string => match($state) {
                     'paid' => 'primary',
@@ -58,7 +58,7 @@ class InvoiceResource extends Resource
                     'unpaid' => 'heroicon-m-no-symbol',
                     'void' => 'heroicon-m-x-circle',
                 }),
-                TextColumn::make('payment_date')->label('Tgl. Pembayaran')->date('d-M-Y'),
+                TextColumn::make('payment_date')->label('Tgl. Pembayaran')->date('d-M-Y')->searchable()->sortable(),
             ])
             ->filters([
                 SelectFilter::make('status')->options([

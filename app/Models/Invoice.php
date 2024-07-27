@@ -38,6 +38,17 @@ class Invoice extends Model
                        
     }
 
+    public function cancelPayment() : void
+    {
+        $this->status = 'unpaid';
+        $this->payment_date = Date::now();
+        $this->save();
+
+        $this->member->balance = $this->member->balance + $this->amount;
+        $this->member->save();
+                       
+    }
+
 
     public function cancel() : void
     {

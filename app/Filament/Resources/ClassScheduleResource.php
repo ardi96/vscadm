@@ -50,10 +50,10 @@ class ClassScheduleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Nama Kelas'),
-                TextColumn::make('location.name')->label('Lokasi'),
-                TextColumn::make('schedule_day')->label('Hari'),
-                TextColumn::make('schedule_start_time')->label('Waktu Mulai'),
+                TextColumn::make('name')->label('Nama Kelas')->searchable()->sortable(),
+                TextColumn::make('location.name')->label('Lokasi')->searchable()->sortable(),
+                TextColumn::make('schedule_day')->label('Hari')->searchable()->sortable(),
+                TextColumn::make('schedule_start_time')->label('Waktu Mulai')->searchable()->sortable(),
             ])
             ->filters([
                 //

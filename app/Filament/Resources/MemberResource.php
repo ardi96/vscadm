@@ -92,14 +92,14 @@ class MemberResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Nama Lengkap'),
-                TextColumn::make('gender')->label('J/K')->alignCenter(),
-                TextColumn::make('date_of_birth')->label('Tanggal Lahir')->date('d-M-Y'),
-                TextColumn::make('school_name')->label('Asal Sekolah'),
-                TextColumn::make('parent.name')->label('Nama Orang Tua'),
-                TextColumn::make('parent.mobile_no')->label('WA Orang Tua'),
-                TextColumn::make('balance')->label('Outstanding')->money('IDR'),
-                TextColumn::make('status')->label('Status'),
+                TextColumn::make('name')->label('Nama Lengkap')->searchable()->sortable(),
+                TextColumn::make('gender')->label('J/K')->alignCenter()->searchable()->sortable(),
+                TextColumn::make('date_of_birth')->label('Tanggal Lahir')->date('d-M-Y')->searchable()->sortable(),
+                TextColumn::make('school_name')->label('Asal Sekolah')->searchable()->sortable(),
+                TextColumn::make('parent.name')->label('Nama Orang Tua')->searchable()->sortable(),
+                TextColumn::make('parent.mobile_no')->label('WA Orang Tua')->searchable()->sortable(),
+                TextColumn::make('balance')->label('Outstanding')->money('IDR')->searchable()->sortable(),
+                TextColumn::make('status')->label('Status')->searchable()->sortable(),
             ])
             ->filters([
                 SelectFilter::make('status')->options([
@@ -111,13 +111,14 @@ class MemberResource extends Resource
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
                 ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->requiresConfirmation(),
-                    Tables\Actions\BulkAction::make('Generate Invoice')
+                    // Tables\Actions\DeleteBulkAction::make()
+                    //     ->requiresConfirmation(),
+                    Tables\Actions\BulkAction::make('Generate Monthly Invoice')
                         ->icon('heroicon-m-banknotes')
                         ->color(Color::Amber)
                         ->requiresConfirmation()

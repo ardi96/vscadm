@@ -59,16 +59,16 @@ class PaymentResource extends Resource
                     ->required()
                     ->label('Pembayaran untuk invoice')
                     ->relationship('invoices','invoice_no')
-                    ->afterStateHydrated(function ($component, $state) {
-                        if (! filled($state)) {
-                            $component->state(
-                                Invoice::where('parent_id',Auth::user()->id)
-                                ->where('status','unpaid')
-                                ->select(DB::raw(' concat(invoice_no, \' : \', format(amount,2)) as no, id '))
-                                ->pluck('id')
-                            );
-                        }
-                    })
+                    // ->afterStateHydrated(function ($component, $state) {
+                    //     if (! filled($state)) {
+                    //         $component->state(
+                    //             Invoice::where('parent_id',Auth::user()->id)
+                    //             ->where('status','unpaid')
+                    //             ->select(DB::raw(' concat(invoice_no, \' : \', format(amount,2)) as no, id '))
+                    //             ->pluck('id')->toArray()
+                    //         );
+                    //     }
+                    // })
                     ->options(
                         Invoice::where('parent_id',Auth::user()->id)
                         ->where('status','unpaid')
@@ -81,12 +81,13 @@ class PaymentResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('payment_date')->label('Tanggal Pembayaran')->date('d-M-Y'),
-                TextColumn::make('amount')->label('Jumlah Pembayaran')->money('IDR'),
-                TextColumn::make('bank')->label('Nama Bank'),
-                TextColumn::make('notes')->label('Keterangan'),
-                TextColumn::make('created_at')->label('Tanggal Upload'),
+                TextColumn::make('payment_date')->label('Tanggal Pembayaran')->date('d-M-Y')->searchable()->sortable(),
+                TextColumn::make('amount')->label('Jumlah Pembayaran')->money('IDR')->searchable()->sortable(),
+                TextColumn::make('bank')->label('Nama Bank')->searchable()->sortable(),
+                TextColumn::make('notes')->label('Keterangan')->searchable()->sortable(),
+                TextColumn::make('created_at')->label('Tanggal Upload')->searchable()->sortable(),
                 TextColumn::make('status')->label('status')
+                    ->searchable()->sortable()
                     ->badge()
                     ->color(fn(string $state):string => match($state) {
                         'accepted' => 'primary',

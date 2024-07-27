@@ -9,15 +9,17 @@ use App\Models\Invoice;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Tables\Actions\Action;
+use App\Jobs\SendInvoiceMail;
 use Forms\Components\TextInput;
 use App\Jobs\GenerateInvoiceJob;
+use App\Services\InvoiceService;
 use Filament\Infolists\Infolist;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\FormsComponent;
+use Illuminate\Support\Facades\Date;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\MemberResource;
-use App\Jobs\SendInvoiceMail;
-use App\Services\InvoiceService;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
 
@@ -33,8 +35,14 @@ class MemberInvoices extends ManageRelatedRecords
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('amount')->required()->label('Jumlah'),
+                Forms\Components\TextInput::make('description')->required()->label('Judul Invoice'),
                 Forms\Components\TextInput::make('item_description')->required()->label('Keterangan'),
+                Forms\Components\TextInput::make('amount')->required()->label('Jumlah'),
+                Forms\Components\Hidden::make('parent_id')->default($this->getRecord()->parent_id),
+                Forms\Components\Hidden::make('invoice_no')->default(env('INVOICE_PREFIX','VSC') . InvoiceService::getNextNumber()),
+                Forms\Components\Hidden::make('type')->default('other'),
+                Forms\Components\Hidden::make('status')->default('unpaid'),
+                Forms\Components\Hidden::make('invoice_date')->default(Date::now()),
             ]);
     }
     
@@ -42,11 +50,11 @@ class MemberInvoices extends ManageRelatedRecords
     {
         return $table
             ->columns([
-                TextColumn::make('invoice_no')->label('No. Invoice')->alignCenter()->sortable(),
-                TextColumn::make('invoice_date')->date('d-M-Y')->label('Tanggal Invoice'),
-                TextColumn::make('item_description')->label('Paket'),
-                TextColumn::make('amount')->money('IDR')->label('Jumlah'),
-                TextColumn::make('status')->label('Status')
+                TextColumn::make('invoice_no')->label('No. Invoice')->alignCenter()->sortable()->searchable()->sortable(),
+                TextColumn::make('invoice_date')->date('d-M-Y')->label('Tanggal Invoice')->searchable()->sortable(),
+                TextColumn::make('item_description')->label('Paket')->searchable()->sortable(),
+                TextColumn::make('amount')->money('IDR')->label('Jumlah')->searchable()->sortable(),
+                TextColumn::make('status')->label('Status')->searchable()->sortable()
                 ->badge()
                 ->color(fn(string $state):string => match($state) {
                     'paid' => 'primary',
@@ -63,7 +71,9 @@ class MemberInvoices extends ManageRelatedRecords
             ])
             ->poll('10s')
             ->headerActions([
-                Tables\Actions\Action::make('Create New Invoice')
+                Tables\Actions\CreateAction::make('Create New Invoice')
+                    ->label('Create New Invoice'),
+                Tables\Actions\Action::make('Generate Monthly Invoice')
                     ->action(function() {
 
                        $invoice = InvoiceService::generate($this->getRecord());

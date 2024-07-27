@@ -152,14 +152,14 @@ class MemberResource extends Resource
     {
         return $table
         ->columns([
-            TextColumn::make('name')->label('Nama Lengkap'),
-            TextColumn::make('gender')->label('J/K')->alignCenter(),
-            TextColumn::make('date_of_birth')->label('Tanggal Lahir')->date('d-M-Y'),
-            TextColumn::make('school_name')->label('Asal Sekolah'),
-            TextColumn::make('parent_name')->label('Nama Orang Tua'),
-            TextColumn::make('parent_mobile_no')->label('WA Orang Tua'),
-            TextColumn::make('balance')->label('Outstanding')->money('IDR'),
-            TextColumn::make('status')->label('Status'),
+            TextColumn::make('name')->label('Nama Lengkap')->searchable()->sortable(),
+            TextColumn::make('gender')->label('J/K')->alignCenter()->searchable()->sortable(),
+            TextColumn::make('date_of_birth')->label('Tanggal Lahir')->date('d-M-Y')->searchable()->sortable(),
+            TextColumn::make('school_name')->label('Asal Sekolah')->searchable()->sortable(),
+            TextColumn::make('parent_name')->label('Nama Orang Tua')->searchable()->sortable(),
+            TextColumn::make('parent_mobile_no')->label('WA Orang Tua')->searchable()->sortable(),
+            TextColumn::make('balance')->label('Outstanding')->money('IDR')->searchable()->sortable(),
+            TextColumn::make('status')->label('Status')->searchable()->sortable(),
         ])
         ->filters([
             //
