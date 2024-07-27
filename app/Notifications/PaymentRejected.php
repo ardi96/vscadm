@@ -37,6 +37,7 @@ class PaymentRejected extends Notification
         return (new MailMessage)
                     ->subject('Bukti Pembayaran Ditolak')
                     ->line('Bukti pembayaran Anda tanggal ' . date_format(date_create($this->payment->payment_date),'d-M-Y') .' untuk ' . $this->payment->notes . ' tidak dapat diverifikasi.')
+                    ->line('Alasan : ' . $this->payment->rejection_note)
                     ->line('Silakan mengupload ulang melalui halaman portal Veins Skating Club.')
                     ->action('Klik di sini untuk login', url('/portal/payments'))
                     ->line('Terima Kasih.');
