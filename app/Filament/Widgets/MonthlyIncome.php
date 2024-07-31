@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Invoice;
+use App\Models\Payment;
 use Flowframe\Trend\Trend;
 use Illuminate\Support\Carbon;
 use Flowframe\Trend\TrendValue;
@@ -31,12 +32,12 @@ class MonthlyIncome extends ApexChartWidget
 
         $year = Carbon::now()->year; // $this->filterFormData['year'];
 
-        $data = Trend::query(Invoice::where('status','paid'))
+        $data = Trend::query(Payment::where('status','accepted'))
             ->between(
                 start : Carbon::createFromDate($year,1,1),
                 end: Carbon::createFromDate($year,12,31)
             )
-            ->dateColumn('invoice_date')
+            ->dateColumn('payment_date')
             ->perMonth()
             ->sum('amount');
 
