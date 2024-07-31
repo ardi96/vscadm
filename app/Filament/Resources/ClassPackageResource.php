@@ -65,11 +65,11 @@ class ClassPackageResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Nama Paket')->searchable()->sortable(),
-                TextColumn::make('description')->label('Deskripsi')->wrap()->searchable()->sortable(),
-                TextColumn::make('type')->label('Tipe Kelas')->searchable()->sortable(),
+                TextColumn::make('name')->label('Nama Paket')->searchable()->sortable()->verticallyAlignStart(),
+                TextColumn::make('description')->label('Deskripsi')->wrap()->searchable()->sortable()->verticallyAlignStart(),
+                TextColumn::make('type')->label('Tipe Kelas')->searchable()->sortable()->verticallyAlignStart(),
                 TextColumn::make('schedules.name')->label('Jadwal Tersedia')->bulleted()->searchable()->sortable(),
-                TextColumn::make('price')->label('Harga')->money('IDR')->searchable()->sortable(),
+                TextColumn::make('price')->label('Harga')->money('IDR')->searchable()->sortable()->verticallyAlignStart(),
             ])
             ->filters([
                 //

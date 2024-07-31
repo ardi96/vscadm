@@ -38,9 +38,10 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('invoice_no')->label('No. Invoice')->sortable()->searchable(),
+                TextColumn::make('invoice_no')->label('No. Invoice')->sortable()->searchable()
+                    ->description(fn($record) => date_format(date_create($record->invoice_date),'d-M-Y') ),
+                // TextColumn::make('invoice_date')->label('Tgl. Invoice')->date('d-M-Y')->searchable()->sortable(),
                 TextColumn::make('member.name')->label('Atas Nama')->searchable()->sortable(),
-                TextColumn::make('invoice_date')->label('Tgl. Invoice')->date('d-M-Y')->searchable()->sortable(),
                 TextColumn::make('description')->label('Keterangan')->searchable()->sortable(),
                 TextColumn::make('item_description')->label('Nama Paket')->searchable()->sortable(),
                 TextColumn::make('amount')->label('Jumlah')->money('IDR')->searchable()->sortable(),

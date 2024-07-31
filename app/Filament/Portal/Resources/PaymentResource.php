@@ -22,6 +22,9 @@ use Filament\Forms\Components\CheckboxList;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Portal\Resources\PaymentResource\Pages;
 use App\Filament\Portal\Resources\PaymentResource\RelationManagers;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
+use Doctrine\DBAL\Schema\Column;
 
 class PaymentResource extends Resource
 {
@@ -50,30 +53,22 @@ class PaymentResource extends Resource
                 DatePicker::make('payment_date')->label('Tanggal Pembayaran')->required()->default(Date::now()),
                 TextInput::make('bank')->label('Nama Bank Anda')->required(),
                 Textinput::make('notes')->label('Keterangan')->required(),
+                CheckboxList::make('invoices')
+                ->columnSpanFull()
+                ->bulkToggleable()
+                ->required()
+                ->label('Pembayaran untuk invoice')
+                ->relationship('invoices','invoice_no')
+                ->options(
+                    Invoice::where('parent_id',Auth::user()->id)
+                    ->where('status','unpaid')
+                    ->select(DB::raw(' concat( \'No. Invoice: \', invoice_no, \' , Nominal : \', format(amount,2), \', Keterangan: \', item_description) as no, id '))
+                    ->pluck('no','id')),
+
                 FileUpload::make('file_name')->label('Upload Bukti Pembayaran')
                     ->required()
                     ->acceptedFileTypes(['image/jpeg','image/png','application/pdf'])
                     ->maxSize(1024*2),
-                CheckboxList::make('invoices')
-                    ->bulkToggleable()
-                    ->required()
-                    ->label('Pembayaran untuk invoice')
-                    ->relationship('invoices','invoice_no')
-                    // ->afterStateHydrated(function ($component, $state) {
-                    //     if (! filled($state)) {
-                    //         $component->state(
-                    //             Invoice::where('parent_id',Auth::user()->id)
-                    //             ->where('status','unpaid')
-                    //             ->select(DB::raw(' concat(invoice_no, \' : \', format(amount,2)) as no, id '))
-                    //             ->pluck('id')->toArray()
-                    //         );
-                    //     }
-                    // })
-                    ->options(
-                        Invoice::where('parent_id',Auth::user()->id)
-                        ->where('status','unpaid')
-                        ->select(DB::raw(' concat(invoice_no, \' : \', format(amount,2)) as no, id '))
-                        ->pluck('no','id'))
             ]);
     }
 
@@ -125,7 +120,7 @@ class PaymentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+          
         ];
     }
 

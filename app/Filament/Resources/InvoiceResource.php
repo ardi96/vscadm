@@ -11,13 +11,14 @@ use DeepCopy\Filter\Filter;
 use App\Jobs\SendInvoiceMail;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\InvoiceResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\InvoiceResource\RelationManagers;
 use App\Filament\Resources\MemberResource\Pages\MemberInvoices;
-use Filament\Forms\Components\TextInput;
 
 class InvoiceResource extends Resource
 {
@@ -100,7 +101,17 @@ class InvoiceResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
+                     Tables\Actions\BulkAction::make('bulk_send')->label('Kirim Invoice')
+                        ->icon('heroicon-o-envelope')
+                        ->action(function(Collection $records) 
+                            { 
+                                foreach($records as $invoice)
+                                {
+                                    SendInvoiceMail::dispatch( $invoice );
+                                }
+                            })
+                        ->deselectRecordsAfterCompletion()
+                        ->requiresConfirmation(),
                 ]),
             ])
             ->recordUrl( fn(Invoice $record): string => 
