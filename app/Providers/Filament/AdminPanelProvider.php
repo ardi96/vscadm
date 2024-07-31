@@ -2,24 +2,26 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Widgets\FinancialChartWidget;
-use App\Filament\Widgets\FinancialStatWidget;
-use App\Filament\Widgets\MyAccountWidget;
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
+use Filament\Widgets;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use App\Filament\Widgets\MyAccountWidget;
+use Filament\Http\Middleware\Authenticate;
+use App\Filament\Widgets\FinancialStatWidget;
+use App\Filament\Widgets\FinancialChartWidget;
+use App\Filament\Widgets\MonthlyIncome;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -45,6 +47,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 MyAccountWidget::class,
                 FinancialStatWidget::class,
+                MonthlyIncome::class,
                 // Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
             ])
@@ -61,6 +64,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->plugins([
+                FilamentApexChartsPlugin::make()
             ])
             ->topNavigation(false)
             ->passwordReset()
