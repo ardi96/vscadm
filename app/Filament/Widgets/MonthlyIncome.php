@@ -32,7 +32,7 @@ class MonthlyIncome extends ApexChartWidget
 
         $year = Carbon::now()->year; // $this->filterFormData['year'];
 
-        $data = Trend::query(Payment::where('status','accepted'))
+        $payment = Trend::query(Payment::where('status','accepted'))
             ->between(
                 start : Carbon::createFromDate($year,1,1),
                 end: Carbon::createFromDate($year,12,31)
@@ -41,6 +41,15 @@ class MonthlyIncome extends ApexChartWidget
             ->perMonth()
             ->sum('amount');
 
+        $invoice = Trend::query(Invoice::whereNot('status','void'))
+            ->between(
+                start : Carbon::createFromDate($year,1,1),
+                end: Carbon::createFromDate($year,12,31)
+            )
+            ->dateColumn('invoice_date')
+            ->perMonth()
+            ->sum('amount');
+        
         return [
             'chart' => [
                 'type' => 'bar',
@@ -50,8 +59,13 @@ class MonthlyIncome extends ApexChartWidget
             'series' => [
                 [
                     'type' => 'bar',
-                    'name' => 'Monthly Income (IDR)',
-                    'data' => $data->map(fn (TrendValue $value) => $value->aggregate), 
+                    'name' => 'Payment Received (IDR)',
+                    'data' => $payment->map(fn (TrendValue $value) => $value->aggregate), 
+                ],
+                [
+                    'type' => 'line',
+                    'name' => 'Invoice (IDR)',
+                    'data' => $invoice->map(fn (TrendValue $value) => $value->aggregate), 
                 ],
             ],
             'xaxis' => [
