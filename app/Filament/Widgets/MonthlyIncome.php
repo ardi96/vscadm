@@ -29,7 +29,7 @@ class MonthlyIncome extends ApexChartWidget
     protected function getOptions(): array
     {
 
-        $year = Carbon::now()->year(); // $this->filterFormData['year'];
+        $year = Carbon::now()->year; // $this->filterFormData['year'];
 
         $data = Trend::query(Invoice::where('status','paid'))
             ->between(
