@@ -60,10 +60,13 @@ class PaymentResource extends Resource
                 ->label('Pembayaran untuk invoice')
                 ->relationship('invoices','invoice_no')
                 ->options(
-                    Invoice::where('parent_id',Auth::user()->id)
-                    ->where('status','unpaid')
-                    ->select(DB::raw(' concat( \'No. Invoice: \', invoice_no, \' , Nominal : \', format(amount,2), \', Keterangan: \', item_description) as no, id '))
-                    ->pluck('no','id')),
+                    DB::table('invoices')
+                        ->join('members','invoices.member_id','=','members.id')
+                        // ->select('invoices.id, invoices.no_incoive, invoices.amount, invoices.item_description, members.name')
+                        ->where('invoices.parent_id',Auth::user()->id)
+                        ->where('invoices.status','unpaid')
+                        ->select(DB::raw(' concat( \'No. Invoice: \', invoices.invoice_no, \' , Nominal : \', format(invoices.amount,2), \', Keterangan: \', invoices.item_description, \', Atas Nama: \', members.name) as no, invoices.id as id '))
+                        ->pluck('no','id')),
 
                 FileUpload::make('file_name')->label('Upload Bukti Pembayaran')
                     ->required()
