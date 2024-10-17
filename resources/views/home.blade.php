@@ -60,13 +60,13 @@
 
     <!-- hero section start -->
     <section class="section hero-section bg-ico-hero" id="home">
-        <div class="bg-overlay bg-primary"></div>
+        <div class="bg-overlay" style="background-color:#fd1515"></div>
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-12">
                     <div class="text-white-50">
-                        <h1 class="text-white fw-semibold mb-3 hero-title">No Veins No Gain</h1>
-                        <p class="font-size-14">We are dedicated to developing skating skills and potential through safe, fun, and communitfy-ocused training for all ages.</p>
+                        <h1 class="fw-semibold mb-3 hero-title" style="color:#ffe872">No Veins No Gain</h1>
+                        <p class="font-size-14 text-white">We are dedicated to developing skating skills and potential through safe, fun, and communitfy-ocused training for all ages.</p>
 
                         <!-- <div class="d-flex flex-wrap gap-2 mt-4">
                             <a href="#" class="btn btn-success">Get Whitepaper</a>
