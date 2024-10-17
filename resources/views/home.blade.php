@@ -425,7 +425,7 @@
                         <div class="card text-center team-box">
                             <div class="card-body">
                                 <div>
-                                    <img src="{{ URL::asset('build/images/users/avatar-2.jpg') }}" alt=""
+                                    <img src="storage/images/veins-rizal.jpeg" alt=""
                                         class="rounded">
                                 </div>
 
@@ -462,7 +462,7 @@
                         <div class="card text-center team-box">
                             <div class="card-body">
                                 <div>
-                                    <img src="{{ URL::asset('build/images/users/avatar-8.jpg') }}" alt=""
+                                    <img src="storage/images/veins-lika.jpeg" alt=""
                                         class="rounded">
                                 </div>
                                 <div class="mt-3">
