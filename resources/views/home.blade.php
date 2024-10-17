@@ -9,7 +9,7 @@
     <meta content="Veins Skating Club" name="description" />
     <meta content="Aldhira" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ URL::asset('build/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ URL::asset('build/images/logo-light.png') }}">
 
     <!-- owl.carousel css -->
     <link rel="stylesheet" href="{{ URL::asset('build/libs/owl.carousel/assets/owl.carousel.min.css') }}">
