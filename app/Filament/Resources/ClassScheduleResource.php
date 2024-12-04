@@ -26,6 +26,18 @@ class ClassScheduleResource extends Resource
 
     protected static ?string $navigationLabel = 'Jadwal';
 
+    protected static ?string $label = 'Jadwal';
+
+    public static function getPluralLabel(): ?string
+    {
+        return "Jadwal";
+    }
+
+    public static function getLabel(): ?string
+    {
+        return "Jadwal";
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -50,7 +62,7 @@ class ClassScheduleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Nama Kelas')->searchable()->sortable(),
+                TextColumn::make('name')->label('Nama Jadwal')->searchable()->sortable(),
                 TextColumn::make('location.name')->label('Lokasi')->searchable()->sortable(),
                 TextColumn::make('schedule_day')->label('Hari')->searchable()->sortable(),
                 TextColumn::make('schedule_start_time')->label('Waktu Mulai')->searchable()->sortable(),

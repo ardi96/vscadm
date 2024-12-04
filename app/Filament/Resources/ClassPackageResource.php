@@ -32,7 +32,9 @@ class ClassPackageResource extends Resource
     
     protected static ?string $navigationLabel = 'Paket';
 
+    protected static ?string $label = 'Package';
 
+    protected static ?string $slug = 'Packages';
 
     public static function form(Form $form): Form
     {

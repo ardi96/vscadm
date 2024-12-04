@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use App\Models\User;
 use Filament\Tables;
+use App\Models\Grade;
+use App\Models\Kelas;
 use App\Models\Member;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -12,10 +14,10 @@ use App\Models\CostumeSize;
 use App\Models\ClassPackage;
 use App\Models\ClassSchedule;
 use App\Models\MarketingSource;
+use App\Services\InvoiceService;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Colors\Color;
-use Illuminate\Database\Eloquent\Collection;
 use App\Models\ClassPackageSchedule;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -25,14 +27,14 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Forms\Components\CheckboxList;
+use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\MemberResource\Pages;
-use App\Services\InvoiceService;
 
 class MemberResource extends Resource
 {
     protected static ?string $model = Member::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     protected static ?string $navigationGroup = 'Keanggotaan';
 
@@ -60,11 +62,14 @@ class MemberResource extends Resource
                 ),
                 TextInput::make('marketing_source_other')->label('Lainnya '),
                 TextInput::make('instagram')->label('Nama Akun Instagram'),
+                
+                Select::make('kelas_id')->options(Kelas::all()->pluck('name','id'))->required()->label('Kelas'),
+                Select::make('grade_id')->options(Grade::all()->pluck('name','id'))->required()->label('Grade'),
                 Select::make('class_package_id')->label('Paket Yang Dipilih')
                     ->options(
                         ClassPackage::all()->pluck('name','id')
                     )->required()->live(),
-                // DatePicker::make('start_date')->label('Mulai Tanggal')->required(),
+                    
                 Select::make('status')->options([
                         'pending' => 'Pending',
                         'inactive' => 'Inactive',

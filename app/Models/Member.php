@@ -17,6 +17,21 @@ class Member extends Model
         'schedules' => 'array',
     ];
 
+    public function kelas() : BelongsTo
+    {
+        return $this->belongsTo(Kelas::class,'kelas_id');
+    }
+
+    public function gradings()  : HasMany
+    {
+        return $this->hasMany(Grading::class,'member_id');
+    }
+
+    public function grade() : BelongsTo
+    {
+        return $this->belongsTo(Grade::class,'grade_id');
+    }
+
     public function marketingSource() : BelongsTo
     {
         return $this->belongsTo(MarketingSource::class,'marketing_source_id');

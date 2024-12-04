@@ -24,11 +24,15 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if ( $panel->getId() === 'admin')
+        if ( $panel->getId() === 'admin' )
         {
             return str_ends_with($this->email, '@veins-skatingclub.com') 
                        && $this->hasVerifiedEmail()
                        && $this->is_admin;
+        }
+        elseif ($panel->getId() === 'coach')
+        {
+            return $this->is_admin;
         }
         else 
         {
