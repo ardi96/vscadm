@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('gradings', function (Blueprint $table) {
             $table->id();
-            $table->date('period');
+            $table->unsignedSmallInteger('year');
+            $table->unsignedSmallInteger('month');
             $table->foreignId('member_id');
             $table->decimal('marks',4,1);
             $table->string('notes',1000);

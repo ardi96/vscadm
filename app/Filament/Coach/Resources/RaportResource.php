@@ -2,6 +2,7 @@
 
 namespace App\Filament\Coach\Resources;
 
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Grade;
@@ -13,14 +14,18 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\GradingItem;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\DB;
 use Filament\Forms\Components\Radio;
 use Illuminate\Support\Facades\Date;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Placeholder;
@@ -48,12 +53,16 @@ class RaportResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->query( parent::getEloquentQuery()->leftJoin('gradings','gradings.member_id','members.id') )
             ->columns([
                 TextColumn::make('name')->searchable()->label('Nama'),
                 TextColumn::make('school_name')->searchable()->label('Sekolah'),
                 TextColumn::make('parent_name')->searchable()->label('Orang Tua'),
                 TextColumn::make('kelas.name')->searchable()->label('Kelas'),
                 TextColumn::make('grade.name')->searchable()->label('Grade'),
+                TextColumn::make('month')->searchable()->label('Bulan'),
+                TextColumn::make('year')->searchable()->label('Tahun'),
+                TextColumn::make('marks')->searchable()->label('Nilai'),
             ])
             ->filters([
                 SelectFilter::make('kelas_id')->options(Kelas::all()->pluck('name','id'))->label('Kelas')->selectablePlaceholder(false),
@@ -68,11 +77,35 @@ class RaportResource extends Resource
                         ])->toArray(),
                     ])
                     ->form([
-                        Hidden::make('member_id'),
                         Placeholder::make('nama')->content(fn(Forms\Get $get) => $get('name')),
+                        Section::make([
+
+                            TextInput::make('year')->numeric()->label('Tahun')->minValue(Carbon::now()->year)->required(),
+                            Select::make('month')->label('Bulan')
+                            ->options([
+                            1 => 1,
+                            2 => 2,
+                            3 => 3,
+                            4 => 4,
+                            5 => 5,
+                            6 => 6,
+                            7 => 7,
+                            8 => 8,
+                            9 => 9,
+                            10 => 10,
+                            11 => 11,
+                            12 => 12,
+                            ])->required(),
+                            
+                        ])->columns(2),
                         TableRepeater::make('aspects')->schema([
                             TextInput::make('aspect')->required(),
-                            Radio::make('mark')->options([1,2,3,4])->columns(4)->required()
+                            Radio::make('mark')->options([
+                                1 => 1,
+                                2 => 2,
+                                3 => 2,
+                                4 => 4
+                                ])->columns(4)->required()
                         ])
                             ->addable(false)->reorderable(false)->deletable(false)
                         ,
@@ -84,25 +117,25 @@ class RaportResource extends Resource
                     ])
                     ->action( function(array $data, Member $record) {
 
-                        $grading = $record->gradings()->first();
+                        $grading = $record->gradings()->where('year',$data['year'])->where('month',$data['month'])->first();
 
+                        
                         if ( $grading == null  )
                         {
                             $marks = 0; 
-
+                            
                             foreach( $data['aspects'] as $index => $item)
                             {
                                 $marks += $item['mark'];
                             }
-
-                            $marks = $marks / count($data['aspects']);
 
                             $grading = Grading::create([
                                 'member_id' => $record->id,
                                 'notes' => $data['notes'],
                                 'decision' => $data['decision'],
                                 'marks' => $marks,
-                                'period' => Date::now()
+                                'year' => $data['year'],
+                                'month' => $data['month']
                             ]);
 
                             foreach( $data['aspects'] as $index => $item)
@@ -113,6 +146,14 @@ class RaportResource extends Resource
                                     'mark' => $item['mark']
                                 ]);
                             }
+
+                        } 
+                        else 
+                        {
+                            Notification::make('error')
+                                ->title('Record Exist')
+                                ->body('Nilai sudah tersedia, penilaian dibatalkan')
+                                ->send();
                         }
                     })
                     ->slideOver()

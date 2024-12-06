@@ -7,10 +7,12 @@ use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,7 +38,10 @@ class UserResource extends Resource
                 TextInput::make('email')->label('Alamat Email')->email()->required(),
                 TextInput::make('password')->label('Password')->password()->visibleOn('create'),
                 TextInput::make('mobile_no')->label('No. Handphone')->required(),
-                Checkbox::make('is_admin')->label('VSC Admin')->default(true)
+                Section::make([
+                    Checkbox::make('is_admin')->label('VSC Admin')->default(true),
+                    Checkbox::make('is_coach')->label('Coach')->default(false),
+                ])->columnSpanFull()->columns(2),
             ]);
     }
 
@@ -48,6 +53,7 @@ class UserResource extends Resource
                 TextColumn::make('email')->label('Alamat Email')->searchable()->sortable(),
                 TextColumn::make('is_admin')->label('Peranan')->searchable()->sortable()
                     ->formatStateUsing(fn($state) : string => ( $state == 1) ? 'Admin' : 'Public'),
+                CheckboxColumn::make('is_coach')->label('Coach')->alignCenter()->disabled(),
                 TextColumn::make('created_at')->label('Tanggal Dibuat')->dateTime('d-M-Y H:i:s')->searchable()->sortable(),
             ])
             ->filters([

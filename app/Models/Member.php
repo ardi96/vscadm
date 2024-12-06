@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -56,5 +57,19 @@ class Member extends Model
     public function schedules() : BelongsToMany
     {
         return $this->belongsToMany(ClassSchedule::class, MemberSchedule::class);
+    }
+
+    protected function getMarkAttribute() 
+    {
+        $mark = 0; 
+
+        $grading = $this->gradings()->get()->last();
+
+        if ( $grading != null )
+        {
+            $mark = $grading->marks;
+        }
+
+        return $mark;
     }
 }

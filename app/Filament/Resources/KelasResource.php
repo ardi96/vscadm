@@ -34,7 +34,7 @@ class KelasResource extends Resource
             ->schema([
                 TextInput::make('name')->label('Nama Kelas')->required(),
                 Select::make('grade_id')->options(Grade::all()->pluck('name','id'))->required()->label('Grade'),
-                Select::make('user_id')->options(User::all()->pluck('name','id'))->required()->label('Coach'),
+                Select::make('user_id')->options(User::where('is_coach',true)->pluck('name','id'))->required()->label('Coach'),
             ])->columns(3);
     }
 
