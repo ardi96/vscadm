@@ -53,10 +53,23 @@ class Member extends Model
         return $this->belongsTo(User::class,'parent_id');
     }   
 
-
     public function schedules() : BelongsToMany
     {
         return $this->belongsToMany(ClassSchedule::class, MemberSchedule::class);
+    }
+
+    protected function getCurrentMarkAttribute()
+    {
+        $mark = 0; 
+
+        $grading = $this->gradings()->where('grade_id', $this->grade_id)->first();
+
+        if ( $grading != null )
+        {
+            $mark = $grading->marks;
+        }
+
+        return $mark;
     }
 
     protected function getMarkAttribute() 
@@ -71,5 +84,20 @@ class Member extends Model
         }
 
         return $mark;
+    }
+
+    protected function getLastGradingIdAttribute()
+    {
+        $id = null;
+
+        $grading = $this->gradings()->get()->last();
+
+        if ( $grading != null )
+        {
+            $id = $grading->id;
+        }
+
+        return $id; 
+
     }
 }

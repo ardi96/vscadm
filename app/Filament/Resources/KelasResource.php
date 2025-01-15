@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\KelasResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\KelasResource\RelationManagers;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 
 class KelasResource extends Resource
@@ -38,6 +39,7 @@ class KelasResource extends Resource
             ])->columns(3);
     }
 
+    
     public static function table(Table $table): Table
     {
         return $table
@@ -62,7 +64,7 @@ class KelasResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\MembersRelationManager::class,
         ];
     }
 
@@ -70,8 +72,8 @@ class KelasResource extends Resource
     {
         return [
             'index' => Pages\ListKelas::route('/'),
-            // 'create' => Pages\CreateKelas::route('/create'),
-            // 'edit' => Pages\EditKelas::route('/{record}/edit'),
+            'create' => Pages\CreateKelas::route('/create'),
+            'edit' => Pages\EditKelas::route('/{record}/edit'),
         ];
     }
 }
