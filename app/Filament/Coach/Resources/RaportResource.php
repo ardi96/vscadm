@@ -158,9 +158,13 @@ class RaportResource extends Resource
                     })
                 ,
                 Tables\Actions\Action::make('view')->label('Approve Nilai')->icon('heroicon-m-pencil-square')
+                    ->visible(fn($record) => $record->LastGradingId != null)
                     ->url( function ($record) {
                         $id = $record->LastGradingId;
-                        return ViewGrading::getUrl(['record' => $id]);
+                        if ( $id != null )
+                        {
+                            return ViewGrading::getUrl(['record' => $id]);
+                        }
                     } )
             ])
             ->bulkActions([
