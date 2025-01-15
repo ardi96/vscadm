@@ -113,10 +113,10 @@
     <div id="navigation-menu" class="hidden absolute left-0 top-full w-screen bg-[#ffffff] pb-4 lg:static lg:flex flex-1 lg:items-center lg:justify-between lg:bg-transparent lg:pb-0">
       <ul class="flex flex-col lg:px-6 lg:flex-row flex-1 lg:justify-center lg:items-center lg:space-y-0 lg:space-x-8">
         <li class="flex items-center p-2 border-t border-gray-200 lg:border-t-transparent lg:p-0">
-          <a href="./index.html#siw5l8h" class="transition ease-linear md:hover:text-black">Tentang VSC</a>
+          <a href="./#siw5l8h" class="transition ease-linear md:hover:text-black">Tentang VSC</a>
         </li>
         <li class="flex items-center p-2 border-t border-gray-200 lg:border-t-transparent lg:p-0">
-          <a href="./index.html#si5jlso" class="transition ease-linear md:hover:text-black">Programs</a>
+          <a href="./#si5jlso" class="transition ease-linear md:hover:text-black">Programs</a>
         </li>
         <li class="flex items-center p-2 border-t border-gray-200 lg:border-t-transparent lg:p-0">
           <a href="./schedule.html" class="transition ease-linear md:hover:text-black">Jadwal & Biaya</a>
