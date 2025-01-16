@@ -32,6 +32,7 @@ class GradeResource extends Resource
             ->schema([
                 TextInput::make('code')->maxLength(10)->required(),
                 TextInput::make('name')->maxLength(100)->required()->label('Nama Grade'),
+                TextInput::make('level')->numeric()->required()->label('Level'),
                 TextInput::make('threshold')->maxValue(99)->minValue(0.1)->required(),
                 Repeater::make('aspects')->simple(
                     TextInput::make('aspect')->required()
