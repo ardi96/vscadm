@@ -83,7 +83,7 @@ class RaportResource extends Resource
                 // TextColumn::make('marks')->searchable()->label('Nilai'),
             ])
             ->filters([
-                SelectFilter::make('kelas_id')->options(Kelas::all()->pluck('name','id'))->label('Kelas')->selectablePlaceholder(true),
+                // SelectFilter::make('kelas_id')->options(Kelas::all()->pluck('name','id'))->label('Kelas')->selectablePlaceholder(true),
                 SelectFilter::make('grade_id')->options(Grade::all()->pluck('name','id'))->label('Grade')->selectablePlaceholder(true),
             ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(4)
