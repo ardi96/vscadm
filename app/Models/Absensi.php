@@ -17,9 +17,9 @@ class Absensi extends Model
         return $this->belongsTo(Member::class);
     }
 
-    public function sesi_kelas() : BelongsTo
+    public function grade() : BelongsTo
     {
-        return $this->belongsTo(SesiKelas::class,'sesi_kelas_id');
+        return $this->belongsTo(Grade::class);
     }
 
 }
