@@ -63,7 +63,7 @@ class RaportResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Isi Raport';
+        return 'Raport';
     }
 
     public static function table(Table $table): Table

@@ -3,12 +3,17 @@
 namespace App\Filament\Resources\KelasResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use App\Models\Kelas;
+use App\Models\Member;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class MembersRelationManager extends RelationManager
 {
@@ -38,16 +43,37 @@ class MembersRelationManager extends RelationManager
                 // Tables\Actions\CreateAction::make(),
                 // Tables\Actions\AttachAction::make()->label('Tambah member ke Kelas'),
                 Tables\Actions\AssociateAction::make()->label('Tambah member ke Kelas')
+                    ->modalSubmitActionLabel('Save')
+                    ->associateAnother(false)
+                    
             ])
             ->actions([
                 // Tables\Actions\EditAction::make(),
                 // Tables\Actions\DeleteAction::make(),
                 // Tables\Actions\DetachAction::make()
-                Tables\Actions\DissociateAction::make()
+                Tables\Actions\DissociateAction::make(),
+                Tables\Actions\Action::make('pindah')->label('Pindah Kelas')->color('primary')
+                ->icon('heroicon-m-arrow-path-rounded-square')
+                ->form([
+                    Select::make('kelas_id')->options(Kelas::pluck('name','id'))
+                        ->label('Pindah ke Kelas')
+                ])
+                ->action(function(array $data, Model $selectedRecord) {
+                    
+                        $member_id = $selectedRecord->id;
+                    
+                        $kelas_id = $data['kelas_id'];
+                        
+                        $member = Member::find( $member_id );
+                        $member->update([
+                            'kelas_id' => $kelas_id
+                        ]);
+                }),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    
                 ]),
             ]);
     }

@@ -51,7 +51,7 @@ class ViewMember extends ViewRecord
             TextEntry::make('instagram')->label('Akun Instagram'),
             TextEntry::make('package.name')->label('Paket'),
             TextEntry::make('kelas.name')->label('Kelas'),
-            TextEntry::make('grade.name')->label('Grade'),
+            TextEntry::make('kelas.grade.name')->label('Grade'),
             // TextEntry::make('start_date')->label('Tanggal Mulai')->date('d-M-Y'),
             TextEntry::make('status')->label('Status Keanggotaan')->badge()->color(Color::Amber),
             TextEntry::make('created_at')->label('Tanggal Registrasi')->date('d-M-Y'),

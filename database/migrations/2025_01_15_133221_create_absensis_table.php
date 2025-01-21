@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('absensis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sesi_kelas_id');
             $table->foreignId('member_id');
-            $table->boolean('hadir')->default(false);
+            $table->foreignId('grade_id');
+            $table->date('tanggal');
+            $table->boolean('hadir')->default(true);
+            $table->foreignId('user_id');
             $table->timestamps();
         });
     }

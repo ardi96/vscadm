@@ -14,6 +14,9 @@ class ListAbsensis extends ListRecords
     {
         return [
             // Actions\CreateAction::make(),
+            // Actions\Action::make('submit')->label('Submit')->color('primary')->action(fn() => dd($this)),
         ];
     }
+
+    
 }
