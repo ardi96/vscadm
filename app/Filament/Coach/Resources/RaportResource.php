@@ -157,7 +157,20 @@ class RaportResource extends Resource
                         }
                     })
                 ,
-                Tables\Actions\Action::make('view')->label('Approve Nilai')->icon('heroicon-m-pencil-square')
+                Tables\Actions\Action::make('view')->label(function($record){
+                        $id = $record->LastGradingId;
+                        if ( $id != null )
+                        {
+                            $grading = Grading::find( $id );
+                            if ( $grading->status == 'approved') { 
+                                return 'Lihat Nilai';  
+                            }
+                            else 
+                            { 
+                                return 'Approve Nilai';
+                            }
+                        }
+                    })->icon('heroicon-m-pencil-square')
                     ->visible(fn($record) => $record->LastGradingId != null)
                     ->url( function ($record) {
                         $id = $record->LastGradingId;
@@ -214,18 +227,18 @@ class RaportResource extends Resource
                 }), 
                 Select::make('month')->label('Bulan')
                 ->options([
-                1 => 1,
-                2 => 2,
-                3 => 3,
-                4 => 4,
-                5 => 5,
-                6 => 6,
-                7 => 7,
-                8 => 8,
-                9 => 9,
-                10 => 10,
-                11 => 11,
-                12 => 12,
+                1 => 'Januari',
+                2 => 'Februari',
+                3 => 'Maret',
+                4 => 'April',
+                5 => 'Mei',
+                6 => 'Juni',
+                7 => 'Juli',
+                8 => 'Agustus',
+                9 => 'September',
+                10 => 'Oktober',
+                11 => 'November',
+                12 => 'Desember',
                 ])->required(),
                 
             ])->columns(2),

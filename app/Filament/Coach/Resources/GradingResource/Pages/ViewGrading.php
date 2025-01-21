@@ -42,7 +42,7 @@ class ViewGrading extends ViewRecord
     {
         return [
 
-            EditAction::make('Edit')->icon('heroicon-m-pencil-square')->visible(fn( Grading $record) => $record->status != 'approved'),
+            //  EditAction::make('Edit')->icon('heroicon-m-pencil-square')->visible(fn( Grading $record) => $record->status != 'approved'),
             
             Action::make('Approve')->icon('heroicon-m-check-circle')->action(function(Grading $record) {
                 
