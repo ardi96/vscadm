@@ -70,10 +70,11 @@ class AdminPanelProvider extends PanelProvider
                 FilamentApexChartsPlugin::make()
             ])
             ->navigationGroups([
-                NavigationGroup::make('Reporting')
-                    ->icon('heroicon-o-document-chart-bar')
+                NavigationGroup::make('Coach')
+                    // ->icon('heroicon-o-document-chart-bar')
                     ->collapsed()
             ])
+            // ->sidebarCollapsibleOnDesktop()
             ->topNavigation(false)
             ->passwordReset()
             ->profile();

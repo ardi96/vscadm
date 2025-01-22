@@ -19,7 +19,11 @@ class GeneralInfoResource extends Resource
 {
     protected static ?string $model = GeneralInfo::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-information-circle';
+    protected static ?string $pluralModelLabel = 'General Info';
+
+    protected static ?string $slug = 'general-info';
+
+    // protected static ?string $navigationIcon = 'heroicon-o-information-circle';
 
     public static function form(Form $form): Form
     {

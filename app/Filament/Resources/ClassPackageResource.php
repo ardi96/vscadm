@@ -26,7 +26,7 @@ class ClassPackageResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationIcon = 'heroicon-o-qr-code';
+    // protected static ?string $navigationIcon = 'heroicon-o-qr-code';
 
     protected static ?string $navigationGroup = 'Atur Jadwal dan Lokasi';
     

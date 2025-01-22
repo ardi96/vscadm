@@ -26,7 +26,7 @@ class ParentResource extends Resource
 
     protected static ?string $label = 'Parent';
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-plus';
+    // protected static ?string $navigationIcon = 'heroicon-o-user-plus';
 
     protected static ?string $navigationLabel = 'Parent';
 

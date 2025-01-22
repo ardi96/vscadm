@@ -24,7 +24,7 @@ class GradeResource extends Resource
 
     protected static ?string $navigationGroup = 'Atur Jadwal dan Lokasi';
 
-    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
+    // protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
     public static function form(Form $form): Form
     {

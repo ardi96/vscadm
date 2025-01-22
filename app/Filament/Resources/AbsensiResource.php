@@ -1,40 +1,34 @@
 <?php
 
-namespace App\Filament\Coach\Resources;
+namespace App\Filament\Resources;
 
-use Forms\Get;
 use Carbon\Carbon;
-use Filament\Forms;
 use Filament\Tables;
 use App\Models\Grade;
-use App\Models\Kelas;
 use App\Models\Member;
 use App\Models\Absensi;
 use Filament\Forms\Form;
-use App\Models\SesiKelas;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Coach\Resources\AbsensiResource\Pages;
-use App\Filament\Coach\Resources\AbsensiResource\RelationManagers;
+use App\Filament\Resources\AbsensiResource\Pages;
 
 class AbsensiResource extends Resource
 {
     protected static ?string $model = Member::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    
+    protected static ?string $navigationGroup = 'Coach';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $pluralModelLabel = 'Absensi';
 

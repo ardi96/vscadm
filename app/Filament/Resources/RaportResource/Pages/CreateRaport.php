@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Filament\Coach\Resources\RaportResource\Pages;
+namespace App\Filament\Resources\RaportResource\Pages;
 
-use App\Filament\Coach\Resources\RaportResource;
-use Filament\Actions;
+use App\Filament\Resources\RaportResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateRaport extends CreateRecord

@@ -1,36 +1,31 @@
 <?php
 
-namespace App\Filament\Coach\Resources;
+namespace App\Filament\Resources;
 
-use Filament\Forms;
 use Filament\Tables;
 use App\Models\Grade;
-use App\Models\Kelas;
 use App\Models\Grading;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\RepeatableEntry;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Coach\Resources\GradingResource\Pages;
-use App\Filament\Coach\Resources\GradingResource\RelationManagers;
+use App\Filament\Resources\GradingResource\Pages;
 use Filament\Tables\Enums\FiltersLayout;
+use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 
 class GradingResource extends Resource
 {
     protected static ?string $model = Grading::class;
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 40;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Coach';
 
     public static function form(Form $form): Form
     {
@@ -49,12 +44,12 @@ class GradingResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return 'Approval';
+        return 'Raport Approval';
     }
 
     public static function getNavigationLabel(): string
     {
-        return 'Approval';
+        return 'Raport Approval';
     }
 
     public static function table(Table $table): Table

@@ -27,7 +27,7 @@ class KelasResource extends Resource
 
     protected static ?string $navigationGroup = 'Atur Jadwal dan Lokasi';
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    // protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     public static function form(Form $form): Form
     {

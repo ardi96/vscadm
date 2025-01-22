@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Filament\Coach\Resources\GradingResource\Pages;
+namespace App\Filament\Resources\GradingResource\Pages;
 
-use App\Filament\Coach\Resources\GradingResource;
+use App\Filament\Resources\GradingResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Database\Eloquent\Model;
 
 class EditGrading extends EditRecord
 {

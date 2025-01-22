@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Filament\Coach\Resources\AbsensiResource\Pages;
+namespace App\Filament\Resources\AbsensiResource\Pages;
 
-use App\Filament\Coach\Resources\AbsensiResource;
-use Filament\Actions;
+use App\Filament\Resources\AbsensiResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateAbsensi extends CreateRecord

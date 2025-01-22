@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Filament\Coach\Resources\GradingResource\Pages;
+namespace App\Filament\Resources\GradingResource\Pages;
 
 use App\Models\Grading;
 use Filament\Actions\Action;
-use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Illuminate\Support\Facades\Auth;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Forms\Components\Placeholder;
 use Filament\Infolists\Components\TextEntry;
-use App\Filament\Coach\Resources\GradingResource;
+use App\Filament\Resources\GradingResource;
 use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Tables\Columns\TextColumn;
+use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 use Torgodly\Html2Media\Actions\Html2MediaAction;
 
 class ViewGrading extends ViewRecord
@@ -29,12 +29,12 @@ class ViewGrading extends ViewRecord
             TextEntry::make('decision')->label('Keputusan')->formatStateUsing(fn($state) : string => 
                 $state == 1 ? 'Naik Kelas' : 'Tidak Naik Kelas'
             ),          
-            RepeatableEntry::make('gradingItems')->schema([
-                TextEntry::make('aspect')->label(''),
-                TextEntry::make('mark')->label(''),
-            ])->columns(2)->columnSpanFull()->label('Penilaian'),  
+            TableRepeatableEntry::make('gradingItems')->schema([
+                TextEntry::make('aspect')->label('Aspek'),
+                TextEntry::make('mark')->label('Nilai'),
+            ])->columns(2)->columnSpanFull()->label('Penilaian')->striped(),  
+            TextEntry::make('notes')->html()->columnSpanFull(),
             TextEntry::make('status')->label('Status'),
-            TextEntry::make('notes')->html()->columnSpanFull()
         ]);        
     }
 

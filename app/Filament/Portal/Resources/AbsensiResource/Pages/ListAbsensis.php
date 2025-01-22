@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Coach\Resources\AbsensiResource\Pages;
+namespace App\Filament\Portal\Resources\AbsensiResource\Pages;
 
-use App\Filament\Coach\Resources\AbsensiResource;
+use App\Filament\Portal\Resources\AbsensiResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -14,9 +14,6 @@ class ListAbsensis extends ListRecords
     {
         return [
             // Actions\CreateAction::make(),
-            // Actions\Action::make('submit')->label('Submit')->color('primary')->action(fn() => dd($this)),
         ];
     }
-
-    
 }

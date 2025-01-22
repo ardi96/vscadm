@@ -1,56 +1,43 @@
 <?php
 
-namespace App\Filament\Coach\Resources;
+namespace App\Filament\Resources;
 
-use App\Filament\Coach\Resources\GradingResource\Pages\ViewGrading;
+use App\Filament\Resources\GradingResource\Pages\ViewGrading;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Grade;
-use App\Models\Kelas;
 use App\Models\Member;
-use App\Models\Raport;
 use App\Models\Grading;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\GradingItem;
 use Filament\Resources\Resource;
-use Illuminate\Support\Facades\DB;
 use Filament\Forms\Components\Radio;
-use Illuminate\Support\Facades\Date;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Placeholder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Coach\Resources\RaportResource\Pages;
-use App\Filament\Coach\Resources\RaportResource\RelationManagers;
-use Doctrine\DBAL\Query\QueryBuilder;
-use Filament\Actions\Action;
-use Filament\Facades\Filament;
+use App\Filament\Resources\RaportResource\Pages;
 use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
-use Livewire\Attributes\Layout;
 
 class RaportResource extends Resource
 {
     protected static ?string $model = Member::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document';
+    // protected static ?string $navigationIcon = 'heroicon-o-document';
+
+    protected static ?string $navigationGroup = 'Coach';
 
     protected static ?string $label = 'Raport';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 30;
 
 
     public static function form(Form $form): Form

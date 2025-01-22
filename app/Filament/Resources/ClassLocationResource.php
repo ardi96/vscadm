@@ -21,7 +21,7 @@ class ClassLocationResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationIcon = 'heroicon-o-map';
+    // protected static ?string $navigationIcon = 'heroicon-o-map';
 
     protected static ?string $navigationGroup = 'Atur Jadwal dan Lokasi';
 

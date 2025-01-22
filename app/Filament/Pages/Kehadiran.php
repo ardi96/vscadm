@@ -26,7 +26,11 @@ class Kehadiran extends Page implements HasTable
 
     protected static string $view = 'filament.pages.absensi';
 
-    protected static ?string $navigationGroup = 'Reporting';
+    protected static ?string $navigationGroup = 'Coach';
+
+    protected static ?int $navigationSort = 20 ;
+
+    protected static ?string $navigationLabel = 'Laporan Kehadiran';
 
     public static function table(Table $table) : Table 
     {

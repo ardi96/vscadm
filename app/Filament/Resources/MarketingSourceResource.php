@@ -21,7 +21,7 @@ class MarketingSourceResource extends Resource
 
     protected static ?int $navigationSort = 97;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    // protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     protected static ?string $navigationGroup = 'Pengaturan Sistem';
 

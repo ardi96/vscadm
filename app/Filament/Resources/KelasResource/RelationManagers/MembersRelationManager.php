@@ -37,21 +37,21 @@ class MembersRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('name'),
             ])
             ->filters([
-                //
             ])
             ->headerActions([
-                // Tables\Actions\CreateAction::make(),
-                // Tables\Actions\AttachAction::make()->label('Tambah member ke Kelas'),
-                Tables\Actions\AssociateAction::make()->label('Tambah member ke Kelas')
+                Tables\Actions\AssociateAction::make()
+                    ->color('primary')
+                    ->label('Tambah member ke Kelas')
                     ->modalSubmitActionLabel('Save')
-                    ->associateAnother(false)
-                    
+                    ->associateAnother(false) 
+                    ->after(function(Member $member) {
+                        $member->grade_id = $this->getOwnerRecord()->grade->id;
+                        $member->save();
+                    })                   
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
-                // Tables\Actions\DeleteAction::make(),
-                // Tables\Actions\DetachAction::make()
                 Tables\Actions\DissociateAction::make(),
+
                 Tables\Actions\Action::make('pindah')->label('Pindah Kelas')->color('primary')
                 ->icon('heroicon-m-arrow-path-rounded-square')
                 ->form([
@@ -72,9 +72,7 @@ class MembersRelationManager extends RelationManager
 
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    
-                ]),
+                Tables\Actions\BulkActionGroup::make([]),
             ]);
     }
 }
