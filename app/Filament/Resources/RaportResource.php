@@ -26,6 +26,7 @@ use App\Filament\Resources\RaportResource\Pages;
 use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Enums\FiltersLayout;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
+use Illuminate\Support\Facades\Auth;
 
 class RaportResource extends Resource
 {
@@ -38,7 +39,6 @@ class RaportResource extends Resource
     protected static ?string $label = 'Raport';
 
     protected static ?int $navigationSort = 30;
-
 
     public static function form(Form $form): Form
     {
@@ -80,7 +80,8 @@ class RaportResource extends Resource
 
                         $visible = false; 
 
-                        if ($record->kelas_id != null && $record->grade_id != null && $record->CurrentMark == null)
+                        if ($record->kelas_id != null && $record->grade_id != null 
+                            && $record->CurrentMark == null && Auth::user()->can('create grading'))
                         {
                             $visible = true; 
                         }
@@ -154,11 +155,18 @@ class RaportResource extends Resource
                             }
                             else 
                             { 
-                                return 'Approve Nilai';
+                                if ( Auth::user()->can('approve grading'))
+                                    return 'Approve Nilai';
+                                else
+                                    return 'Lihat Nilai';
                             }
                         }
                     })->icon('heroicon-m-pencil-square')
-                    ->visible(fn($record) => $record->LastGradingId != null)
+                    ->visible(function($record) {
+                        return ( $record->LastGradingId != null && ( Auth::user()->can('view grading')  
+                            || Auth::user()->can('approve grading')));
+                        
+                    })
                     ->url( function ($record) {
                         $id = $record->LastGradingId;
                         if ( $id != null )

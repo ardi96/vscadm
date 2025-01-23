@@ -51,7 +51,7 @@ class ViewGrading extends ViewRecord
                 $record->approved_by = Auth::user()->id;
                 $record->save();
 
-            })->requiresConfirmation()->visible(fn( Grading $record) => $record->status != 'approved'),
+            })->requiresConfirmation()->visible(fn( Grading $record) => $record->status != 'approved' && Auth::user()->can('approve grading')),
 
             Html2MediaAction::make('Print')->icon('heroicon-m-printer')->color('primary')
                 ->label('Print to PDF')->content( fn($record) => view('raport', ['record' => $record]) )
@@ -60,6 +60,4 @@ class ViewGrading extends ViewRecord
 
         ];
     }
-
-
 }

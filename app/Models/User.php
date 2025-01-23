@@ -12,10 +12,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerifyEmail
 { 
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     public function getFilamentAvatarUrl(): ?string
     {
