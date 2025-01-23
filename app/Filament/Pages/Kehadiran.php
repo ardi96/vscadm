@@ -8,6 +8,7 @@ use App\Models\Absensi;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\Filter;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -34,7 +35,7 @@ class Kehadiran extends Page implements HasTable
 
     public static function shouldRegisterNavigation() : bool
     {
-        return Auth()->user->can('view grading');   
+        return Auth::user()->can('view grading');   
     }
 
     public static function table(Table $table) : Table 
