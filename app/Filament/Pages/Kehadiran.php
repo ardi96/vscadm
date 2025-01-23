@@ -32,6 +32,11 @@ class Kehadiran extends Page implements HasTable
 
     protected static ?string $navigationLabel = 'Laporan Kehadiran';
 
+    public static function shouldRegisterNavigation() : bool
+    {
+        return Auth()->user->can('view grading');   
+    }
+
     public static function table(Table $table) : Table 
     {
         return $table
