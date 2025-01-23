@@ -2,7 +2,7 @@
 
 namespace App\Filament\Portal\Resources\RaportResource\Pages;
 
-use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\TextEntry;
@@ -31,5 +31,14 @@ class ViewRaport extends ViewRecord
             TextEntry::make('notes')->html()->columnSpanFull(),
             TextEntry::make('status')->label('Status'),
         ]);        
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('Print')->icon('heroicon-m-printer')->color('primary')
+                ->url( fn($record) : string => config('app.url').'/download/raport/'. $record->id)
+                ->openUrlInNewTab()
+        ];
     }
 }

@@ -67,18 +67,14 @@ class GradingResource extends Resource
                 SelectFilter::make('grade_id')->options(Grade::pluck('name','id'))->label('Grade'),
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('download')
                     ->color('primary')
                     ->icon('heroicon-m-arrow-down-circle')
-                    ->url( fn($record) : string => config('app.url').'/storage/raport_'. $record->member->id . '_'. $record->year . $record->month .'.pdf' )
+                    ->url( fn($record) : string => config('app.url').'/download/raport/'. $record->id)
                     ->openUrlInNewTab() 
             ])
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ;

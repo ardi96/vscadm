@@ -28,8 +28,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         if ( $panel->getId() === 'admin' )
         {
             return str_ends_with($this->email, '@veins-skatingclub.com') 
-                       && $this->hasVerifiedEmail()
-                       && $this->is_admin;
+                && $this->is_admin
+                && $this->hasVerifiedEmail();
         }
         else 
         {

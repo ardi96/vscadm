@@ -50,7 +50,7 @@ class ViewGrading extends ViewRecord
                 $record->approved_by = Auth::user()->id;
                 $record->save();
 
-                Pdf::view('raport',['record' => $record])->save('storage/raport_' . $record->member->id . '_'. $record->year . $record->month .'.pdf');
+                // Pdf::view('raport',['record' => $record])->save('storage/raport_' . $record->member->id . '_'. $record->year . $record->month .'.pdf');
                 
             })->requiresConfirmation()->visible(fn( Grading $record) => $record->status != 'approved' && Auth::user()->can('approve grading')),
             
@@ -60,12 +60,8 @@ class ViewGrading extends ViewRecord
             //     ->format('a4','mm'),
             
             Action::make('Print')->icon('heroicon-m-printer')->color('primary')
-                ->action( function($record) { 
-                    Pdf::view('raport',['record' => $record])->save('storage/raport_' . $record->member->id . '_'. $record->year . $record->month .'.pdf');
-                    }
-                )
-                // ->url( fn($record) : string => config('app.url').'/storage/raport_'. $record->member->id . '_'. $record->year . $record->month .'.pdf')
-                // ->openUrlInNewTab()
+                ->url( fn($record) : string => config('app.url').'/download/raport/'. $record->id)
+                ->openUrlInNewTab()
 
         ];
     }
