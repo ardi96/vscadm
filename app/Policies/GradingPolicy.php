@@ -13,7 +13,9 @@ class GradingPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view grading');
+        return $user->can('view grading') || (
+            !$user->is_admin
+        );
     }
 
     /**
@@ -21,7 +23,9 @@ class GradingPolicy
      */
     public function view(User $user, Grading $grading): bool
     {
-        return $user->can('view grading');
+        return $user->can('view grading') || (
+            !$user->is_admin
+        );
     }
 
     /**

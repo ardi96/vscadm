@@ -69,6 +69,11 @@ class GradingResource extends Resource
             ->actions([
                 // Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('download')
+                    ->color('primary')
+                    ->icon('heroicon-m-arrow-down-circle')
+                    ->url( fn($record) : string => config('app.url').'/storage/raport_'. $record->member->id . '_'. $record->year . $record->month .'.pdf' )
+                    ->openUrlInNewTab() 
             ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([

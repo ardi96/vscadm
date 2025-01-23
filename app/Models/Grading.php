@@ -26,4 +26,9 @@ class Grading extends Model
     {
         return $this->belongsTo(Grade::class);
     }
+
+    public function approver() :BelongsTo
+    {
+        return $this->belongsTo(User::class,'approved_by');
+    }
 }

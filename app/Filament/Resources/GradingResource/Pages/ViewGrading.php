@@ -5,14 +5,13 @@ namespace App\Filament\Resources\GradingResource\Pages;
 use App\Models\Grading;
 use Filament\Actions\Action;
 use Filament\Infolists\Infolist;
+use Spatie\LaravelPdf\Facades\Pdf;
+use function Spatie\LaravelPdf\Support\pdf;
 use Illuminate\Support\Facades\Auth;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\TextEntry;
 use App\Filament\Resources\GradingResource;
-use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Infolists\Components\TextEntry;
 use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
-use Torgodly\Html2Media\Actions\Html2MediaAction;
 
 class ViewGrading extends ViewRecord
 {
@@ -51,12 +50,22 @@ class ViewGrading extends ViewRecord
                 $record->approved_by = Auth::user()->id;
                 $record->save();
 
+                Pdf::view('raport',['record' => $record])->save('storage/raport_' . $record->member->id . '_'. $record->year . $record->month .'.pdf');
+                
             })->requiresConfirmation()->visible(fn( Grading $record) => $record->status != 'approved' && Auth::user()->can('approve grading')),
-
-            Html2MediaAction::make('Print')->icon('heroicon-m-printer')->color('primary')
-                ->label('Print to PDF')->content( fn($record) => view('raport', ['record' => $record]) )
-                ->margin([10,10,10,10])
-                ->format('a4','mm'),
+            
+            // Html2MediaAction::make('Print')->icon('heroicon-m-printer')->color('primary')
+            //     ->label('Print to PDF')->content( fn($record) => view('raport', ['record' => $record]) )
+            //     ->margin([10,10,10,10])
+            //     ->format('a4','mm'),
+            
+            Action::make('Print')->icon('heroicon-m-printer')->color('primary')
+                ->action( function($record) { 
+                    Pdf::view('raport',['record' => $record])->save('storage/raport_' . $record->member->id . '_'. $record->year . $record->month .'.pdf');
+                    }
+                )
+                // ->url( fn($record) : string => config('app.url').'/storage/raport_'. $record->member->id . '_'. $record->year . $record->month .'.pdf')
+                // ->openUrlInNewTab()
 
         ];
     }
