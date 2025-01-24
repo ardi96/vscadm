@@ -10,6 +10,7 @@ use Filament\Support\Colors\Color;
 use App\Filament\Widgets\MyAccountWidget;
 use Filament\Http\Middleware\Authenticate;
 use App\Filament\Portal\Pages\Auth\Register;
+use App\Filament\Portal\Pages\Login;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -61,7 +62,7 @@ class PortalPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->login()
+            ->login(Login::class)
             ->registration(Register::class)
             ->passwordReset()
             ->emailVerification()
