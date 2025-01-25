@@ -7,18 +7,19 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\ClassPackage;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ClassPackageResource\Pages;
-use App\Filament\Resources\ClassPackageResource\RelationManagers;
 use App\Models\ClassSchedule;
-use Filament\Forms\Components\CheckboxList;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\CheckboxList;
 use PhpParser\Node\Expr\BinaryOp\BooleanOr;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ClassPackageResource\Pages;
+use App\Filament\Resources\ClassPackageResource\RelationManagers;
 
 class ClassPackageResource extends Resource
 {
@@ -55,6 +56,7 @@ class ClassPackageResource extends Resource
                     ->maxValue(21)->suffix('x pertemuan')
                     ->numeric(),
                 TextInput::make('price')->label('Harga')->numeric()->required()->suffix('IDR'),
+                TextInput::make('price_per_session')->label('Harga per Sesi')->numeric()->required()->suffix('IDR'),
                 CheckboxList::make('schedules')->relationship('schedules','name')->label('Jadwal Tersedia')
                     ->columns(1)
                     ->bulkToggleable()
@@ -67,11 +69,13 @@ class ClassPackageResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Nama Paket')->searchable()->sortable()->verticallyAlignStart(),
-                TextColumn::make('description')->label('Deskripsi')->wrap()->searchable()->sortable()->verticallyAlignStart(),
+                TextColumn::make('name')->label('Nama Paket')->searchable()->sortable()->verticallyAlignStart()
+                    ->description(fn($record) => $record->description)->wrap(),
+                // TextColumn::make('description')->label('Deskripsi')->wrap()->searchable()->sortable()->verticallyAlignStart(),
                 TextColumn::make('type')->label('Tipe Kelas')->searchable()->sortable()->verticallyAlignStart(),
                 TextColumn::make('schedules.name')->label('Jadwal Tersedia')->bulleted()->searchable()->sortable(),
                 TextColumn::make('price')->label('Harga')->money('IDR')->searchable()->sortable()->verticallyAlignStart(),
+                TextColumn::make('price_per_session')->label('Harga/Sesi')->money('IDR')->searchable()->sortable()->verticallyAlignStart(),
             ])
             ->filters([
                 //
@@ -81,7 +85,7 @@ class ClassPackageResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->visible( Auth::user()->can('delete paket')),
                 ]),
             ]);
     }
