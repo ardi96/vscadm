@@ -79,7 +79,7 @@ class MemberResource extends Resource
                     ->label('Status'),
                 Section::make('Pilih Jadwal')
                     ->schema([
-                        CheckboxList::make('schedules')->options(function (Forms\Get $get) {
+                        CheckboxList::make('jadwal')->relationship('schedules')->options(function (Forms\Get $get) {
                             return ClassSchedule::whereIn(
                                 'id',ClassPackageSchedule::where('class_package_id', $get('class_package_id'))->pluck('class_schedule_id')
                                 )->pluck('name','id');

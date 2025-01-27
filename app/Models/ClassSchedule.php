@@ -24,9 +24,8 @@ class ClassSchedule extends Model
         );
     }
 
-
     public function members() : BelongsToMany
     {
-        return $this->belongsToMany(member::class, MemberSchedule::class);
+        return $this->belongsToMany(Member::class,'member_schedules');
     }
 }

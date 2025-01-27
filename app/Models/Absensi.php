@@ -22,4 +22,9 @@ class Absensi extends Model
         return $this->belongsTo(Grade::class);
     }
 
+
+    public function coach() : BelongsTo
+    {
+        return $this->belongsTo(User::class,'user_id');
+    }
 }
