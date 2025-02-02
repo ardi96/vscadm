@@ -14,6 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Columns\CheckboxColumn;
@@ -66,6 +67,13 @@ class Kehadiran extends Page implements HasTable
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->emptyStateHeading('Tidak ada kehadiran')
+            ->actions([
+                Action::make('delete')->icon('heroicon-o-x-circle')->label('Hapus')
+                    ->requiresConfirmation()->color('danger')->modalDescription('Apakah anda yakin ingin menghapus data ini?')
+                    ->modalHeading('Hapus Kehadiran')
+                    ->action(fn(Absensi $absensi) => $absensi->delete())
+                    ->visible(fn() => Auth::user()->can('delete absensi')),
+            ])
             ;
     }
 
