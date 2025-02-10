@@ -49,14 +49,14 @@
     <table class="w-full text-left mb-4 border">
         <thead>
         <tr>
-            <th style="height: 60px" class="text-gray-700 font-bold uppercase py-2 border">Aspek Penilaian</th>
-            <th style="height: 60px" class="text-gray-700 font-bold uppercase py-2 border">Nilai</th>
+            <th style="height: 40px" class="text-gray-700 font-bold uppercase py-2 border">Aspek Penilaian</th>
+            <th style="height: 40px" class="text-gray-700 font-bold uppercase py-2 border">Nilai</th>
         </tr>
         </thead>
         <tbody>
         @foreach( $record->gradingItems as $item)
         <tr>
-            <td style="height: 30px" class="py-2 text-gray-700 border">{{ $item->aspect }}</td>
+            <td style="height: 30px; padding: 5px" class="py-2 text-gray-700 border">{{ $item->aspect }}</td>
             <td style="text-align:center; height: 30px" class="py-2 text-gray-700 border">{{ $item->mark }}</td>
         </tr>
         @endforeach
@@ -83,16 +83,16 @@
     <table class="w-full text-center mb-8 border">
         <thead>
         <tr>
-            <th class="text-gray-700 font-bold uppercase py-2 border">Wali Kelas</th>
-            <th class="text-gray-700 font-bold uppercase py-2 border">Head Coach</th>
-            <th class="text-gray-700 font-bold uppercase py-2 border">Ketua VSC</th>
+            <th style="padding: 5px" class="text-gray-700 font-bold uppercase py-2 border">Wali Kelas</th>
+            <th style="padding: 5px" class="text-gray-700 font-bold uppercase py-2 border">Head Coach</th>
+            <th style="padding: 5px" class="text-gray-700 font-bold uppercase py-2 border">Ketua VSC</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-            <td style="text-align:center" class="py-2 text-gray-700 border border-gray-300 dark:border-gray-700 border"><br/><br/><br/></br>{{ $record->member->kelas->coach->name }}</td>
-            <td style="text-align:center" class="py-2 text-gray-700 border border-gray-300 dark:border-gray-700 border"><br/><br/><br/></br>{{ $record->approver->name }}</td>
-            <td style="text-align:center" class="py-2 text-gray-700 border border-gray-300 dark:border-gray-700 border"><br/><br/><br/></br>Rizal Prasetyo</td>
+            <td style="text-align:center" class="py-2 text-gray-700 border border-gray-300 dark:border-gray-700 border"><br/><br/><br/><br/><br/></br>{{ $record->member->kelas->coach->name }}</td>
+            <td style="text-align:center" class="py-2 text-gray-700 border border-gray-300 dark:border-gray-700 border"><br/><br/><br/><br/><br/></br>{{ $record->approver->name }}</td>
+            <td style="text-align:center" class="py-2 text-gray-700 border border-gray-300 dark:border-gray-700 border"><br/><br/><br/><br/><br/></br>Rizal Prasetyo</td>
         </tr>
         </tbody>
     </table>
