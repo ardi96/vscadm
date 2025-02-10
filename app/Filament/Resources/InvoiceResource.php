@@ -19,6 +19,7 @@ use App\Filament\Resources\InvoiceResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\InvoiceResource\RelationManagers;
 use App\Filament\Resources\MemberResource\Pages\MemberInvoices;
+use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 
 class InvoiceResource extends Resource
 {
@@ -34,6 +35,11 @@ class InvoiceResource extends Resource
             ->schema([
                 TextInput::make('amount')->required()->label('Jumlah'),
                 TextInput::make('item_description')->required()->label('Keterangan'),
+                TableRepeater::make('items')
+                    ->schema([
+                        TextInput::make('description')->required()->label('Deskripsi'),
+                        TextInput::make('amount')->required()->label('Jumlah'),
+                    ]),
             ]);
     }
 
@@ -116,8 +122,8 @@ class InvoiceResource extends Resource
                         ->requiresConfirmation(),
                 ]),
             ])
-            ->recordUrl( fn(Invoice $record): string => 
-                MemberInvoices::getUrl(['record' => $record->member])
+            ->recordUrl( fn(Invoice $record): string => ( $record != null ) ?
+                MemberInvoices::getUrl(['record' => $record->member]) : '' 
             )
             ->defaultSort('invoice_no','desc');
     }

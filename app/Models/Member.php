@@ -35,7 +35,7 @@ class Member extends Model
 
     public function absensi() : HasMany
     {
-        return $this->hasMany(Absensi::class,'member_id');
+        return $this->hasMany(Absensi::class,'member_id');  
     }
 
     public function gradings()  : HasMany
@@ -158,5 +158,56 @@ class Member extends Model
                 ->count('hadir');
 
         return $attendance_count;
+    }
+
+    /**
+     * will return the number of carried forward holiday 
+     * which is not attended by the member
+     * from the given date range
+     * 
+     * when the holiday is marked as carried forward and the member schedule    
+     * fall on the holiday date, we increase the count of carried forward holiday
+     * but if the member schedule is not on the holiday date, we don't increase the count
+     */
+    public function getCarriedForwardHoliday(?string $from, ?string $to) : int
+    {
+        
+        $carried_forward = 0;
+
+        $to_date = new DateTime( $to );
+
+        $from_date = new DateTime ( $from );
+
+        $holidays = Holiday::whereBetween('tanggal',array($from_date,$to_date))->get();
+        
+        if ( count($holidays) > 0 )
+        {
+            foreach( $holidays as $holiday)
+            {
+                
+                if ( $holiday->is_carried_forward == true )
+                {
+                    $day = new DateTime( $holiday->tanggal );
+
+                    $this->schedules()->get()->each(function($schedule) use ($day, &$carried_forward) {
+        
+                        $day_map = array('Minggu' => 0, 'Senin' => 1, 'Selasa' => 2,'Rabu' => 3,'Kamis' => 4,'Jumat' => 5,'Sabtu' => 6);
+
+                        $schedule_day = $schedule->schedule_day;
+
+                        $day_num = date_format($day,'w');
+                        
+                        if ( $day_num == $day_map[$schedule_day] )
+                        {
+                            $carried_forward++;
+                        }
+                    }); 
+
+                    $carried_forward++;
+                }
+            }
+        }
+
+        return $carried_forward;
     }
 }

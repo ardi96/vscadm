@@ -3,11 +3,12 @@
 namespace App\Filament\Resources\GradingResource\Pages;
 
 use App\Models\Grading;
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Infolists\Infolist;
-use Spatie\LaravelPdf\Facades\Pdf;
-use function Spatie\LaravelPdf\Support\pdf;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Resources\GradingResource;
 use Filament\Infolists\Components\TextEntry;
@@ -60,8 +61,19 @@ class ViewGrading extends ViewRecord
             //     ->format('a4','mm'),
             
             Action::make('Print')->icon('heroicon-m-printer')->color('primary')
-                ->url( fn($record) : string => config('app.url').'/download/raport/'. $record->id)
-                ->openUrlInNewTab()
+                ->action( function ($record) {
+
+                    File::ensureDirectoryExists(storage_path('app/public/raports'));
+
+                    $pdf = Pdf::loadView('raport', ['record' => $record ]);
+    
+                    $filename = Str::uuid() . '.pdf';
+    
+                    $pdf->save(storage_path('app/public/raports/') . $filename);
+                            
+                    return response()->download(storage_path('app/public/raports/') . $filename);
+                }) 
+                ->visible(fn( Grading $record) => $record->status == 'approved'),
 
         ];
     }

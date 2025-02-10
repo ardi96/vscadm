@@ -91,6 +91,12 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'edit costume size']);
         Permission::create(['name' => 'delete costume size']);
 
+        // Holiday
+        Permission::create(['name' => 'create holiday']);
+        Permission::create(['name' => 'view holiday']);
+        Permission::create(['name' => 'edit holiday']);
+        Permission::create(['name' => 'delete holiday']);
+
         // User
         Permission::create(['name' => 'create user']);
         Permission::create(['name' => 'view user']);

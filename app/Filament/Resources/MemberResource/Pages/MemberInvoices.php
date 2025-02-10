@@ -9,7 +9,9 @@ use App\Models\Invoice;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Tables\Actions\Action;
+use Illuminate\Support\Str;
 use App\Jobs\SendInvoiceMail;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Forms\Components\TextInput;
 use App\Jobs\GenerateInvoiceJob;
 use App\Services\InvoiceService;
@@ -18,10 +20,13 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\FormsComponent;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Blade;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\MemberResource;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 
 class MemberInvoices extends ManageRelatedRecords
 {
@@ -37,7 +42,15 @@ class MemberInvoices extends ManageRelatedRecords
             ->schema([
                 Forms\Components\TextInput::make('description')->required()->label('Judul Invoice'),
                 Forms\Components\TextInput::make('item_description')->required()->label('Keterangan'),
-                Forms\Components\TextInput::make('amount')->required()->label('Jumlah'),
+                Forms\Components\TextInput::make('amount')->required()->label('Jumlah')->prefix('Rp. '),
+                TableRepeater::make('items')
+                    ->schema([
+                        Forms\Components\TextInput::make('description')->required()->label('Deskripsi'),
+                        Forms\Components\TextInput::make('amount')->required()->label('Jumlah')->numeric()->prefix('Rp. '),
+                    ])->label('')
+                    ->relationship('items')
+                    ->addActionLabel('Tambah Item')
+                    , 
                 Forms\Components\Hidden::make('parent_id')->default($this->getRecord()->parent_id),
                 Forms\Components\Hidden::make('invoice_no')->default(env('INVOICE_PREFIX','VSC') . InvoiceService::getNextNumber()),
                 Forms\Components\Hidden::make('type')->default('other'),
@@ -73,6 +86,7 @@ class MemberInvoices extends ManageRelatedRecords
             ->headerActions([
                 Tables\Actions\CreateAction::make('Create New Invoice')
                     ->label('Create New Invoice'),
+
                 Tables\Actions\Action::make('Generate Monthly Invoice')
                     ->action(function() {
 
@@ -108,6 +122,31 @@ class MemberInvoices extends ManageRelatedRecords
                     Tables\Actions\EditAction::make()->label('Edit Invoice')
                     ->visible(fn($record) => ($record->status =='unpaid'))
                     ->icon('heroicon-o-pencil'),
+
+
+                    Tables\Actions\Action::make('pdf') 
+                    ->label('PDF')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->action(function (Invoice $record) {
+                        
+                        // dd(Blade::render('invoice', ['record' => $record]));
+
+                        File::ensureDirectoryExists(storage_path('app/public/invoices'));
+
+                        $pdf = Pdf::loadView('invoice', ['record' => $record ]);
+
+                        $filename = Str::uuid() . '.pdf';
+
+                        $pdf->save(storage_path('app/public/invoices/') . $filename);
+                        
+                        return response()->download(storage_path('app/public/invoices/') . $filename);
+
+                        // return response()->streamDownload(function () use ($record) {
+                        //     echo Pdf::loadHtml(
+                        //         Blade::render('invoice', ['record' => $record])
+                        //     )->stream();
+                        // }, $record->invoice_no . '.pdf');
+                    }), 
 
                 ])
             ])

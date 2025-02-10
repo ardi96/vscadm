@@ -20,6 +20,7 @@ use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ClassPackageResource\Pages;
 use App\Filament\Resources\ClassPackageResource\RelationManagers;
+use Filament\Support\Enums\VerticalAlignment;
 
 class ClassPackageResource extends Resource
 {
@@ -50,10 +51,10 @@ class ClassPackageResource extends Resource
                     'regular' => 'Regular',
                     'per sesi' => 'Per Sesi'
                 ])->live(),
-                TextInput::make('session_per_week')->label('Sesi per Minggu')
+                TextInput::make('session_per_week')->label('Sesi per Bulan')
                     ->hidden(fn(Forms\Get $get): bool => $get('type') == 'private' || $get('type') =='per sesi')
                     ->requiredIf('type','regular')
-                    ->maxValue(21)->suffix('x pertemuan')
+                    ->maxValue(21)->suffix('pertemuan')
                     ->numeric(),
                 TextInput::make('price')->label('Harga')->numeric()->required()->suffix('IDR'),
                 TextInput::make('price_per_session')->label('Harga per Sesi')->numeric()->required()->suffix('IDR'),
@@ -73,7 +74,9 @@ class ClassPackageResource extends Resource
                     ->description(fn($record) => $record->description)->wrap(),
                 // TextColumn::make('description')->label('Deskripsi')->wrap()->searchable()->sortable()->verticallyAlignStart(),
                 TextColumn::make('type')->label('Tipe Kelas')->searchable()->sortable()->verticallyAlignStart(),
-                TextColumn::make('schedules.name')->label('Jadwal Tersedia')->bulleted()->searchable()->sortable(),
+                TextColumn::make('schedules.name')->label('Jadwal Tersedia')
+                    ->verticalAlignment(VerticalAlignment::Start)
+                    ->bulleted()->searchable()->sortable(),
                 TextColumn::make('price')->label('Harga')->money('IDR')->searchable()->sortable()->verticallyAlignStart(),
                 TextColumn::make('price_per_session')->label('Harga/Sesi')->money('IDR')->searchable()->sortable()->verticallyAlignStart(),
             ])

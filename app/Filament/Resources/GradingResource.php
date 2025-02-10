@@ -7,15 +7,18 @@ use App\Models\Grade;
 use App\Models\Grading;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\File;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Filters\SelectFilter;
 use App\Filament\Resources\GradingResource\Pages;
-use Filament\Tables\Enums\FiltersLayout;
-use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
+use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 
 class GradingResource extends Resource
 {
@@ -71,9 +74,19 @@ class GradingResource extends Resource
                 Tables\Actions\Action::make('download')
                     ->color('primary')
                     ->icon('heroicon-m-arrow-down-circle')
-                    ->url( fn($record) : string => config('app.url').'/download/raport/'. $record->id)
-                    ->openUrlInNewTab() 
-            ])
+                    ->action(function (Grading $record) {
+
+                        File::ensureDirectoryExists(storage_path('app/public/raports'));
+
+                        $pdf = Pdf::loadView('raport', ['record' => $record ]);
+        
+                        $filename = Str::uuid() . '.pdf';
+        
+                        $pdf->save(storage_path('app/public/raports/') . $filename);
+                                
+                        return response()->download(storage_path('app/public/raports/') . $filename);
+                    }) 
+                    ->visible(fn( Grading $record) => $record->status == 'approved')            ])
             ->bulkActions([
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
