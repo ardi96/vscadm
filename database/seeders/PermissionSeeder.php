@@ -97,6 +97,12 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'edit holiday']);
         Permission::create(['name' => 'delete holiday']);
 
+        // General Info
+        Permission::create(['name' => 'create general info']);
+        Permission::create(['name' => 'view general info']);
+        Permission::create(['name' => 'edit general info']);
+        Permission::create(['name' => 'delete general info']);
+
         // User
         Permission::create(['name' => 'create user']);
         Permission::create(['name' => 'view user']);

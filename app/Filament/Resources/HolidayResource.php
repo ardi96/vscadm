@@ -27,7 +27,7 @@ class HolidayResource extends Resource
 
     protected static ?string $navigationGroup = 'Pengaturan Sistem';
 
-    protected static ?int $navigationSort = 101;
+    protected static ?int $navigationSort = 102;
 
     public static function form(Form $form): Form
     {
