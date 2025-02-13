@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
-use \Spatie\Permission\Models\Permission;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use App\Models\Permission;
 
 class PermissionPolicy
 {
