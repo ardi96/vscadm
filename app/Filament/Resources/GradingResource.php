@@ -47,12 +47,12 @@ class GradingResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return 'Raport Approval';
+        return 'View Raport';
     }
 
     public static function getNavigationLabel(): string
     {
-        return 'Raport Approval';
+        return 'View Raport';
     }
 
     public static function table(Table $table): Table
