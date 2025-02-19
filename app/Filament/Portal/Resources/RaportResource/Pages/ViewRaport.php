@@ -2,8 +2,11 @@
 
 namespace App\Filament\Portal\Resources\RaportResource\Pages;
 
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Infolists\Infolist;
+use Illuminate\Support\Facades\File;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\TextEntry;
 use App\Filament\Portal\Resources\RaportResource;
@@ -36,9 +39,22 @@ class ViewRaport extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            // Action::make('Print')->icon('heroicon-m-printer')->color('primary')
+            //     ->url( fn($record) : string => config('app.url').'/download/raport/'. $record->id)
+            //     ->openUrlInNewTab()
             Action::make('Print')->icon('heroicon-m-printer')->color('primary')
-                ->url( fn($record) : string => config('app.url').'/download/raport/'. $record->id)
-                ->openUrlInNewTab()
+                ->action(function($record) {
+
+                    File::ensureDirectoryExists(storage_path('app/public/raports'));
+
+                    $pdf = Pdf::loadView('raport', ['record' => $record ]);
+    
+                    $filename = Str::uuid() . '.pdf';
+    
+                    $pdf->save(storage_path('app/public/raports/') . $filename);
+                            
+                    return response()->download(storage_path('app/public/raports/') . $filename);
+                })
         ];
     }
 }
