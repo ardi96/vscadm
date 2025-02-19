@@ -13,7 +13,7 @@ class GeneralInfoPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view general info');
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class GeneralInfoPolicy
      */
     public function view(User $user, GeneralInfo $generalInfo): bool
     {
-        return $user->can('view general info');
+        return true; 
     }
 
     /**
