@@ -33,7 +33,9 @@ class MemberPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create member');
+        return $user->can('create member') || (
+            !$user->is_admin
+        );
     }
 
     /**
@@ -41,7 +43,9 @@ class MemberPolicy
      */
     public function update(User $user, Member $member): bool
     {
-        return $user->can('edit member');
+        return $user->can('edit member') || (
+            $member->parent_id === $user->id
+        );
     }
 
     /**
