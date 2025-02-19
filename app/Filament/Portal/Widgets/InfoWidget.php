@@ -19,8 +19,16 @@ class InfoWidget extends Widget
      */
     protected function getViewData(): array
     {
-        return [
-            'record' =>  GeneralInfo::all()->first()->info
-        ];
+        if ( GeneralInfo::all()->isEmpty() ) {
+            return [
+                'record' =>  ''
+            ];
+        }   
+        else
+        {
+            return [
+                'record' =>  GeneralInfo::all()->first()->info
+            ];
+        }
     }
 }
