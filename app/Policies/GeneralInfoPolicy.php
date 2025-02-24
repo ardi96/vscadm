@@ -13,7 +13,9 @@ class GeneralInfoPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('view general info') || (
+            !$user->is_admin
+        );
     }
 
     /**
@@ -21,7 +23,9 @@ class GeneralInfoPolicy
      */
     public function view(User $user, GeneralInfo $generalInfo): bool
     {
-        return true; 
+        return $user->can('view general info') || (
+            !$user->is_admin
+        );
     }
 
     /**
