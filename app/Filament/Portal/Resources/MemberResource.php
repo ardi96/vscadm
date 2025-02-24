@@ -104,6 +104,7 @@ class MemberResource extends Resource
                     Section::make('Pilih Jadwal')
                         ->schema([
                             CheckboxList::make('schedules')->label('')
+                                ->relationship('schedules')
                                 ->options(function (Forms\Get $get) {
                                 return ClassSchedule::whereIn(
                                     'id',ClassPackageSchedule::where('class_package_id', $get('class_package_id'))->pluck('class_schedule_id')
