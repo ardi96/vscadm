@@ -23,6 +23,7 @@ class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse
 
     private function getFirstAccessiblePage(): string
     {
+
         $user = Auth::user();
     
         // Get all registered Filament pages & resources
@@ -35,6 +36,9 @@ class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse
                 if ($pageClass::canAccess($user)) {
                     return $pageClass::getUrl();
                 }
+            }
+            else {
+                return $pageClass::getUrl();
             }
         }
     
