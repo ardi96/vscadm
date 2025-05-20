@@ -12,7 +12,7 @@ class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse
     public function toResponse($request): RedirectResponse|Redirector
     {
         // Here, you can define which resource and which page you want to redirect to
-        if (Auth::user()->hasPermission('view finance dashboard')) {
+        if (Auth::user()->can('view finance dashboard')) {
             return redirect()->to(\App\Filament\Pages\FinanceDashboard::getUrl());
         }   
         else
@@ -32,13 +32,13 @@ class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse
         $pages = $panels->getPages();
     
         foreach ($pages as $pageClass => $page) {
-            if (method_exists($pageClass, 'canAccess')) {
-                if ($pageClass::canAccess($user)) {
-                    return $pageClass::getUrl();
+            if (method_exists($page, 'canAccess')) {
+                if ($page::canAccess($user)) {
+                    return $page::getUrl();
                 }
             }
             else {
-                return $pageClass::getUrl();
+                return $page::getUrl();
             }
         }
     

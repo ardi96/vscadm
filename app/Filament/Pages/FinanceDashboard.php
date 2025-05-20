@@ -26,7 +26,7 @@ class FinanceDashboard extends \Filament\Pages\Dashboard
 
     public static function canAccess(): bool
     {
-        return auth()->user()->can('view finance dashboard');
+        return Auth::user()->can('view finance dashboard');
     }
 
     public static function getNavigationLabel(): string

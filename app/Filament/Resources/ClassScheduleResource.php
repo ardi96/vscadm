@@ -54,7 +54,11 @@ class ClassScheduleResource extends Resource
                     'Jumat' => 'Jumat',
                     'Sabtu' => 'Sabtu',
                 ])->required(),
-                TimePicker::make('schedule_start_time')->label('Waktu Mulai')->required()
+                TimePicker::make('schedule_start_time')->label('Mulai Pukul')->required(),
+                Select::make('schedule_flag')->label('Waktu')->options([
+                    'pagi' => 'Pagi',
+                    'sore' => 'Sore',
+                ])->default('pagi'),
             ]);
     }
 
@@ -65,7 +69,8 @@ class ClassScheduleResource extends Resource
                 TextColumn::make('name')->label('Nama Jadwal')->searchable()->sortable(),
                 TextColumn::make('location.name')->label('Lokasi')->searchable()->sortable(),
                 TextColumn::make('schedule_day')->label('Hari')->searchable()->sortable(),
-                TextColumn::make('schedule_start_time')->label('Waktu Mulai')->searchable()->sortable(),
+                TextColumn::make('schedule_flag')->label('Waktu')->searchable()->sortable(),
+                TextColumn::make('schedule_start_time')->label('Mulai Pukul')->searchable()->sortable(),
             ])
             ->filters([
                 //

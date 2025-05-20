@@ -14,11 +14,8 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Placeholder;
-use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Table\Concerns\HasQuery;
 use Illuminate\Database\Eloquent\Collection;
-use Filament\Tables\Columns\Summarizers\Count;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Livewire\Attributes\Url;
 
@@ -64,11 +61,16 @@ class LaporanKehadiran extends Page implements HasTable
         return $table
             ->query( $this->getQuery() )
             ->columns([
-                TextColumn::make('name')->searchable(),
-                TextColumn::make('grade.name')->searchable(),
+                TextColumn::make('id')->searchable()
+                    ->label('Member ID')
+                    ->formatStateUsing(fn ($record) => 'VSC' . str_pad($record->id, 4, '0', STR_PAD_LEFT)),
+                TextColumn::make('name')->searchable()->label('Nama'),
+                TextColumn::make('grade.name')->searchable()->label('Grade'),
+                TextColumn::make('costume_label')->searchable()->label('Panggilan'),
+                TextColumn::make('parent_name')->searchable()->label('Orang Tua'),
                 TextColumn::make('kelas.name')->searchable(),
                 TextColumn::make('kelas.coach.name')->searchable(),
-                TextColumn::make('id')->formatStateUsing(function($record) {
+                TextColumn::make('created_at')->formatStateUsing(function($record) {
                     return $record->getSessionCount(
                         $this->tableFilters['created_from']['from_date'],
                         $this->tableFilters['created_to']['to_date']

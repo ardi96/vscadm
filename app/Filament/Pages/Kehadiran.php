@@ -45,8 +45,14 @@ class Kehadiran extends Page implements HasTable
             ->query( Absensi::query() )
             ->columns([
                 TextColumn::make('tanggal')->date('d-M-Y')->badge(),
-                TextColumn::make('member.name'),
+                TextColumn::make('member.id')->label('Member ID')
+                    ->sortable()
+                    ->formatStateUsing(fn ($record) => 'VSC' . str_pad($record->id, 4, '0', STR_PAD_LEFT)),
+                TextColumn::make('member.name')->label('Nama Anggota')->searchable(),
+                TextColumn::make('member.costume_label')->label('Panggilan'),
+                TextColumn::make('member.parent_name')->label('Orang Tua'),
                 TextColumn::make('grade.name'),
+                TextColumn::make('waktu')->label('Waktu'),
                 CheckboxColumn::make('hadir')->disabled()
             ])
             ->filters([

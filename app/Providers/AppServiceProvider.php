@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Http\Responses\LoginResponse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(
-            LoginResponse::class,
+            LoginResponseContract::class,
             \App\Http\Responses\LoginResponse::class
         );
     }

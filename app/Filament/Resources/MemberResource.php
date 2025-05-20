@@ -98,6 +98,8 @@ class MemberResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id')->label('Member ID')->searchable()->sortable()
+                    ->formatStateUsing(fn ($record) => 'VSC' . str_pad($record->id, 4, '0', STR_PAD_LEFT)),
                 TextColumn::make('name')->label('Nama Lengkap')->searchable()->sortable(),
                 TextColumn::make('gender')->label('J/K')->alignCenter()->searchable()->sortable(),
                 TextColumn::make('date_of_birth')->label('Tanggal Lahir')->date('d-M-Y')->searchable()->sortable(),
