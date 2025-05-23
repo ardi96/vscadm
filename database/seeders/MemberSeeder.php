@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Member;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Date;
@@ -15,6 +16,8 @@ class MemberSeeder extends Seeder
      */
     public function run(): void
     {
+        Member::truncate();
+
         // Open the CSV file from the database/csv directory (adjust path as needed)
         $csvFile = database_path('csv/members.csv'); // place your CSV here
 
@@ -39,10 +42,15 @@ class MemberSeeder extends Seeder
                 // Create user record - adjust keys to your CSV columns and User fillable fields
                 $member_data[] = [
                     'name' => $data['name'] ?? null,
-                    'email' => $data['email'] ?? null,
-                    'mobile_no' => $data['mobile_no'] ?? null,
-                    'is_admin' => 0,
-                    'is_coach' => 0,
+                    'gender' => $data['gender'] ?? null,
+                    'date_of_birth' => $data['date_of_birth'] ?? null,
+                    'parent_name' => $data['parent_name'] ?? null,
+                    'parent_mobile_no' => $data['parent_mobile_no'] ?? null,
+                    'class_package_id' => $data['class_package_id'] ?? null,
+                    'status' => $data['status'] ?? null,
+                    'balance' => 0,
+                    'parent_id' => $data['parent_id'] ?? null,
+                    // 'grade_id' => $data['grade_id'] == '' ? $data['grade_id'] :  0,
                     'created_at' => Date::now(),
                     'updated_at' => Date::now(),
                 ];
