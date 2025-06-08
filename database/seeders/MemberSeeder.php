@@ -39,6 +39,9 @@ class MemberSeeder extends Seeder
 
                 $data = array_combine($header, $row);
 
+                if ( $data['date_of_birth'] == '' ) {
+                    $data['date_of_birth'] = null; // Handle empty date_of_birth
+                }
                 // Create user record - adjust keys to your CSV columns and User fillable fields
                 $member_data[] = [
                     'name' => $data['name'] ?? null,
@@ -47,10 +50,10 @@ class MemberSeeder extends Seeder
                     'parent_name' => $data['parent_name'] ?? null,
                     'parent_mobile_no' => $data['parent_mobile_no'] ?? null,
                     'class_package_id' => $data['class_package_id'] ?? null,
-                    'status' => $data['status'] ?? null,
+                    'status' => $data['status'] ?? 'active',
                     'balance' => 0,
                     'parent_id' => $data['parent_id'] ?? null,
-                    // 'grade_id' => $data['grade_id'] == '' ? $data['grade_id'] :  0,
+                    'grade_id' => $data['grade_id'] == '' ? 0 : $data['grade_id'],
                     'created_at' => Date::now(),
                     'updated_at' => Date::now(),
                 ];
