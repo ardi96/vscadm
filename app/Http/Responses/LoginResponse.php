@@ -20,7 +20,8 @@ class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse
         {
             $panel = Filament::getCurrentPanel();
             
-            if ( $panel->id() == 'portal') {
+            if ( $panel->getId() == 'portal') {
+
                 return redirect()->intended(Filament::getUrl());
             }
 
