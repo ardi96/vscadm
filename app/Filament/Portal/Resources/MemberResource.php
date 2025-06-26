@@ -165,10 +165,11 @@ class MemberResource extends Resource
         ->filters([
             //
         ])
-        ->actions([
+        ->actions([ 
             Tables\Actions\ActionGroup::make([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make()->visible(fn($record) => $record->status == 'pending'),
+                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make()->visible(fn($record) => $record->status == 'pending'),
             ])
         ])
         ->bulkActions([
