@@ -4,6 +4,7 @@ namespace App\Filament\Portal\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\Grade;
 use App\Models\Member;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -83,6 +84,9 @@ class MemberResource extends Resource
                         ->requiredIf('marketing_source_id','4')
                         ->validationMessages(['required_if' => 'Isi channel marketing lainnya']),
                     TextInput::make('instagram')->label('Nama Akun Instagram'),
+
+                    Select::make('grade_id')->options(Grade::all()->pluck('name','id'))->label('Grade'),
+                    
                 ])->columns(2),
 
                 Wizard\Step::make('Pilih Paket')->schema([
@@ -123,13 +127,14 @@ class MemberResource extends Resource
                         ->suffix('IDR')
                         ->numeric()
                         ->required()
-                        ->default(150000)
-                        ->readOnly()
-                        ->mask(RawJs::make('$money($input,\',\',\'.\')')),
+                        ->default(250000)
+                        // ->readOnly()
+                        //->mask(RawJs::make('$money($input,\',\',\'.\')'))
+                        ,
                 
-                    TextInput::make('bank')->label('Bank')->required(),
-                    TextInput::make('notes')->label('Keterangan')->required(),
-                    DatePicker::make('payment_date')->label('Tanggal Transfer')->required()->default(Date::now()),
+                    // TextInput::make('bank')->label('Bank')->required(),
+                    // TextInput::make('notes')->label('Keterangan')->required(),
+                    // DatePicker::make('payment_date')->label('Tanggal Transfer')->required()->default(Date::now()),
 
                     FileUpload::make('payment_file_name')->label('Upload File')
                             ->acceptedFileTypes(['image/jpeg','image/png','application/pdf'])
