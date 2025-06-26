@@ -2,8 +2,9 @@
 
 namespace App\Rules;
 
-use App\Models\ClassPackage;
 use Closure;
+use App\Models\ClassPackage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Mockery\Generator\StringManipulation\Pass\ClassPass;
@@ -23,7 +24,8 @@ class ClassScheduleValidation implements DataAwareRule,  ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
        
-        if ($this->data['data']['class_package_id'] === null )
+        
+        if (!$this->data['data']['class_package_id'] )
         {
             return;
         }
