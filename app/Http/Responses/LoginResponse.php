@@ -3,6 +3,7 @@
 namespace App\Http\Responses;
  
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Livewire\Features\SupportRedirects\Redirector;
@@ -17,6 +18,12 @@ class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse
         }   
         else
         {
+            $panel = Filament::getCurrentPanel();
+            
+            if ( $panel->id() == 'portal') {
+                return redirect()->intended(Filament::getUrl());
+            }
+
             return redirect()->to($this->getFirstAccessiblePage());
         }
     }
@@ -28,7 +35,7 @@ class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse
     
         // Get all registered Filament pages & resources
         $panels = Filament::getCurrentPanel();
-
+        
         $pages = $panels->getPages();
     
         foreach ($pages as $pageClass => $page) {
