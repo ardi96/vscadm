@@ -3,17 +3,18 @@
 namespace App\Filament\Portal\Resources\MemberResource\Pages;
 
 use Filament\Actions;
+use App\Models\Invoice;
 use App\Models\Payment;
 use Filament\Actions\Action;
+use App\Models\PaymentInvoice;
+use App\Services\InvoiceService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Portal\Resources\MemberResource;
-use App\Models\Invoice;
-use App\Models\PaymentInvoice;
-use App\Services\InvoiceService;
 
 class CreateMember extends CreateRecord
 {
@@ -27,7 +28,7 @@ class CreateMember extends CreateRecord
     {
         $data['parent_id'] = Auth()->user()->id;
 
-        $data['payment_amount'] = $data['payment_amount'] * 1000;
+        // $data['payment_amount'] = $data['payment_amount'] * 1000;
 
         return $data; 
     }
@@ -69,7 +70,6 @@ class CreateMember extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
 
-
         $payment_date = $data['payment_date'];
         $bank = $data['bank'];
         $notes = $data['notes'];
@@ -81,8 +81,6 @@ class CreateMember extends CreateRecord
         //insert the member information
         $record =  static::getModel()::create($data);
 
-        
-        
         
         // Create a new payment
         $payment = new Payment();

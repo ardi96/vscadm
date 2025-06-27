@@ -9,7 +9,7 @@ use App\Models\Member;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\CostumeSize;
-use Filament\Support\RawJs;
+// use Filament\Support\RawJs;
 use App\Models\ClassPackage;
 use App\Models\ClassSchedule;
 use App\Models\MarketingSource;
