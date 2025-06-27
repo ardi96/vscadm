@@ -132,9 +132,9 @@ class MemberResource extends Resource
                         //->mask(RawJs::make('$money($input,\',\',\'.\')'))
                         ,
                 
-                    // TextInput::make('bank')->label('Bank')->required(),
-                    // TextInput::make('notes')->label('Keterangan')->required(),
-                    // DatePicker::make('payment_date')->label('Tanggal Transfer')->required()->default(Date::now()),
+                    TextInput::make('bank')->label('Bank')->required(),
+                    TextInput::make('notes')->label('Keterangan')->required(),
+                    DatePicker::make('payment_date')->label('Tanggal Transfer')->required()->default(Date::now()),
 
                     FileUpload::make('payment_file_name')->label('Upload File')
                             ->acceptedFileTypes(['image/jpeg','image/png','application/pdf'])
