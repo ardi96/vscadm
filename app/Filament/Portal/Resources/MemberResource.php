@@ -149,7 +149,7 @@ class MemberResource extends Resource
                                     ->icon('heroicon-o-question-mark-circle')
                                     ->tooltip('Petunjuk Pembayaran')
                             ),
-                ])
+                ])->visibleOn('create')
             ])->columnSpanFull(),
         ])->inlineLabel();
     }

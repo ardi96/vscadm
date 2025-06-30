@@ -33,13 +33,13 @@ class EditMember extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
 
-        $payment_date = $data['payment_date'];
-        $bank = $data['bank'];
-        $notes = $data['notes'];
+        // $payment_date = $data['payment_date'];
+        // $bank = $data['bank'];
+        // $notes = $data['notes'];
         
-        unset($data['bank']);
-        unset($data['payment_date']);
-        unset($data['notes']);
+        // unset($data['bank']);
+        // unset($data['payment_date']);
+        // unset($data['notes']);
 
         //insert the member information
         $record->update($data);
