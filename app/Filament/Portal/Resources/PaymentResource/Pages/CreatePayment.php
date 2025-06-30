@@ -2,11 +2,14 @@
 
 namespace App\Filament\Portal\Resources\PaymentResource\Pages;
 
+use App\Models\User;
 use Filament\Actions;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Portal\Resources\PaymentResource;
+use Filament\Notifications\Actions\Action as ActionsAction;
 
 class CreatePayment extends CreateRecord
 {
@@ -31,5 +34,19 @@ class CreatePayment extends CreateRecord
             $invoice->save();
         }
         
+
+        $users = User::permission('approve payment')->get();
+
+        foreach( $users as $user)
+        {
+
+            Notification::make()
+                ->body('Payment receipt has been uploaded by the member')
+                ->actions([
+                    ActionsAction::make('view')->label('View')->url(PaymentResource::getUrl(name: 'view', parameters: ['record' => $this->record->id ], panel : 'admin'))
+                ])
+                ->sendToDatabase( $user );
+              
+        }
     }
 }

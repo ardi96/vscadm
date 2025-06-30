@@ -2,7 +2,7 @@
 
 namespace App\Filament\Portal\Resources\MemberResource\Pages;
 
-use Filament\Actions;
+use App\Models\User;
 use App\Models\Invoice;
 use App\Models\Payment;
 use Filament\Actions\Action;
@@ -12,9 +12,13 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Contracts\Support\Htmlable;
+use App\Filament\Resources\PaymentResource;
 use App\Filament\Portal\Resources\MemberResource;
+use Filament\Notifications\Actions\Action as ActionsAction;
+use Illuminate\Support\Facades\URL;
 
 class CreateMember extends CreateRecord
 {
@@ -105,6 +109,22 @@ class CreateMember extends CreateRecord
             'payment_id' => $payment->id 
         ]);
 
+
+        // here we want to send notification to the users whose permission to "approve payment"
+        $users = User::permission('approve payment')->get();
+
+        foreach( $users as $user)
+        {
+
+            Notification::make()
+                ->body('Payment receipt has been uploaded by the member')
+                ->actions([
+                    ActionsAction::make('view')->label('View')->url(PaymentResource::getUrl(name: 'view', parameters: ['record' => $payment->id ], panel : 'admin'))
+                ])
+                ->sendToDatabase( $user );
+              
+        }
+        
         return $record;
     }
 }

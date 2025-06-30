@@ -66,6 +66,7 @@ class PortalPanelProvider extends PanelProvider
             ->registration(Register::class)
             ->passwordReset()
             ->emailVerification()
-            ->profile();;
+            ->profile()
+            ->databaseNotifications();;
     }
 }
