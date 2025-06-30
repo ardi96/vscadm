@@ -96,7 +96,7 @@ class InvoiceService
             $member->save();
         }
 
-        SendInvoiceMail::dispatch($invoice);
+        // SendInvoiceMail::dispatch($invoice);
         
         return $invoice;
     }
