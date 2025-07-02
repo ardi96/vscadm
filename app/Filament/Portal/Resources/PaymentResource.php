@@ -105,11 +105,12 @@ class PaymentResource extends Resource
                 Tables\Actions\ActionGroup::make([
                     // Tables\Actions\EditAction::make(),
                     Tables\Actions\ViewAction::make(),
+                    
                     Tables\Actions\Action::make('lihat attachment')->icon('heroicon-m-arrow-top-right-on-square')
                     ->url(fn(Payment $record):string => url('storage/'. $record->file_name))
                         ->openUrlInNewTab(),
-                    Tables\Actions\DeleteAction::make()
-                        ->visible(fn($record) => $record->status == 'pending'),
+                    
+                    // Tables\Actions\DeleteAction::make()->visible(fn($record) => $record->status == 'pending'),
                 ])
             ])
             ->bulkActions([

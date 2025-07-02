@@ -127,7 +127,7 @@ class MemberResource extends Resource
                         ->numeric()
                         ->required()
                         ->default(250000)
-                        // ->readOnly()
+                        ->readOnly()
                         //->mask(RawJs::make('$money($input,\',\',\'.\')'))
                         ,
                 
