@@ -26,6 +26,7 @@ class MemberTest extends TestCase
         $available_days = $member->getAvailableSessionDay('2023-01-01', '2023-01-31');
 
         $this->assertIsInt($available_days);
+        $this->assertEquals(8, $available_days, 'The available session days for the member are not as expected.');
     }
 
 }
