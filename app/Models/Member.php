@@ -190,9 +190,12 @@ class Member extends Model
         {
             $day_num = date_format( $current_date,'w' );
 
-            if ( $day_num == $day_map[$schedule_day] )
+            foreach( $schedule_days as $schedule_day )
             {
-                $available_days++;
+                if ( $day_num == $schedule_day )
+                {
+                    $available_days++;
+                }
             }
 
             $current_date = date_add($current_date, DateInterval::createFromDateString('1 day'));
