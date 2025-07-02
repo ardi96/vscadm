@@ -39,4 +39,15 @@ class MemberTest extends TestCase
         $this->assertEquals(1, $holiday_count, 'The holiday count for the member is not as expected.');
     }
 
+    public function test_get_carried_forward_holiday()
+    {
+        $member = Member::find(228);
+        $this->assertNotNull($member, 'Member with ID 228 does not exist.');
+        $carried_forward = $member->getCarriedForwardHoliday('2025-01-01', '2025-01-31');
+
+        echo "Carried Forward Holiday: $carried_forward\n"; // Debugging output
+
+        $this->assertIsInt($carried_forward);
+        $this->assertEquals(0, $carried_forward, 'The carried forward holiday for the member is not as expected.');
+    }   
 }
