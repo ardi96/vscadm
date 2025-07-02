@@ -35,8 +35,8 @@
                 <div>Bpk/Ibu {{ $record->member->parent_name }}</div>
                 <br>
                 <div>Nama Siswa: {{ $record->member->name }}</div>
-                <div>Grade: {{ $record->member->grade->name  }}</div>
-                <div>Kelas: {{ $record->member->kelas->name }}</div>
+                <div>Grade: {{ $record->member->grade?->name  }}</div>
+                <div>Kelas: {{ $record->member->kelas?->name }}</div>
             </td>
         </tr>
     </table>
