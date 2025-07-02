@@ -120,6 +120,11 @@ class InvoiceService
         $member->last_invoice_date = Date::now();
         $member->save();
 
+        $invoice->items()->create([
+            'description' => 'Registration Fee',
+            'amount' => $payment->amount
+        ]);
+
         SendInvoiceMail::dispatch($invoice);
         
         return $invoice;
