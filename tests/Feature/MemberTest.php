@@ -23,7 +23,7 @@ class MemberTest extends TestCase
     {
         $member = Member::find(228);
         $this->assertNotNull($member, 'Member with ID 228 does not exist.');
-        $available_days = $member->getAvailableSessionDay('2023-01-01', '2023-01-31');
+        $available_days = $member->getAvailableSessionDay('2025-01-01', '2025-01-31');
 
         $this->assertIsInt($available_days);
         $this->assertEquals(8, $available_days, 'The available session days for the member are not as expected.');
