@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-use DateInterval;
 use DateTime;
-use Dflydev\DotAccessData\DataInterface;
+use DateInterval;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Database\Eloquent\Model;
+use Dflydev\DotAccessData\DataInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -223,6 +224,8 @@ class Member extends Model
         $from_date = new DateTime ( $from );
 
         $holidays = Holiday::whereBetween('tanggal',array($from_date,$to_date))->get();
+
+        Log::info('Holidays: ' . $holidays->count());
         
         if ( count($holidays) > 0 )
         {
@@ -244,6 +247,7 @@ class Member extends Model
                         if ( $day_num == $day_map[$schedule_day] )
                         {
                             $holiday_count++;
+                            Log::info('Holiday Count: ' . $holiday_count);
                         }
                     }); 
 
@@ -271,7 +275,7 @@ class Member extends Model
         {
             $carried_forward = 0;
         }
-        
+
         return $carried_forward;
     }
 }
