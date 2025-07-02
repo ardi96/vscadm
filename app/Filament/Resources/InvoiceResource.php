@@ -122,7 +122,7 @@ class InvoiceResource extends Resource
                         ->requiresConfirmation(),
                 ]),
             ])
-            ->recordUrl( fn(Invoice $record): string => ( $record != null ) ?
+            ->recordUrl( fn(Invoice $record): string => ( $record->member != null ) ?
                 MemberInvoices::getUrl(['record' => $record->member]) : '' 
             )
             ->defaultSort('invoice_no','desc');
