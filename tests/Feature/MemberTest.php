@@ -29,4 +29,14 @@ class MemberTest extends TestCase
         $this->assertEquals(8, $available_days, 'The available session days for the member are not as expected.');
     }
 
+    public function test_get_holiday_count()
+    {
+        $member = Member::find(228);
+        $this->assertNotNull($member, 'Member with ID 228 does not exist.');
+        $holiday_count = $member->getHolidayCount('2025-01-01', '2025-01-31');
+
+        $this->assertIsInt($holiday_count);
+        $this->assertEquals(1, $holiday_count, 'The holiday count for the member is not as expected.');
+    }
+
 }

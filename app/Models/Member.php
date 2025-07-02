@@ -205,18 +205,18 @@ class Member extends Model
     }
 
     /**
-     * will return the number of carried forward holiday 
-     * which is not attended by the member
+     * will return the number of holiday 
+     * falls on the member schedule
      * from the given date range
      * 
      * when the holiday is marked as carried forward and the member schedule    
      * fall on the holiday date, we increase the count of carried forward holiday
      * but if the member schedule is not on the holiday date, we don't increase the count
      */
-    public function getCarriedForwardHoliday(?string $from, ?string $to) : int
+    public function getHolidayCount(?string $from, ?string $to) : int
     {
         
-        $carried_forward = 0;
+        $holiday_count = 0;
 
         $to_date = new DateTime( $to );
 
@@ -233,7 +233,7 @@ class Member extends Model
                 {
                     $day = new DateTime( $holiday->tanggal );
 
-                    $this->schedules()->get()->each(function($schedule) use ($day, &$carried_forward) {
+                    $this->schedules()->get()->each(function($schedule) use ($day, &$holiday_count) {
         
                         $day_map = array('Minggu' => 0, 'Senin' => 1, 'Selasa' => 2,'Rabu' => 3,'Kamis' => 4,'Jumat' => 5,'Sabtu' => 6);
 
@@ -243,15 +243,35 @@ class Member extends Model
                         
                         if ( $day_num == $day_map[$schedule_day] )
                         {
-                            $carried_forward++;
+                            $holiday_count++;
                         }
                     }); 
 
-                    $carried_forward++;
                 }
             }
         }
 
+        return $holiday_count;
+    }
+
+    public function getCarriedForwardHoliday(?string $from, ?string $to) : int
+    {
+        $carried_forward = 0;
+
+        $available_days = $this->getAvailableSessionDay($from, $to);
+        $holiday_count = $this->getHolidayCount($from, $to);
+
+        $eligible_sessions = $this->package->session_per_week;
+     
+        if ( $available_days - $holiday_count < $eligible_sessions )
+        {
+            $carried_forward = $eligible_sessions - ($available_days - $holiday_count);
+        }
+        else
+        {
+            $carried_forward = 0;
+        }
+        
         return $carried_forward;
     }
 }
