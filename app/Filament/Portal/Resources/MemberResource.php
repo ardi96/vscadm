@@ -23,7 +23,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Wizard;
-use App\Rules\ClassScheduleValidation;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -115,7 +114,7 @@ class MemberResource extends Resource
                                     )->pluck('name','id');
                                 })
                             ->columns(2)
-                            ->rules([new ClassScheduleValidation()])
+                            // ->rules([new ClassScheduleValidation()])
                             
                         ]),
                 ])
