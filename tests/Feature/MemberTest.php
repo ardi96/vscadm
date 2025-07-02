@@ -1,0 +1,31 @@
+<?php
+
+namespace Tests\Feature;
+
+use Tests\TestCase;
+use App\Models\Member;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+class MemberTest extends TestCase
+{
+    /**
+     * A basic feature test example.
+     */
+    public function test_example(): void
+    {
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+    }
+
+    public function test_get_available_session_days()
+    {
+        $member = Member::find(228);
+        $this->assertNotNull($member, 'Member with ID 228 does not exist.');
+        $available_days = $member->getAvailableSessionDay('2023-01-01', '2023-01-31');
+
+        $this->assertIsInt($available_days);
+    }
+
+}

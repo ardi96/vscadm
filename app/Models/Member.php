@@ -160,6 +160,47 @@ class Member extends Model
         return $attendance_count;
     }
 
+    public function getAvailableSessionDay(?string $from, ?string $to) : int
+    {
+        $day_map = array('Minggu' => 0, 'Senin' => 1, 'Selasa' => 2,'Rabu' => 3,'Kamis' => 4,'Jumat' => 5,'Sabtu' => 6);
+
+        $available_days = 0;
+        
+        $schedule_days = [];
+
+        $to_date = new DateTime( $to );
+        $from_date = new DateTime ( $from );
+
+        $schedules = $this->schedules()->get();
+
+        foreach( $schedules as $schedule)
+        {
+            $schedule_day =  $day_map[$schedule->schedule_day];
+            
+            if ( array_search($schedule_day, $schedule_days) === false )
+            {
+                $schedule_days[] = $schedule_day;
+            }
+
+        }
+
+        $current_date = $from_date;
+
+        while ($current_date <= $to_date)
+        {
+            $day_num = date_format( $current_date,'w' );
+
+            if ( $day_num == $day_map[$schedule_day] )
+            {
+                $available_days++;
+            }
+
+            $current_date = date_add($current_date, DateInterval::createFromDateString('1 day'));
+        }
+
+        return $available_days;
+    }
+
     /**
      * will return the number of carried forward holiday 
      * which is not attended by the member
