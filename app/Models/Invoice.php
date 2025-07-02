@@ -44,8 +44,8 @@ class Invoice extends Model
         $this->payment_date = Date::now();
         $this->save();
 
-        $this->member->balance = $this->member->balance + $this->amount;
-        $this->member->save();
+        // $this->member->balance = $this->member->balance + $this->amount;
+        // $this->member->save();
                        
     }
 
