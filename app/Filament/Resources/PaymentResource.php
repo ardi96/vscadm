@@ -41,7 +41,7 @@ class PaymentResource extends Resource
                 TextColumn::make('notes')->label('Keterangan')->searchable()->sortable(),
                 TextColumn::make('bank')->label('Nama Bank')->searchable()->sortable(),
                 TextColumn::make('invoices.invoice_no')->label('No. Invoices')->bulleted()->searchable()->sortable(),
-                TextColumn::make('invoices.member.name')->label('Nama Anak')->searchable()->sortable(),
+                TextColumn::make('invoices.member.name')->label('Nama Anak')->bulleted()->searchable()->sortable(),
                 TextColumn::make('created_at')->label('Tanggal Upload')->date('d-M-Y')->searchable()->sortable(),
                 TextColumn::make('status')->label('status')->searchable()->sortable()
                 ->badge()
