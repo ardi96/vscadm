@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\InvoiceResource\Pages;
 
+use App\Filament\Exports\InvoiceExporter;
 use Filament\Actions;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,7 @@ use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\InvoiceResource;
+use Filament\Actions\ExportAction;
 
 class ListInvoices extends ListRecords
 {
@@ -17,7 +19,10 @@ class ListInvoices extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            // Actions\CreateAction::make(),
+            ExportAction::make()
+                ->label('Export Data')
+                ->exporter(InvoiceExporter::class)
+                ->visible(Auth::user()->can('export invoice')),
         ];
     }
 

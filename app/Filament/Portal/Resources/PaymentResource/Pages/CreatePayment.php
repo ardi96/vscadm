@@ -25,7 +25,7 @@ class CreatePayment extends CreateRecord
         if ($user->invoices()->where('status', 'unpaid')->count() == 0) {
             Notification::make()
                 ->title('Peringatan')
-                ->body('Tidak ada invoice yang belum dibayar. Anda tidak dapat mengunggah bukti pembayaran.')
+                ->body('Tagihan belum tersedia.')
                 ->danger()
                 ->send();
 

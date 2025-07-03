@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PaymentResource\Pages;
 use Filament\Actions;
 use App\Models\Payment;
 use Filament\Resources\Components\Tab;
+use App\Filament\Exports\PaymentExporter;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\PaymentResource;
@@ -16,6 +17,10 @@ class ListPayments extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\ExportAction::make()
+                ->label('Export Data')
+                ->exporter(PaymentExporter::class)
+                ->visible(auth()->user()->can('export payment'))
             // Actions\CreateAction::make(),
         ];
     }
