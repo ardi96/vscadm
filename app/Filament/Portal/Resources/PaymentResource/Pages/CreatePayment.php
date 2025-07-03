@@ -17,6 +17,23 @@ class CreatePayment extends CreateRecord
 
     protected static bool $canCreateAnother = false;
 
+
+    public function beforeFill()
+    {
+        $user = Auth::user();
+
+        if ($user->invoices()->where('status', 'unpaid')->count() == 0) {
+            Notification::make()
+                ->title('Peringatan')
+                ->body('Tidak ada invoice yang belum dibayar. Anda tidak dapat mengunggah bukti pembayaran.')
+                ->danger()
+                ->send();
+
+            return redirect( url(PaymentResource\Pages\ListPayments::getUrl()) );
+        }   
+    }
+
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['user_id'] = Auth::user()->id;
