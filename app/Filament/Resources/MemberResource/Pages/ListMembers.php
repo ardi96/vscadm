@@ -17,7 +17,6 @@ class ListMembers extends ListRecords
         return [
             Actions\ExportAction::make()
                 ->label('Export Data')
-                ->fileDisk('export')
                 ->exporter(MemberExporter::class),
             Actions\CreateAction::make(),
         ];
