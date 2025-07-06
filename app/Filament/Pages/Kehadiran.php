@@ -45,7 +45,7 @@ class Kehadiran extends Page implements HasTable
             ->query( Absensi::query() )
             ->columns([
                 TextColumn::make('tanggal')->date('d-M-Y')->badge(),
-                TextColumn::make('date_created')->date('H:i:s')->badge()->label('Jam'),
+                TextColumn::make('created_at')->date('d-M-Y H:i:s')->badge()->label('Timestamp'),
                 TextColumn::make('coach.name')->label('Coach')->searchable(),
                 TextColumn::make('member.id')->label('Member ID')
                     ->sortable()
