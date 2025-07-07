@@ -43,7 +43,7 @@ class MemberResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationLabel = 'Registrasi';
+    protected static ?string $navigationLabel = 'Member';
 
     protected static ?int $navigationSort = 10;
 
