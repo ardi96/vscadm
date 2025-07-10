@@ -105,6 +105,7 @@ class MemberResource extends Resource
                 TextColumn::make('date_of_birth')->label('Tanggal Lahir')->date('d-M-Y')->searchable()->sortable(),
                 TextColumn::make('school_name')->label('Asal Sekolah')->searchable()->sortable(),
                 TextColumn::make('parent.name')->label('Nama Orang Tua')->searchable()->sortable(),
+                TextColumn::make('parent.email')->label('Email Orang Tua')->searchable()->sortable(),
                 TextColumn::make('parent.mobile_no')->label('WA Orang Tua')->searchable()->sortable(),
                 TextColumn::make('balance')->label('Outstanding')->money('IDR')->searchable()->sortable(),
                 TextColumn::make('status')->label('Status')->searchable()->sortable(),
