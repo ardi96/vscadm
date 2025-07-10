@@ -63,7 +63,8 @@ class MemberInvoices extends ManageRelatedRecords
     {
         return $table
             ->columns([
-                TextColumn::make('invoice_no')->label('No. Invoice')->alignCenter()->sortable()->searchable()->sortable(),
+                TextColumn::make('invoice_no')->label('No. Invoice')->alignCenter()->sortable()->searchable(),
+                TextColumn::make('type')->label('Judul Invoice')->searchable()->sortable(),
                 TextColumn::make('invoice_date')->date('d-M-Y')->label('Tanggal Invoice')->searchable()->sortable(),
                 TextColumn::make('item_description')->label('Paket')->searchable()->sortable(),
                 TextColumn::make('amount')->money('IDR')->label('Jumlah')->searchable()->sortable(),

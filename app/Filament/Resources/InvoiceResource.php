@@ -48,6 +48,7 @@ class InvoiceResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('invoice_no')->label('No. Invoice')->sortable()->searchable(),
+                TextColumn::make('type')->label('Judul Invoice')->sortable()->searchable(),
                 TextColumn::make('member.name')->label('Atas Nama')->sortable()->searchable(),
                 TextColumn::make('parent.name')->label('Nama Org. Tua')->sortable()->searchable(),
                 TextColumn::make('invoice_date')->label('Tgl. Invoice')->date('d-M-Y')->searchable()->sortable(),

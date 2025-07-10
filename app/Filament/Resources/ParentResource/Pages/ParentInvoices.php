@@ -46,6 +46,7 @@ class ParentInvoices extends ManageRelatedRecords
             ->columns([
                 Tables\Columns\TextColumn::make('member.name')->label('Nama Anggota'),
                 Tables\Columns\TextColumn::make('invoice_no')->label('No. Invoice')->sortable(),
+                Tables\Columns\TextColumn::make('type')->label('Judul Invoice')->sortable(),
                 Tables\Columns\TextColumn::make('invoice_date')->label('Tgl. Invoice')->date('d-M-Y'),
                 Tables\Columns\TextColumn::make('item_description')->label('Nama Paket'),
                 Tables\Columns\TextColumn::make('amount')->label('Jumlah')->money('IDR'),
