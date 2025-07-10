@@ -50,7 +50,7 @@ class ViewMember extends ViewRecord
             TextEntry::make('marketing_source_other')->label('Channel Marketing Lainnya'),
             TextEntry::make('instagram')->label('Akun Instagram'),
             TextEntry::make('package.name')->label('Paket'),
-            TextEntry::make('kelas.name')->label('Kelas'),
+            // TextEntry::make('kelas.name')->label('Kelas'),
             TextEntry::make('grade.name')->label('Grade'),
             // TextEntry::make('start_date')->label('Tanggal Mulai')->date('d-M-Y'),
             TextEntry::make('status')->label('Status Keanggotaan')->badge()->color(Color::Amber),
