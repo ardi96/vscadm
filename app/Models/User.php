@@ -79,9 +79,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return $this->hasMany(Member::class,'parent_id');
     }
 
-    public function invoices() : HasManyThrough
+    // public function invoices() : HasManyThrough
+    // {
+    //     return $this->hasManyThrough(Invoice::class, Member::class, 'parent_id', 'member_id');
+    // }
+
+    public function invoices() : HasMany
     {
-        return $this->hasManyThrough(Invoice::class, Member::class, 'parent_id', 'member_id');
+        return $this->hasMany(Invoice::class,'parent_id');
     }
 
 }
