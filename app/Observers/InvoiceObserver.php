@@ -26,9 +26,13 @@ class InvoiceObserver
 
         $member = Member::find($invoice->member_id);
 
-        $member->balance = $member->balance + $diff; 
+        if( $member != null )
+        {
+            $member->balance = $member->balance + $diff; 
 
-        $member->save();
+            $member->save();
+        }
+
     }
 
     /**
