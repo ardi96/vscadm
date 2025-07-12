@@ -21,6 +21,7 @@ use App\Models\ClassPackageSchedule;
 use Filament\Forms\Components\Radio;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
+use App\Rules\MemberUniqueValidation;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Section;
@@ -59,7 +60,7 @@ class MemberResource extends Resource
                     ])->columns(2),
                     TextInput::make('parent_name')->label('Nama Orang Tua')->required(),
                     TextInput::make('parent_mobile_no')->label('Nomor WA Aktif Orang Tua')->required(),
-                    DatePicker::make('date_of_birth')->label('Tanggal Lahir')->required(),
+                    DatePicker::make('date_of_birth')->label('Tanggal Lahir')->required()->rule(new MemberUniqueValidation()),
                     TextInput::make('school_name')->label('Asal Sekolah')->maxLength(40),
                     TextInput::make('costume_label')->label('Nama Tertera di Baju')->maxLength(40),
                     Select::make('costume_size_id')->label('Ukuran Baju')->required()->options(
