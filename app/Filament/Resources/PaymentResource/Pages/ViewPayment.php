@@ -110,7 +110,6 @@ class ViewPayment extends ViewRecord
                     TextEntry::make('description')->label('Judul Invoice'),                
                     TextEntry::make('item_description')->label('Nama Paket'),                
                     TextEntry::make('member.name')->label('Nama Member'),                
-                    TextEntry::make('member.parent_name')->label('Nama Org. Tua'),                
             ])->columns(6)->columnSpanFull(),
             ViewPaymentAttachment::make('file_name')->label('Bukti Pembayaran'),
         ])->columns(6);
