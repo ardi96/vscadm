@@ -87,6 +87,7 @@ class ViewPayment extends ViewRecord
             TextEntry::make('amount')->label('Jumlah Pembayaran')->money('IDR'),
             TextEntry::make('notes')->label('Keterangan'),
             TextEntry::make('bank')->label('Dari Bank'),
+            TextEntry::make('parent.name')->label('User Pembayar'),
             TextEntry::make('created_at')->label('Tanggal Upload')->dateTime('d-M-Y H:i:s'),
             TextEntry::make('status')->label('Status Konfirmasi')
                 ->badge()
@@ -109,6 +110,7 @@ class ViewPayment extends ViewRecord
                     TextEntry::make('description')->label('Judul Invoice'),                
                     TextEntry::make('item_description')->label('Nama Paket'),                
                     TextEntry::make('member.name')->label('Nama Member'),                
+                    TextEntry::make('member.parent_name')->label('Nama Org. Tua'),                
             ])->columns(6)->columnSpanFull(),
             ViewPaymentAttachment::make('file_name')->label('Bukti Pembayaran'),
         ])->columns(6);
