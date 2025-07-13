@@ -76,7 +76,7 @@ class AdminPanelProvider extends PanelProvider
                     // ->icon('heroicon-o-document-chart-bar')
                     ->collapsed()
             ])
-            // ->sidebarCollapsibleOnDesktop()
+            ->sidebarCollapsibleOnDesktop()
             ->topNavigation(false)
             ->passwordReset()
             ->profile()

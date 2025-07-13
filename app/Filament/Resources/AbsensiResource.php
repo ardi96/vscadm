@@ -10,16 +10,17 @@ use App\Models\Absensi;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\AbsensiResource\Pages;
-use Filament\Tables\Filters\SelectFilter;
 
 class AbsensiResource extends Resource
 {
@@ -83,6 +84,41 @@ class AbsensiResource extends Resource
             ->filtersFormColumns(3)
             ->actions([
                 // Tables\Actions\EditAction::make(),
+                Action::make('check')
+                    ->button()
+                    ->label('Cek Hadir')
+                    ->icon('heroicon-m-check-circle')
+                    ->color('primary')
+                    ->requiresConfirmation()
+                    ->action(function (Member $record, $livewire) {
+                        $tanggal = $livewire->getTableFilterState('schedule')['tanggal'];
+                        $waktu = $livewire->getTableFilterState('schedule')['waktu'];
+
+                        $absensi = Absensi::firstOrCreate([
+                            'member_id' => $record->id,
+                            'grade_id' => $record->grade_id,
+                            'tanggal' => $tanggal,
+                            'waktu'=> $waktu,
+                            'hadir' => true,
+                        ]);
+                        
+                        $absensi->user_id = Auth::user()->id;
+                        $absensi->save(); 
+                    })
+                    ->visible(function (Member $record, $livewire) : bool {
+
+                        $tanggal = $livewire->getTableFilterState('schedule')['tanggal'];
+                        $waktu = $livewire->getTableFilterState('schedule')['waktu'];
+
+                        $absensi = Absensi::where('member_id', $record->id)
+                            ->where('grade_id', $record->grade_id)
+                            ->where('tanggal', $tanggal)
+                            ->where('waktu', $waktu)
+                            ->exists();
+
+                        return !$absensi;
+                    })
+                    ,
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
