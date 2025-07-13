@@ -45,6 +45,7 @@ class InvoiceService
 
         $invoice = Invoice::create([
             'member_id' => $member->id,
+            'type' => 'membership',
             'parent_id' => $member->parent->id,
             'amount' => $member->package->price,
             'invoice_date' => Date::now(),
