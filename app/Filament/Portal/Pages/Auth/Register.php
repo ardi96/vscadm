@@ -37,6 +37,7 @@ class Register extends BaseRegister
         return TextInput::make('mobile_no')
             ->label('Mobile No (Whatsapp)')
             ->tel()
+            ->unique('users','mobile_no')
             ->required();
     }
 
