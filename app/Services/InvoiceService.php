@@ -38,10 +38,15 @@ class InvoiceService
         
         $from = date_create( $to->format('Y-m-01') );
         
-        logger('From: ' . $from->format('Y-m-d') ."\r\n");
-        logger('To: ' . $to->format('Y-m-d') ."\r\n");
+        logger('From: ' . $from->format('Y-m-d'));
+
+        logger('To: ' . $to->format('Y-m-d'));
         
         // create Invoice Header
+
+        $invoicePeriod = date_create( Date::now()->format('Y-m-t') );
+
+        $invoicePeriod = date_add($invoicePeriod, date_interval_create_from_date_string("1 day"));
 
         $invoice = Invoice::create([
             'member_id' => $member->id,
@@ -50,7 +55,7 @@ class InvoiceService
             'amount' => $member->package->price,
             'invoice_date' => Date::now(),
             'invoice_no' => env('INVOICE_PREFIX','VSC') . InvoiceService::getNextNumber(),
-            'description' => 'Membership Fee '. Date::now()->format('M-Y'),
+            'description' => 'Membership Fee '. $invoicePeriod->format('M-Y'),
             'item_description' => $member->package->name,
             'status' => 'unpaid',
         ]);
@@ -61,7 +66,7 @@ class InvoiceService
 
         // create invoice item 
         $invoice->items()->create([
-            'description' => 'Membership Fee Bulan '. Date::now()->format('M-Y'),
+            'description' => 'Membership Fee Bulan '. $invoicePeriod->format('M-Y'),
             'amount' => $member->package->price
         ]);
 
