@@ -64,7 +64,7 @@ class RaportResource extends Resource
                 TextColumn::make('parent_name')->searchable()->label('Orang Tua'),
                 TextColumn::make('kelas.name')->searchable()->label('Kelas'),
                 TextColumn::make('grade.name')->searchable()->label('Grade'),
-                TextColumn::make('CurrentMark')->searchable()->label('Nilai'),
+                TextColumn::make('CurrentMark')->label('Nilai'),
                 // TextColumn::make('grade.month')->searchable()->label('Bulan'),
                 // TextColumn::make('year')->searchable()->label('Tahun'),
                 // TextColumn::make('marks')->searchable()->label('Nilai'),
