@@ -63,8 +63,8 @@ class MemberResource extends Resource
                 TextInput::make('marketing_source_other')->label('Lainnya '),
                 TextInput::make('instagram')->label('Nama Akun Instagram'),
                 
-                // Select::make('kelas_id')->options(Kelas::all()->pluck('name','id'))->required()->label('Kelas'),
-                Select::make('grade_id')->options(Grade::all()->pluck('name','id'))->label('Grade'),
+                Select::make('kelas_id')->options(Kelas::all()->pluck('name','id'))->required()->label('Kelas'),
+                // Select::make('grade_id')->options(Grade::all()->pluck('name','id'))->label('Grade'),
                 
                 Select::make('class_package_id')->label('Paket Yang Dipilih')
                     ->options(
