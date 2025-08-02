@@ -24,7 +24,7 @@ class GradingPolicy
     public function view(User $user, Grading $grading): bool
     {
         return ( $user->can('view grading') && $user->is_admin ) || (
-            !$user->is_admin && $user->id === $grading->member->parent_id 
+            (!$user->is_admin) && ($user->id === $grading->member->parent_id) 
             // && $grading->member->balance <= 0
         );
     }
