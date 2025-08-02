@@ -68,7 +68,36 @@ class RaportResource extends Resource
                 Action::make('View')
                     ->before(function (Action $action, $record) {
                         $member = Member::find($record->member_id);
-                        if ( $member->balance > 0) {
+
+                        $isNotLunas = ( $member->balance > 0 ) ;
+                        
+                        $isNotLengkap = ( $member->kelas_id == null || 
+                                  $member->name == null ||
+                                  $member->marketing_source_id == null ||
+                                  $member->parent_id == null ||
+                                  $member->class_package_id == null ||
+                                  $member->costume_label == null ); 
+
+                        if ( $isNotLunas && $isNotLengkap ) {
+                            Notification::make()
+                                ->title('Anda masih memiliki tunggakan dan data anak anda belum lengkap')
+                                ->body('Silakan lunasi pembayaran sebelum melihat raport dan lengkapi data anak anda.')
+                                ->danger()
+                                ->actions([
+                                    NotificationAction::make('Lihat Tagihan')
+                                        ->color('primary')
+                                        ->icon('heroicon-m-document-text')
+                                        ->url(route('filament.portal.resources.invoices.index')),
+                                    NotificationAction::make('Lengkapi Data')
+                                        ->color('primary')
+                                        ->icon('heroicon-m-calendar')
+                                        ->url(route('filament.portal.resources.members.edit', ['record' => $member->id]))
+                                    ])
+                                ->send();
+
+                            $action->cancel();
+                        }
+                        else if ( $isNotLunas ) {
 
                             Notification::make()
                                 ->title('Anda masih memiliki tunggakan')
@@ -84,12 +113,7 @@ class RaportResource extends Resource
 
                             $action->cancel();
                         }
-                        else if ( $member->kelas_id == null || 
-                                  $member->name == null ||
-                                  $member->marketing_source_id == null ||
-                                  $member->parent_id == null ||
-                                  $member->class_package_id == null ||
-                                  $member->costume_label == null ) {
+                        else if ( $isNotLengkap ) {
                             Notification::make()
                                 ->title('Data anak anda belum lengkap')
                                 ->body('Silakan lengkapi data anak anda.')
