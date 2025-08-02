@@ -13,8 +13,8 @@ class GradingPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view grading') && (
-            $user->is_admin
+        return ( $user->can('view grading') && ($user->is_admin)) || (
+            (!$user->is_admin)
         );
     }
 
