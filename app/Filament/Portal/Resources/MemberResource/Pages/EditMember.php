@@ -2,10 +2,11 @@
 
 namespace App\Filament\Portal\Resources\MemberResource\Pages;
 
-use App\Filament\Portal\Resources\MemberResource;
+use App\Models\Kelas;
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Resources\Pages\EditRecord;
+use App\Filament\Portal\Resources\MemberResource;
 
 class EditMember extends EditRecord
 {
@@ -29,6 +30,17 @@ class EditMember extends EditRecord
         return $resource::getUrl('index');
     }
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $kelas = Kelas::find($data['kelas_id']);
+        
+        if ($kelas) {
+            $data['grade_id'] = $kelas->grade_id;
+        } else {
+            $data['grade_id'] = null;
+        }
+        return $data;
+    }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {

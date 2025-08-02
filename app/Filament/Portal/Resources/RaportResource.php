@@ -9,7 +9,9 @@ use App\Models\Grading;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
 use Illuminate\Support\Facades\Auth;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,7 +19,8 @@ use Filament\Tables\Columns\CheckboxColumn;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Portal\Resources\RaportResource\Pages;
 use App\Filament\Portal\Resources\RaportResource\RelationManagers;
-use Filament\Tables\Actions\Action;
+use Filament\Notifications\Notification;
+use Filament\Notifications\Actions\Action as NotificationAction;
 
 class RaportResource extends Resource
 {
@@ -62,6 +65,49 @@ class RaportResource extends Resource
                     ->options(Member::where('parent_id', Auth::user()->id)->pluck('name','id'))
             ])
             ->actions([
+                Action::make('View')
+                    ->before(function (Action $action, $record) {
+                        $member = Member::find($record->member_id);
+                        if ( $member->balance > 0) {
+
+                            Notification::make()
+                                ->title('Anda masih memiliki tunggakan')
+                                ->body('Silakan lunasi pembayaran sebelum melihat raport.')
+                                ->danger()
+                                ->actions([
+                                    NotificationAction::make('Lihat Tagihan')
+                                        ->color('primary')
+                                        ->icon('heroicon-m-document-text')
+                                        ->url(route('filament.portal.resources.invoices.index'))
+                                    ])
+                                ->send();
+
+                            $action->cancel();
+                        }
+                        else if ( $member->kelas_id == null || 
+                                  $member->name == null ||
+                                  $member->marketing_source_id == null ||
+                                  $member->parent_id == null ||
+                                  $member->class_package_id == null ||
+                                  $member->costume_label == null ) {
+                            Notification::make()
+                                ->title('Data anak anda belum lengkap')
+                                ->body('Silakan lengkapi data anak anda.')
+                                ->danger()
+                                ->actions([
+                                    NotificationAction::make('Lengkapi Data')
+                                        ->color('primary')
+                                        ->icon('heroicon-m-calendar')
+                                        ->url(route('filament.portal.resources.members.edit', ['record' => $member->id]))
+                                    ])
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    })
+                    ->icon('heroicon-m-eye')
+                    ->action(fn($record) => redirect()->route('filament.portal.resources.raport.view', ['record' => $record->id]))
+                    // ->url(fn($record) => static::getUrl('view', ['record' => $record]))
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

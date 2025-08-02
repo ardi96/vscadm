@@ -5,11 +5,12 @@ namespace App\Filament\Portal\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Grade;
+use App\Models\Kelas;
 use App\Models\Member;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use App\Models\CostumeSize;
 // use Filament\Support\RawJs;
+use App\Models\CostumeSize;
 use App\Models\ClassPackage;
 use App\Models\ClassSchedule;
 use App\Models\MarketingSource;
@@ -59,10 +60,10 @@ class MemberResource extends Resource
                         'P' => 'P'
                     ])->columns(2),
                     TextInput::make('parent_name')->label('Nama Orang Tua')->required(),
-                    TextInput::make('parent_mobile_no')->label('Nomor WA Aktif Orang Tua')->required(),
+                    TextInput::make('parent_mobile_no')->label('No. WA Aktif Orang Tua')->required(),
                     DatePicker::make('date_of_birth')->label('Tanggal Lahir')->required()->rule(new MemberUniqueValidation()),
                     TextInput::make('school_name')->label('Asal Sekolah')->maxLength(40),
-                    TextInput::make('costume_label')->label('Nama Tertera di Baju')->maxLength(40),
+                    TextInput::make('costume_label')->label('Nama Tertera di Baju')->maxLength(40)->required(),
                     Select::make('costume_size_id')->label('Ukuran Baju')->required()->options(
                             CostumeSize::all()->pluck('name','id')
                         )
@@ -85,7 +86,8 @@ class MemberResource extends Resource
                         ->validationMessages(['required_if' => 'Isi channel marketing lainnya']),
                     TextInput::make('instagram')->label('Nama Akun Instagram'),
 
-                    Select::make('grade_id')->options(Grade::all()->pluck('name','id'))->label('Grade'),
+                    // Select::make('grade_id')->options(Grade::all()->pluck('name','id'))->label('Grade'),
+                    Select::make('kelas_id')->options(Kelas::all()->pluck('name','id'))->label('Kelas'),
                     
                 ])->columns(2),
 
