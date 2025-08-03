@@ -113,6 +113,9 @@ class GradingResource extends Resource
                 TextColumn::make('member.name')->searchable(),
                 TextColumn::make('member.kelas.name')->searchable(),
                 TextColumn::make('grade.name')->searchable(),
+                TextColumn::make('year')->label('Periode')->formatStateUsing(
+                    fn($record) => date("F", strtotime(date("Y") ."-". $record->month ."-01"))  .' '. $record->year    
+                ),
                 TextColumn::make('marks')->label('Nilai'),
                 TextColumn::make('status'),
                 TextColumn::make('created_at')->label('Created')->badge()->date('Y-m-d H:i:s'),

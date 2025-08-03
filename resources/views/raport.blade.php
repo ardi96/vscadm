@@ -28,7 +28,6 @@
         <td class="w-half">
             <h4>Student Report</h4>
             <div>Periode {{ date("F", strtotime(date("Y") ."-". $record->month ."-01"))  .' '. $record->year }}</div>
-            <div>Tanggal Ujian : {{ date('d-M-Y', strtotime($record->created_at)) }}</div>
         </td>
     </tr>
 </table>
