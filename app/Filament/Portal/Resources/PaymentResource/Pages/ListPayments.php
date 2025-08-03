@@ -21,9 +21,9 @@ class ListPayments extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Upload Bukti Pembayaran')
-                ->visible(true)
-                ->icon('heroicon-o-plus-circle')
+            // Actions\CreateAction::make()->label('Upload Bukti Pembayaran')
+            //     ->visible(true)
+            //     ->icon('heroicon-o-plus-circle')
         ];
     }
 }

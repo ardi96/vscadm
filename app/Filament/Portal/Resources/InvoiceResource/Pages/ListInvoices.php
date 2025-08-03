@@ -9,6 +9,7 @@ use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Portal\Resources\InvoiceResource;
+use App\Filament\Portal\Resources\PaymentResource;
 use Illuminate\Support\Facades\Auth;
 
 class ListInvoices extends ListRecords
@@ -22,8 +23,11 @@ class ListInvoices extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            // Actions\CreateAction::make(),
+       return [
+            Actions\Action::make('upload_payment_proof')->label('Upload Bukti Pembayaran')
+                ->visible(true)
+                ->icon('heroicon-o-plus-circle')
+                ->url(PaymentResource::getUrl('create'))
         ];
     }
 
