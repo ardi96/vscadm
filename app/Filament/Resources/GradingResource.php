@@ -121,7 +121,7 @@ class GradingResource extends Resource
                 SelectFilter::make('grade_id')->options(Grade::pluck('name','id'))->label('Grade'),
             ])
             ->actions([
-                // Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('download')
                     ->color('primary')
                     ->icon('heroicon-m-arrow-down-circle')
