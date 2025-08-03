@@ -31,4 +31,15 @@ class Grading extends Model
     {
         return $this->belongsTo(User::class,'approved_by');
     }
+
+    public function getResultAttribute()
+    {
+        $decision = $this->decision; 
+
+        if ( $decision == 1 ) 
+            return 'Lulus';
+        else 
+            return 'Tidak Lulus';
+
+    }
 }

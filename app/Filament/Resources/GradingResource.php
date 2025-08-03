@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\GradingExporter;
 use Filament\Tables;
 use App\Models\Grade;
 use App\Models\Member;
@@ -111,6 +112,10 @@ class GradingResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->headerActions([
+                Tables\Actions\ExportAction::make()
+                    ->exporter(GradingExporter::class),
+            ])
             ->columns([
                 TextColumn::make('member.name')->searchable(),
                 TextColumn::make('grade.name')->searchable(),
