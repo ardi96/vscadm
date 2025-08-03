@@ -23,7 +23,9 @@ class CreateGrading extends CreateRecord
         $data['approved_at'] = now();
         $data['approved_by'] = auth()->user()->id;                       
         $data['status'] = 'approved';
-
+        $data['marks'] = 0;
+        $data['notes'] = 'N/A';
+        
         return $data;   
     }
 

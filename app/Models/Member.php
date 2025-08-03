@@ -116,6 +116,20 @@ class Member extends Model
         return $id; 
     }
 
+    public function getLastGradingPeriodAttribute()
+    {
+        $period = null;
+
+        $grading = $this->gradings()->get()->last();
+
+        if ( $grading != null )
+        {
+            $period = date("F", strtotime(date("Y") ."-". $grading->month ."-01"))  .' '. $grading->year;
+        }
+
+        return $period;
+    }
+
     public function getSessionCount(?string $from, ?string $to) : int
     {
         $session_count = 0;

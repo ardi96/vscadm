@@ -73,11 +73,11 @@ class GradingResource extends Resource
                             ->selectablePlaceholder(false)
                             ->default(date('n'))
                             ->required(),
-                    TextInput::make('marks')
-                        ->label('Nilai')
-                        ->numeric()
-                        ->minValue(0)
-                        ->required(),
+                    // TextInput::make('marks')
+                    //     ->label('Nilai')
+                    //     ->numeric()
+                    //     ->minValue(0)
+                    //     ->required(),
                     Select::make('decision')
                         ->label('Keputusan')
                         ->options([
@@ -88,11 +88,11 @@ class GradingResource extends Resource
                         ->selectablePlaceholder(false)
                         ->required(),
                     ])->columnSpanFull()->columns(4),
-                TextInput::make('notes')
-                    ->label('Catatan')
-                    ->maxLength(1000)
-                    ->columnSpanFull()
-                    ->required(),
+                // TextInput::make('notes')
+                //     ->label('Catatan')
+                //     ->maxLength(1000)
+                //     ->columnSpanFull()
+                //     ->required(),
                 FileUpload::make('raport_file')
                     ->directory('raports')
                     ->maxSize(1024 * 5)

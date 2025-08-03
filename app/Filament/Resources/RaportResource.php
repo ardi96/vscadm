@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\GradingResource\Pages\ViewGrading;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
@@ -14,19 +13,21 @@ use Filament\Tables\Table;
 use App\Models\GradingItem;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Radio;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Forms\Components\Placeholder;
 use App\Filament\Resources\RaportResource\Pages;
-use Filament\Forms\Components\RichEditor;
-use Filament\Tables\Enums\FiltersLayout;
+use App\Filament\Resources\GradingResource\Pages\ViewGrading;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
-use Illuminate\Support\Facades\Auth;
 
 class RaportResource extends Resource
 {
@@ -48,11 +49,6 @@ class RaportResource extends Resource
             ]);
     }
 
-    public static function shouldRegisterNavigation(): bool
-    {
-        return false;
-    }
-
     public static function getNavigationLabel(): string
     {
         return 'Raport';
@@ -69,8 +65,7 @@ class RaportResource extends Resource
                 TextColumn::make('parent_name')->searchable()->label('Orang Tua'),
                 TextColumn::make('kelas.name')->searchable()->label('Kelas'),
                 TextColumn::make('grade.name')->searchable()->label('Grade'),
-                TextColumn::make('CurrentMark')->label('Nilai'),
-                // TextColumn::make('grade.month')->searchable()->label('Bulan'),
+                TextColumn::make('LastGradingPeriod')->label('Last Raport Period')->alignCenter(),
                 // TextColumn::make('year')->searchable()->label('Tahun'),
                 // TextColumn::make('marks')->searchable()->label('Nilai'),
             ])
@@ -80,7 +75,52 @@ class RaportResource extends Resource
             ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(4)
             ->actions([
-                Tables\Actions\Action::make('raport')->icon('heroicon-o-pencil-square')->label('Beri Nilai')
+                    Tables\Actions\Action::make('Upload Raport')
+                        ->icon('heroicon-m-arrow-up-circle')
+                        ->form(static::getUploadRaportForm())
+                        ->fillForm(fn(Member $record): array => [
+                            'name' => $record->name,
+                            'kelas' => $record->kelas ? $record->kelas->name : '',
+                            'ortu' => $record->parent_name,
+                            'grade' => $record->grade ? $record->grade->name : '',
+                            'grade_id' => $record->grade_id,
+                            'year' => date('Y'),
+                            'month' => date('n'),   
+                            'decision' => 1,
+                        ])
+                        ->action(function (array $data, Member $record) {
+                         
+                            $grading = $record->gradings()->where('year', $data['year'])->where('month', $data['month'])->first();
+
+                            if ($grading == null) {
+                                Grading::create([
+                                    'member_id' => $record->id,
+                                    'notes' => 'N/A',
+                                    'decision' => $data['decision'],
+                                    'marks' => 0,
+                                    'year' => $data['year'],
+                                    'month' => $data['month'],
+                                    'grade_id' => $data['grade_id'],
+                                    'raport_file' => $data['raport_file'] ?? null,
+                                ]);
+
+                                Notification::make('Success')
+                                    ->title('Record Created')
+                                    ->body('Raport berhasil diupload')
+                                    ->send();
+                                    
+                            } else {
+                                $grading->raport_file = $data['raport_file'] ?? null;
+                                $grading->save();
+                                
+                                    Notification::make('Success')
+                                        ->title('Record Updated')
+                                        ->body('Raport berhasil diupdate')
+                                    ->send();
+                            }
+                        })
+                        ,
+                    Tables\Actions\Action::make('raport')->icon('heroicon-o-pencil-square')->label('Beri Nilai')
                     ->visible(function (Member $record) : bool { 
 
                         $visible = false; 
@@ -91,7 +131,8 @@ class RaportResource extends Resource
                             $visible = true; 
                         }
 
-                        return $visible;
+                        // return $visible;
+                        return false;
 
                     })
                     ->fillForm(fn( Member $record) : array => [
@@ -150,6 +191,7 @@ class RaportResource extends Resource
                         }
                     })
                 ,
+
                 Tables\Actions\Action::make('view')->label(function($record){
                         $id = $record->LastGradingId;
                         if ( $id != null )
@@ -168,9 +210,9 @@ class RaportResource extends Resource
                         }
                     })->icon('heroicon-m-pencil-square')
                     ->visible(function($record) {
-                        return ( $record->LastGradingId != null && ( Auth::user()->can('view grading')  
-                            || Auth::user()->can('approve grading')));
-                        
+                        // return ( $record->LastGradingId != null && ( Auth::user()->can('view grading')  
+                        //     || Auth::user()->can('approve grading')));
+                        return false;
                     })
                     ->url( function ($record) {
                         $id = $record->LastGradingId;
@@ -179,6 +221,7 @@ class RaportResource extends Resource
                             return ViewGrading::getUrl(['record' => $id]);
                         }
                     } )
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -202,6 +245,47 @@ class RaportResource extends Resource
         ];
     }
 
+    private static function getUploadRaportForm() : array
+    {
+        return [
+            Section::make([
+                Placeholder::make('nama')->content(fn(Forms\Get $get) => $get('name'))->label('Nama'),
+                Placeholder::make('kelas')->content(fn(Forms\Get $get) => $get('kelas'))->label('Kelas'),
+                Placeholder::make('grade')->content(fn(Forms\Get $get) => $get('grade'))->label('Grade'),
+                Placeholder::make('ortu')->content(fn(Forms\Get $get) => $get('ortu'))->label('Orang Tua'),
+                Hidden::make('grade_id'),
+            ])->columns(4),
+            Section::make([
+                Select::make('year')
+                    ->label('Tahun')
+                    ->options(static::getYearOptions())
+                    ->default(date('Y'))
+                    ->selectablePlaceholder(false)
+                    ->required(),
+                Select::make('month')
+                    ->label('Bulan')
+                    ->options(static::getMonthOptions())
+                    ->default(date('n'))
+                    ->selectablePlaceholder(false)
+                    ->required(),
+                Select::make('decision')
+                    ->label('Keputusan')
+                    ->selectablePlaceholder(false)
+                    ->options([
+                        1 => 'Naik',
+                        0 => 'Tidak Naik'
+                    ])
+                    ->required(),
+            ])->columns(3),
+            FileUpload::make('raport_file')
+                ->label('File Raport')
+                ->acceptedFileTypes(['application/pdf'])
+                ->directory('raports')
+                ->maxSize(1024 * 5)
+                ->required(),
+        ];
+    }   
+    
     private static function getGradingForm() : array
     {
         return [
@@ -259,5 +343,35 @@ class RaportResource extends Resource
                 0 => 'Tidak Naik'
             ])->columns(2)->required()
         ];
+    }
+
+    private static function getMonthOptions() : array
+    {
+        return [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
+        ];
+    }
+
+    private static function getYearOptions() : array
+    {
+        $now = Carbon::now()->year;
+        $options = [];
+        for($i=5; $i>=1; $i--)
+        {
+            $options += [$now => $now];
+            $now--; 
+        }
+        return $options; 
     }
 }
