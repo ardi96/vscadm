@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Resources\Resource;
+use Filament\Tables\Filters\Filter;
 use Illuminate\Support\Facades\File;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
@@ -20,6 +21,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\GradingResource\Pages;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
@@ -111,17 +113,52 @@ class GradingResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('member.name')->searchable(),
-                TextColumn::make('member.kelas.name')->searchable(),
                 TextColumn::make('grade.name')->searchable(),
                 TextColumn::make('year')->label('Periode')->formatStateUsing(
                     fn($record) => date("F", strtotime(date("Y") ."-". $record->month ."-01"))  .' '. $record->year    
-                ),
+                )->searchable(),
                 TextColumn::make('marks')->label('Nilai'),
                 TextColumn::make('status'),
                 TextColumn::make('created_at')->label('Created')->badge()->date('Y-m-d H:i:s'),
             ])
             ->filters([
-                SelectFilter::make('grade_id')->options(Grade::pluck('name','id'))->label('Grade'),
+                Filter::make('period')->form([
+                    Select::make('grade_id')->options(Grade::pluck('name','id'))->label('Grade'),
+                    Select::make('year')
+                        ->label('Tahun')
+                        ->options(Grading::distinct()->pluck('year')->sort()->mapWithKeys(fn($year) => [$year => $year])),
+                    Select::make('month')
+                        ->label('Bulan')
+                        ->options([
+                            1 => 'Januari',
+                            2 => 'Februari',
+                            3 => 'Maret',
+                            4 => 'April',
+                            5 => 'Mei',
+                            6 => 'Juni',
+                            7 => 'Juli',
+                            8 => 'Agustus',
+                            9 => 'September',
+                            10 => 'Oktober',
+                            11 => 'November',
+                            12 => 'Desember',
+                        ]),
+                ])->columnSpanFull()->columns(3)
+                 ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['grade_id'],
+                                fn (Builder $query, $grade_id): Builder => $query->where('grade_id', '=', $grade_id),
+                            )
+                            ->when(
+                                $data['year'],
+                                fn (Builder $query, $year): Builder => $query->where('year', '=', $year),
+                            )
+                            ->when(
+                                $data['month'],
+                                fn (Builder $query, $month): Builder => $query->where('month', '=', $month),
+                            );
+                    })
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
