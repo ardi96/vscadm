@@ -123,7 +123,9 @@ class GradingResource extends Resource
                     fn($record) => date("F", strtotime(date("Y") ."-". $record->month ."-01"))  .' '. $record->year    
                 )->searchable(),
                 // TextColumn::make('marks')->label('Nilai'),
-                TextColumn::make('status'),
+                TextColumn::make('decision')->label('Keputusan')
+                    ->formatStateUsing(fn($record) => $record->decision == 1 ? 'Lulus' : 'Tidak Lulus')
+                    ->searchable(),
                 TextColumn::make('created_at')->label('Created')->badge()->date('Y-m-d H:i:s'),
             ])
             ->filters([

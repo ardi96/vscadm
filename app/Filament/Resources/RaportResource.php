@@ -37,7 +37,7 @@ class RaportResource extends Resource
 
     protected static ?string $navigationGroup = 'Coach';
 
-    protected static ?string $label = 'Raport';
+    protected static ?string $label = 'Member';
 
     protected static ?int $navigationSort = 30;
 
@@ -51,7 +51,7 @@ class RaportResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Raport';
+        return 'Upload Raport';
     }
 
     public static function table(Table $table): Table
@@ -108,7 +108,7 @@ class RaportResource extends Resource
                                     ->title('Record Created')
                                     ->body('Raport berhasil diupload')
                                     ->send();
-                                    
+
                             } else {
                                 $grading->raport_file = $data['raport_file'] ?? null;
                                 $grading->save();
@@ -281,6 +281,7 @@ class RaportResource extends Resource
                 ->label('File Raport')
                 ->acceptedFileTypes(['application/pdf'])
                 ->directory('raports')
+                ->previewable(true)
                 ->maxSize(1024 * 5)
                 ->required(),
         ];
