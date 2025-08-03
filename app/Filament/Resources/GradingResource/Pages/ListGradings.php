@@ -13,7 +13,7 @@ class ListGradings extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Upload Raport'),
+            // Actions\CreateAction::make()->label('Upload Raport'),
         ];
     }
 }

@@ -122,7 +122,7 @@ class GradingResource extends Resource
                 TextColumn::make('year')->label('Periode')->formatStateUsing(
                     fn($record) => date("F", strtotime(date("Y") ."-". $record->month ."-01"))  .' '. $record->year    
                 )->searchable(),
-                TextColumn::make('marks')->label('Nilai'),
+                // TextColumn::make('marks')->label('Nilai'),
                 TextColumn::make('status'),
                 TextColumn::make('created_at')->label('Created')->badge()->date('Y-m-d H:i:s'),
             ])
@@ -166,7 +166,7 @@ class GradingResource extends Resource
                     })
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                // Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('download')
                     ->color('primary')
                     ->icon('heroicon-m-arrow-down-circle')
