@@ -29,10 +29,10 @@ class ViewGrading extends ViewRecord
             TextEntry::make('decision')->label('Keputusan')->formatStateUsing(fn($state) : string => 
                 $state == 1 ? 'Naik Kelas' : 'Tidak Naik Kelas'
             ),          
-            TableRepeatableEntry::make('gradingItems')->schema([
-                TextEntry::make('aspect')->label('Aspek'),
-                TextEntry::make('mark')->label('Nilai'),
-            ])->columns(2)->columnSpanFull()->label('Penilaian')->striped(),  
+            // TableRepeatableEntry::make('gradingItems')->schema([
+            //     TextEntry::make('aspect')->label('Aspek'),
+            //     TextEntry::make('mark')->label('Nilai'),
+            // ])->columns(2)->columnSpanFull()->label('Penilaian')->striped(),  
             TextEntry::make('notes')->html()->columnSpanFull(),
             TextEntry::make('status')->label('Status'),
         ]);        

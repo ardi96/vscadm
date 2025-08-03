@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use Filament\Tables;
 use App\Models\Grade;
+use App\Models\Member;
 use App\Models\Grading;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -11,9 +12,12 @@ use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\File;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Fieldset;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Filters\SelectFilter;
 use App\Filament\Resources\GradingResource\Pages;
@@ -34,20 +38,67 @@ class GradingResource extends Resource
     {
         return $form
             ->schema([
-               TextInput::make('year')->readOnly(),
-               TextInput::make('month')->readOnly(),
-               TextInput::make('status')->readOnly(),
-               TableRepeater::make('gradingItems')->relationship('gradingItems')->schema([
-                    TextInput::make('aspect')->label('Materi Penilaian'),
-                    TextInput::make('mark')->label('Nilai')
-               ])->deletable(false)->addable(false)->label(''),
-               RichEditor::make('notes')->columnSpanFull()
+                Select::make('member_id')
+                    ->label('Member')
+                    ->options(Member::all()->pluck('name', 'id'))
+                    ->searchable()
+                    ->columnSpanFull()
+                    ->required(),
+               Fieldset::make('Periode dan Nilai')
+                    ->schema([
+                        TextInput::make('year')
+                            ->label('Tahun')
+                            ->numeric()
+                            ->default(date('Y'))
+                            ->required(),
+                        Select::make('month')
+                            ->label('Bulan')
+                            ->options([
+                                1 => 'Januari',
+                                2 => 'Februari',
+                                3 => 'Maret',
+                                4 => 'April',
+                                5 => 'Mei',
+                                6 => 'Juni',
+                                7 => 'Juli',
+                                8 => 'Agustus',
+                                9 => 'September',
+                                10 => 'Oktober',
+                                11 => 'November',
+                                12 => 'Desember',
+                            ])
+                            ->selectablePlaceholder(false)
+                            ->default(date('n'))
+                            ->required(),
+                    TextInput::make('marks')
+                        ->label('Nilai')
+                        ->numeric()
+                        ->minValue(0)
+                        ->required(),
+                    Select::make('decision')
+                        ->label('Keputusan')
+                        ->options([
+                            0 => 'Tidak Lulus',
+                            1 => 'Lulus',
+                        ])
+                        ->default(1)
+                        ->selectablePlaceholder(false)
+                        ->required(),
+                    ])->columnSpanFull()->columns(4),
+                TextInput::make('notes')
+                    ->label('Catatan')
+                    ->maxLength(1000)
+                    ->columnSpanFull()
+                    ->required(),
+                FileUpload::make('raport_file')
+                    ->directory('raports')
+                    ->maxSize(1024 * 5)
             ]);
     }
 
     public static function getLabel(): ?string
     {
-        return 'View Raport';
+        return 'Raport';
     }
 
     public static function getNavigationLabel(): string
@@ -70,7 +121,7 @@ class GradingResource extends Resource
                 SelectFilter::make('grade_id')->options(Grade::pluck('name','id'))->label('Grade'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                // Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('download')
                     ->color('primary')
                     ->icon('heroicon-m-arrow-down-circle')
@@ -78,15 +129,25 @@ class GradingResource extends Resource
 
                         File::ensureDirectoryExists(storage_path('app/public/raports'));
 
-                        $pdf = Pdf::loadView('raport', ['record' => $record ]);
-        
-                        $filename = Str::uuid() . '.pdf';
-        
-                        $pdf->save(storage_path('app/public/raports/') . $filename);
-                                
-                        return response()->download(storage_path('app/public/raports/') . $filename);
-                    }) 
-                    ->visible(fn( Grading $record) => $record->status == 'approved')            ])
+                        if ( $record->raport_file ) {
+                            return response()->download(storage_path('app/public/' . $record->raport_file));
+                        }
+                        else
+                        {
+                            $pdf = Pdf::loadView('raport', ['record' => $record ]);
+                            
+                            $filename = Str::uuid() . '.pdf';
+                            
+                            $pdf->save(storage_path('app/public/raports/') . $filename);
+
+                            $record->raport_file = 'raports/' . $filename;
+                            $record->save();
+
+                            return response()->download(storage_path('app/public/raports/') . $filename);
+                        }
+                    })
+                    // ->visible(fn( Grading $record) => $record->status == 'approved')
+                ])
             ->bulkActions([
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
