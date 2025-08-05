@@ -55,8 +55,8 @@ class RaportResource extends Resource
                 TextColumn::make('year')->label('Periode')->formatStateUsing(
                     fn($record) => date("F", strtotime(date("Y") ."-". $record->month ."-01"))  .' '. $record->year    
                 ),
-                TextColumn::make('marks')->label('Nilai'),
-                CheckboxColumn::make('decision')->label('Naik Tingkat')->disabled()->alignCenter(),
+                // TextColumn::make('marks')->label('Nilai'),
+                // CheckboxColumn::make('decision')->label('Naik Tingkat')->disabled()->alignCenter(),
                 // TextColumn::Make('created_at')->label('Tanggal Penilaian')->date('d-M-Y')->badge()
             ])
             ->filters([
