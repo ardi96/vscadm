@@ -182,9 +182,9 @@ class GradingResource extends Resource
                         else
                         {
                             $pdf = Pdf::loadView('raport', ['record' => $record ]);
-                            
-                            $filename = Str::uuid() . '.pdf';
-                            
+
+                            $filename = 'Raport_VSC' . substr( str_pad($record->member->id,4,'0',STR_PAD_LEFT),-4) . '_' . $record->year . '-'. $record->month . '.pdf';
+
                             $pdf->save(storage_path('app/public/raports/') . $filename);
 
                             $record->raport_file = 'raports/' . $filename;
