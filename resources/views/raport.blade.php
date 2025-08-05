@@ -90,7 +90,7 @@
         <tbody>
         <tr>
             <td style="text-align:center" class="py-2 text-gray-700 border border-gray-300 dark:border-gray-700 border"><br/><br/><br/><br/><br/></br>{{ $record->member->kelas->coach->name }}</td>
-            <td style="text-align:center" class="py-2 text-gray-700 border border-gray-300 dark:border-gray-700 border"><br/><br/><br/><br/><br/></br>{{ $record->approver ? $record->approver->name  : ''}}</td>
+            <td style="text-align:center" class="py-2 text-gray-700 border border-gray-300 dark:border-gray-700 border"><br/><br/><br/><br/><br/></br>Lika Lunardi</td>
             <td style="text-align:center" class="py-2 text-gray-700 border border-gray-300 dark:border-gray-700 border"><br/><br/><br/><br/><br/></br>Rizal Prasetyo</td>
         </tr>
         </tbody>
