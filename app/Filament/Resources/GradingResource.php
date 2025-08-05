@@ -192,8 +192,8 @@ class GradingResource extends Resource
 
                             return response()->download(storage_path('app/public/raports/') . $filename);
                         }
-                    })
-                    // ->visible(fn( Grading $record) => $record->status == 'approved')
+                    }),
+                Tables\Actions\DeleteAction::make()
                 ])
             ->bulkActions([
             ])
