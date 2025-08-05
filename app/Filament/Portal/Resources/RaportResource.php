@@ -65,7 +65,7 @@ class RaportResource extends Resource
                     ->options(Member::where('parent_id', Auth::user()->id)->pluck('name','id'))
             ])
             ->actions([
-                Action::make('View')
+                Action::make('Download')
                     ->before(function (Action $action, $record) {
                         $member = Member::find($record->member_id);
 
@@ -129,8 +129,11 @@ class RaportResource extends Resource
                             $action->cancel();
                         }
                     })
-                    ->icon('heroicon-m-eye')
-                    ->action(fn($record) => redirect()->route('filament.portal.resources.raport.view', ['record' => $record->id]))
+                    ->icon('heroicon-m-arrow-down-circle')
+                    ->action( function ($record) {
+                        return response()->download(storage_path('app/public/' . $record->raport_file));
+                    })
+                    // ->action(fn($record) => redirect()->route('filament.portal.resources.raport.view', ['record' => $record->id]))
                     // ->url(fn($record) => static::getUrl('view', ['record' => $record]))
             ])
             ->bulkActions([
