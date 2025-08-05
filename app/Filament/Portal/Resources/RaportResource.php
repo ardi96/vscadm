@@ -57,7 +57,7 @@ class RaportResource extends Resource
                 ),
                 TextColumn::make('marks')->label('Nilai'),
                 CheckboxColumn::make('decision')->label('Naik Tingkat')->disabled()->alignCenter(),
-                TextColumn::Make('created_at')->label('Tanggal Penilaian')->date('d-M-Y')->badge()
+                // TextColumn::Make('created_at')->label('Tanggal Penilaian')->date('d-M-Y')->badge()
             ])
             ->filters([
                 SelectFilter::make('member_id')

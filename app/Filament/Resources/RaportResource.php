@@ -11,6 +11,7 @@ use App\Models\Grading;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\GradingItem;
+use Illuminate\Support\Str;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Radio;
 use Illuminate\Support\Facades\Auth;
@@ -79,6 +80,7 @@ class RaportResource extends Resource
                         ->icon('heroicon-m-arrow-up-circle')
                         ->form(static::getUploadRaportForm())
                         ->fillForm(fn(Member $record): array => [
+                            'member_id' => $record->id,
                             'name' => $record->name,
                             'kelas' => $record->kelas ? $record->kelas->name : '',
                             'ortu' => $record->parent_name,
@@ -280,6 +282,9 @@ class RaportResource extends Resource
             FileUpload::make('raport_file')
                 ->label('File Raport')
                 ->acceptedFileTypes(['application/pdf'])
+                ->getUploadedFileNameForStorageUsing(
+                    fn(Forms\Get $get, $file) => 'Raport_' . 'VSC' . substr(str_pad($get('member_id'),4,'0',STR_PAD_LEFT),-4) . '_' . $get('year') . '-' . $get('month') . '_' . strtoupper(Str::random(4)) . '.pdf'
+                )
                 ->directory('raports')
                 ->previewable(true)
                 ->maxSize(1024 * 5)
