@@ -8,6 +8,9 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Columns\TextColumn;
@@ -18,6 +21,7 @@ use Filament\Tables\Columns\CheckboxColumn;
 use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
+use Filament\Notifications\Notification;
 
 class UserResource extends Resource
 {
@@ -58,6 +62,19 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Action::make('reset-password')->label('Reset Password')
+                    ->action(function (User $record) {
+                        
+                        $record->update([
+                            'password' => Hash::make('Veins@2025!'),
+                            'email_verified_at' => now()
+                        ]);
+
+                        Notification::make('successful')->body('Password has been reset successfully.')->send();
+
+                    })->requiresConfirmation()
+                    ->icon('heroicon-o-key')
+                    ->visible( Auth::user()->can('reset password'))
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
