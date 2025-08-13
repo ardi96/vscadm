@@ -22,6 +22,34 @@ class InvoiceService
     }
 
 
+    public static function createInvoice(Member $member, Float $amount, string $invoiceDate, string $description, string $itemDescription) : Invoice
+    {
+        $invoice = Invoice::create([
+            'member_id' => $member->id,
+            'type' => 'other',
+            'parent_id' => $member->parent->id,
+            'amount' => $amount,
+            'invoice_date' => $invoiceDate,
+            'invoice_no' => env('INVOICE_PREFIX','VSC') . self::getNextNumber(),
+            'description' => $description,
+            'item_description' => $itemDescription,
+            'status' => 'unpaid',
+        ]);
+
+        $member->balance += $invoice->amount;
+        $member->last_invoice_date = $invoiceDate;
+        $member->save();
+
+        // create invoice item 
+        $invoice->items()->create([
+            'description' => $itemDescription,
+            'amount' => $amount
+        ]);
+
+        return $invoice;
+    }
+    
+
     /**
      * Generate invoice for member
      * Item 1: Membership fee (normal invoice)
