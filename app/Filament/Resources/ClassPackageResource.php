@@ -11,16 +11,19 @@ use App\Models\ClassSchedule;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\CheckboxList;
 use PhpParser\Node\Expr\BinaryOp\BooleanOr;
+use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ClassPackageResource\Pages;
 use App\Filament\Resources\ClassPackageResource\RelationManagers;
-use Filament\Support\Enums\VerticalAlignment;
+use Filament\Tables\Columns\CheckboxColumn;
 
 class ClassPackageResource extends Resource
 {
@@ -56,8 +59,12 @@ class ClassPackageResource extends Resource
                     ->requiredIf('type','regular')
                     ->maxValue(21)->suffix('pertemuan')
                     ->numeric(),
-                TextInput::make('price')->label('Harga')->numeric()->required()->suffix('IDR'),
-                TextInput::make('price_per_session')->label('Harga per Sesi')->numeric()->required()->suffix('IDR'),
+                Fieldset::make()
+                    ->schema([
+                        TextInput::make('price')->label('Harga')->numeric()->required()->suffix('IDR'),
+                        TextInput::make('price_per_session')->label('Harga per Sesi')->numeric()->required()->suffix('IDR'),
+                        Toggle::make('is_flat')->label('Flat Rate')->default(false),
+                    ]),
                 CheckboxList::make('schedules')->relationship('schedules','name')->label('Jadwal Tersedia')
                     ->columns(1)
                     ->bulkToggleable()
@@ -79,6 +86,8 @@ class ClassPackageResource extends Resource
                     ->bulleted()->searchable()->sortable(),
                 TextColumn::make('price')->label('Harga')->money('IDR')->searchable()->sortable()->verticallyAlignStart(),
                 TextColumn::make('price_per_session')->label('Harga/Sesi')->money('IDR')->searchable()->sortable()->verticallyAlignStart(),
+                CheckboxColumn::make('is_flat')->label('Flat Rate')->verticallyAlignStart()->disabled()
+                    ->alignCenter(),
             ])
             ->filters([
                 //

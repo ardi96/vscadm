@@ -98,6 +98,14 @@ class InvoiceService
             'amount' => $member->package->price
         ]);
 
+
+        // if Flat Rate, we don't calculate additional session fee
+        if ( $member->package->is_flat ) {
+         
+            return $invoice;
+        
+        }
+
         $kehadiran = $member->getAttendanceCount($from->format('Y-m-d'), $to->format('Y-m-d') );
 
         logger('Kehadiran: ' . $kehadiran ."\r\n");
