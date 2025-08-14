@@ -3,12 +3,14 @@
 namespace App\Filament\Portal\Resources\MemberResource\Pages;
 
 use App\Models\User;
+use App\Models\Kelas;
 use App\Models\Invoice;
 use App\Models\Payment;
 use Filament\Actions\Action;
 use App\Models\PaymentInvoice;
 use App\Services\InvoiceService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +20,6 @@ use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\PaymentResource;
 use App\Filament\Portal\Resources\MemberResource;
 use Filament\Notifications\Actions\Action as ActionsAction;
-use Illuminate\Support\Facades\URL;
 
 class CreateMember extends CreateRecord
 {
@@ -31,6 +32,12 @@ class CreateMember extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['parent_id'] = Auth()->user()->id;
+        
+        $kelas = Kelas::find( $data['kelas_id'] );
+        
+        if( $kelas ) {
+            $data['grade_id'] = $kelas->grade_id;
+        }
 
         // $data['payment_amount'] = $data['payment_amount'] * 1000;
 
