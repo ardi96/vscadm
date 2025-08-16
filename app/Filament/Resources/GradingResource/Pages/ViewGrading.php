@@ -44,16 +44,16 @@ class ViewGrading extends ViewRecord
 
             //  EditAction::make('Edit')->icon('heroicon-m-pencil-square')->visible(fn( Grading $record) => $record->status != 'approved'),
             
-            Action::make('Approve')->icon('heroicon-m-check-circle')->action(function(Grading $record) {
+            // Action::make('Approve')->icon('heroicon-m-check-circle')->action(function(Grading $record) {
                 
-                $record->status = 'approved';
-                $record->approved_at = now();
-                $record->approved_by = Auth::user()->id;
-                $record->save();
+            //     $record->status = 'approved';
+            //     $record->approved_at = now();
+            //     $record->approved_by = Auth::user()->id;
+            //     $record->save();
 
-                // Pdf::view('raport',['record' => $record])->save('storage/raport_' . $record->member->id . '_'. $record->year . $record->month .'.pdf');
+            //     // Pdf::view('raport',['record' => $record])->save('storage/raport_' . $record->member->id . '_'. $record->year . $record->month .'.pdf');
                 
-            })->requiresConfirmation()->visible(fn( Grading $record) => $record->status != 'approved' && Auth::user()->can('approve grading')),
+            // })->requiresConfirmation()->visible(fn( Grading $record) => $record->status != 'approved' && Auth::user()->can('approve grading')),
             
             // Html2MediaAction::make('Print')->icon('heroicon-m-printer')->color('primary')
             //     ->label('Print to PDF')->content( fn($record) => view('raport', ['record' => $record]) )
@@ -65,13 +65,22 @@ class ViewGrading extends ViewRecord
 
                     File::ensureDirectoryExists(storage_path('app/public/raports'));
 
-                    $pdf = Pdf::loadView('raport', ['record' => $record ]);
-    
-                    $filename = Str::uuid() . '.pdf';
-    
-                    $pdf->save(storage_path('app/public/raports/') . $filename);
-                            
-                    return response()->download(storage_path('app/public/raports/') . $filename);
+                        if ( $record->raport_file ) {
+                            return response()->download(storage_path('app/public/' . $record->raport_file));
+                        }
+                        else
+                        {
+                            $pdf = Pdf::loadView('raport', ['record' => $record ]);
+
+                            $filename = 'Raport_VSC' . substr( str_pad($record->member->id,4,'0',STR_PAD_LEFT),-4) . '_' . $record->year . '-'. $record->month . '_' . strtoupper(Str::random(4)) . '.pdf';
+
+                            $pdf->save(storage_path('app/public/raports/') . $filename);
+
+                            $record->raport_file = 'raports/' . $filename;
+                            $record->save();
+
+                            return response()->download(storage_path('app/public/raports/') . $filename);
+                        }
                 }) 
                 ->visible(fn( Grading $record) => $record->status == 'approved'),
 

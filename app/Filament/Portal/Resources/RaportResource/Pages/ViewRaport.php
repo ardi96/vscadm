@@ -47,13 +47,22 @@ class ViewRaport extends ViewRecord
 
                     File::ensureDirectoryExists(storage_path('app/public/raports'));
 
-                    $pdf = Pdf::loadView('raport', ['record' => $record ]);
-    
-                    $filename = Str::uuid() . '.pdf';
-    
-                    $pdf->save(storage_path('app/public/raports/') . $filename);
-                            
-                    return response()->download(storage_path('app/public/raports/') . $filename);
+                        if ( $record->raport_file ) {
+                            return response()->download(storage_path('app/public/' . $record->raport_file));
+                        }
+                        else
+                        {
+                            $pdf = Pdf::loadView('raport', ['record' => $record ]);
+
+                            $filename = 'Raport_VSC' . substr( str_pad($record->member->id,4,'0',STR_PAD_LEFT),-4) . '_' . $record->year . '-'. $record->month . '_' . strtoupper(Str::random(4)) . '.pdf';
+
+                            $pdf->save(storage_path('app/public/raports/') . $filename);
+
+                            $record->raport_file = 'raports/' . $filename;
+                            $record->save();
+
+                            return response()->download(storage_path('app/public/raports/') . $filename);
+                        }
                 })
         ];
     }

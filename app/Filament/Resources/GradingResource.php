@@ -214,7 +214,7 @@ class GradingResource extends Resource
             'index' => Pages\ListGradings::route('/'),
             'create' => Pages\CreateGrading::route('/create'),
             // 'edit' => Pages\EditGrading::route('/{record}/edit'),
-            'view' => Pages\ViewGrading::route('/{record}'),
+            // 'view' => Pages\ViewGrading::route('/{record}'),
         ];
     }
 }
