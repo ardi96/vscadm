@@ -236,8 +236,8 @@
       </li>
       <li>Private Coaching (by appointment):
         <ul class="list-circle pl-5"> <!-- Sub-list uses hollow bullets -->
-          <li>1 jam: Rp 150.000 /sesi</li>
-          <li>2 jam (one on one): Rp 250.000 /sesi</li>
+          <li>1 jam: Rp 175.000 /sesi</li>
+          <li>2 jam (one on one): Rp 300.000 /sesi</li>
         </ul>
       </li>
     </ul>
