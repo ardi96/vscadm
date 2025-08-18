@@ -214,12 +214,24 @@
       <div class="lg:pl-10 xl:pl-12">
   <p class="font-thin lg:text-lg">
     <ul class="list-disc pl-5"> <!-- Main list uses solid bullets -->
-      <li>Pendaftaran: Rp 150.000 (termasuk kaos)</li>
-      <li>Regular Coaching:
+      <li>Pendaftaran: Rp 250.000 (termasuk kaos)</li>
+      <li>Velodrome:
         <ul class="list-circle pl-5"> <!-- Sub-list uses hollow bullets -->
-          <li>Rp 300.000/bulan (1x seminggu)</li>
-          <li>Rp 400.000/bulan (2x seminggu)</li>
+          <li>Rp 350.000/bulan (1x seminggu)</li>
+          <li>Rp 550.000/bulan (2x seminggu)</li>
           <li>Rp 100.000/kedatangan: 1x Sesi kedatangan (hanya di Velodrome, dapat untuk trial dan tanpa harus mendaftar)</li>
+        </ul>
+      </li>
+      <li>JIRTA:
+        <ul class="list-circle pl-5"> <!-- Sub-list uses hollow bullets -->
+          <li>Rp 500.000/bulan (1x seminggu + latihan tambahan)</li>
+          <li>Rp 600.000/bulan (2x seminggu + latihan tambahan)</li>
+        </ul>
+      </li>
+      <li>Mix:
+        <ul class="list-circle pl-5"> <!-- Sub-list uses hollow bullets -->
+          <li>Rp 400.000/bulan (2x JIRTA, 2x Velo)</li>
+          <li>Rp 650.000/bulan (4x JIRTA, 4x Velo)</li>
         </ul>
       </li>
       <li>Private Coaching (by appointment):
