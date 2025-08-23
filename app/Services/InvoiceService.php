@@ -118,25 +118,29 @@ class InvoiceService
         
         logger('Carried Forward: ' . $carried_forward  ."\r\n");
 
-        if(( $kehadiran - $carried_forward ) > $member->package->session_per_week)
-        {
+
+        /* 23/8/2025 : we implement Flat Rate based on Om Ade Whatsapp */
+
+
+        // if(( $kehadiran - $carried_forward ) > $member->package->session_per_week)
+        // {
             
-            $additional = $kehadiran - $carried_forward - $member->package->session_per_week;
+        //     $additional = $kehadiran - $carried_forward - $member->package->session_per_week;
 
-            $additional_amount = $additional * $member->package->price_per_session;
+        //     $additional_amount = $additional * $member->package->price_per_session;
             
-            $invoice->items()->create([
-                'description' => $additional . ' sesi tambahan ' . $to->format('M-Y'),
-                'amount' => $additional_amount
-            ]);
+        //     $invoice->items()->create([
+        //         'description' => $additional . ' sesi tambahan ' . $to->format('M-Y'),
+        //         'amount' => $additional_amount
+        //     ]);
 
-            $invoice->amount = $invoice->amount + $additional_amount;
+        //     $invoice->amount = $invoice->amount + $additional_amount;
 
-            $invoice->save();
+        //     $invoice->save();
 
-            $member->balance = $member->balance + $additional_amount;
-            $member->save();
-        }
+        //     $member->balance = $member->balance + $additional_amount;
+        //     $member->save();
+        // }
 
         // SendInvoiceMail::dispatch($invoice);
         
