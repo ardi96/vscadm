@@ -3,7 +3,9 @@
 namespace App\Filament\Portal\Resources;
 
 use Filament\Forms;
+use App\Models\User;
 use Filament\Tables;
+use App\Models\Member;
 use App\Models\Invoice;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -84,7 +86,13 @@ class InvoiceResource extends Resource
                 ]),
             ])
             ->defaultSort('invoice_no','desc')
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', Auth::user()->id));
+            ->modifyQueryUsing(function (Builder $query) {
+
+                $query->where('parent_id', Auth::user()->id)
+                ->whereIn('member_id', Member::all()->pluck('id'));
+                
+                return $query;
+            });
     }
 
     public static function getRelations(): array
