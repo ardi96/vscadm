@@ -4,6 +4,7 @@ namespace App\Filament\Portal\Resources\PaymentResource\Pages;
 
 use App\Models\User;
 use Filament\Actions;
+use App\Models\Member;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
 use Filament\Notifications\Notification;
@@ -22,7 +23,8 @@ class CreatePayment extends CreateRecord
     {
         $user = Auth::user();
 
-        if ($user->invoices()->where('status', 'unpaid')->count() == 0) {
+        if ($user->invoices()->where('status', 'unpaid')->whereIn('member_id', Member::all()->pluck('id'))->count() == 0) {
+            
             Notification::make()
                 ->title('Peringatan')
                 ->body('Tagihan belum tersedia.')

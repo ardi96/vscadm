@@ -37,7 +37,8 @@ class FamilyMemberStatistic extends BaseWidget
             ->description('Terdaftar dengan akun Anda. Klik untuk registrasi baru.')
             ->descriptionIcon('heroicon-m-user'),
 
-            Stat::make('Outstanding', 'IDR '. number_format(Invoice::where('parent_id',Auth()->user()->id)->where('status','unpaid')->sum('amount'),0,',','.'))
+            Stat::make('Outstanding', 'IDR '. number_format(Invoice::where('parent_id',Auth()->user()->id)->where('status','unpaid')
+            ->whereIn('member_id', Member::all()->pluck('id'))->sum('amount'),0,',','.'))
             ->color('success')
             ->extraAttributes([
                 'class' => 'cursor-pointer',
