@@ -10,4 +10,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 
-Schedule::call(new GenerateMonthlyInvoice())->monthlyOn(24,'05:00');
+Schedule::call(new GenerateMonthlyInvoice())->monthlyOn(26,'18:00');
