@@ -6,6 +6,7 @@ use App\Models\Member;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Jobs\SendInvoiceMail;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DateTime;
 
@@ -22,7 +23,8 @@ class InvoiceService
     }
 
 
-    public static function createInvoice(Member $member, Float $amount, string $invoiceDate, string $description, string $itemDescription) : Invoice
+    public static function createInvoice(Member $member, Float $amount, string $invoiceDate, 
+        string $description, string $itemDescription) : Invoice
     {
         $invoice = Invoice::create([
             'member_id' => $member->id,
@@ -58,23 +60,23 @@ class InvoiceService
      * Amount is calculated based on the field : price_per_session
      * Sum the total of items
      */
-    public static function generate(Member $member) : ?Invoice
+    public static function generate(Member $member, Carbon $invoicePeriod) : ?Invoice
     {
-        $from = date_create( Date::now()->format('Y-m-01') );
+        // $from = date_create( Date::now()->format('Y-m-01') );
 
-        $to = date_sub( $from, date_interval_create_from_date_string("1 day") );
+        // $to = date_sub( $from, date_interval_create_from_date_string("1 day") );
         
-        $from = date_create( $to->format('Y-m-01') );
+        // $from = date_create( $to->format('Y-m-01') );
         
-        logger('From: ' . $from->format('Y-m-d'));
+        // logger('From: ' . $from->format('Y-m-d'));
 
-        logger('To: ' . $to->format('Y-m-d'));
+        // logger('To: ' . $to->format('Y-m-d'));
         
         // create Invoice Header
 
-        $invoicePeriod = date_create( Date::now()->format('Y-m-t') );
+        // $invoicePeriod = date_create( Date::now()->format('Y-m-t') );
 
-        $invoicePeriod = date_add($invoicePeriod, date_interval_create_from_date_string("1 day"));
+        // $invoicePeriod = date_add($invoicePeriod, date_interval_create_from_date_string("1 day"));
 
         $invoice = Invoice::create([
             'member_id' => $member->id,
@@ -86,6 +88,9 @@ class InvoiceService
             'description' => 'Membership Fee '. $invoicePeriod->format('M-Y'),
             'item_description' => $member->package->name,
             'status' => 'unpaid',
+            'invoice_period_year' => $invoicePeriod->year,
+            'invoice_period_month' => $invoicePeriod->month,
+
         ]);
 
         $member->balance = $member->balance + $invoice->amount;
@@ -100,23 +105,26 @@ class InvoiceService
 
 
         // if Flat Rate, we don't calculate additional session fee
+        //
         if ( $member->package->is_flat ) {
          
             return $invoice;
         
         }
 
-        $kehadiran = $member->getAttendanceCount($from->format('Y-m-d'), $to->format('Y-m-d') );
+        /* 23/8/2025 : we implement Flat Rate based on Om Ade Whatsapp */
 
-        logger('Kehadiran: ' . $kehadiran ."\r\n");
+        // $kehadiran = $member->getAttendanceCount($from->format('Y-m-d'), $to->format('Y-m-d') );
 
-        $last_month_from = date_sub($from, date_interval_create_from_date_string("1 month"));
+        // logger('Kehadiran: ' . $kehadiran ."\r\n");
+
+        // $last_month_from = date_sub($from, date_interval_create_from_date_string("1 month"));
         
-        $last_month_to = date_create( $last_month_from->format('Y-m-t') );  
+        // $last_month_to = date_create( $last_month_from->format('Y-m-t') );  
 
-        $carried_forward = $member->getCarriedForwardHoliday($last_month_from->format('Y-m-d'), $last_month_to->format('Y-m-d'));
+        // $carried_forward = $member->getCarriedForwardHoliday($last_month_from->format('Y-m-d'), $last_month_to->format('Y-m-d'));
         
-        logger('Carried Forward: ' . $carried_forward  ."\r\n");
+        // logger('Carried Forward: ' . $carried_forward  ."\r\n");
 
 
         /* 23/8/2025 : we implement Flat Rate based on Om Ade Whatsapp */

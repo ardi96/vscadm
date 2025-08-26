@@ -8,6 +8,7 @@ use Filament\Tables;
 use App\Models\Grade;
 use App\Models\Kelas;
 use App\Models\Member;
+use App\Models\Invoice;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\CostumeSize;
@@ -20,6 +21,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Support\Colors\Color;
 use App\Models\ClassPackageSchedule;
 use Filament\Forms\Components\Radio;
+use Illuminate\Support\Facades\Date;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
@@ -133,9 +135,19 @@ class MemberResource extends Resource
                         ->requiresConfirmation()
                         ->action(function(Collection $records) 
                             { 
+                                $period = Date::now()->startOfMonth()->addMonth();
+                                
                                 foreach($records as $member)
                                 {
-                                    InvoiceService::generate( $member );
+                                    $invoice = Invoice::where('member_id', $member->id)
+                                        ->where('type', 'membership')
+                                        ->where('invoice_period_year', $period->year)
+                                        ->where('invoice_period_month', $period->month)->first();
+                                    
+                                    if ( !$invoice )
+                                    {
+                                        InvoiceService::generate($member, $period);
+                                    }
                                 }
                             })
                         ->deselectRecordsAfterCompletion(),

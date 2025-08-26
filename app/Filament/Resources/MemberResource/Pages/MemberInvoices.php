@@ -91,8 +91,17 @@ class MemberInvoices extends ManageRelatedRecords
                 Tables\Actions\Action::make('Generate Monthly Invoice')
                     ->action(function() {
 
-                       $invoice = InvoiceService::generate($this->getRecord());
+                       $period = Date::now()->startOfMonth()->addMonth();
 
+                       $invoice = Invoice::where('member_id', $this->getRecord()->id)
+                                        ->where('type', 'membership')
+                                        ->where('invoice_period_year', $period->year)
+                                        ->where('invoice_period_month', $period->month)->first();
+                       
+                        if ( !$invoice )
+                        {
+                            InvoiceService::generate($this->getRecord(), $period);
+                        }
                     })
                     ->requiresConfirmation()
             ])
