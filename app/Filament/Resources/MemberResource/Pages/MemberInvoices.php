@@ -36,6 +36,8 @@ class MemberInvoices extends ManageRelatedRecords
 
     protected static ?string $navigationIcon = 'heroicon-m-banknotes';
 
+
+    
     public function form(Form $form): Form
     {
         return $form
@@ -86,7 +88,13 @@ class MemberInvoices extends ManageRelatedRecords
             ->poll('10s')
             ->headerActions([
                 Tables\Actions\CreateAction::make('Create New Invoice')
-                    ->label('Create New Invoice'),
+                    ->label('Create New Invoice')
+                    ->after(function(Invoice $record) {
+                        $member = $this->getOwnerRecord();
+                        $amount = $record->amount;
+                        $balance = $member->balance + $amount;
+                        $member->update(['balance' => $balance]);
+                    }),
 
                 Tables\Actions\Action::make('Generate Monthly Invoice')
                     ->action(function() {
