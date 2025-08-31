@@ -98,12 +98,20 @@ class MemberInvoices extends ManageRelatedRecords
                     }),
 
                 Tables\Actions\Action::make('Generate Monthly Invoice')
-                    ->action(function() {
+                    ->form([
+                        Forms\Components\DatePicker::make('period')
+                            ->label('Periode Invoice')
+                            ->helperText('Pilih tanggal mana saja untuk periode bulan & tahun invoice ini')
+                            ->default(Date::now()->startOfMonth()->addMonth())
+                            ->required(),
+                    ])
+                    ->action(function( array $data ) {
 
-                       $period = Date::now()->startOfMonth()->addMonth();
+                       $period = Date::createFromFormat('Y-m-d', $data['period']);
 
                        $invoice = Invoice::where('member_id', $this->getRecord()->id)
                                         ->where('type', 'membership')
+                                        ->whereNot('status','void')
                                         ->where('invoice_period_year', $period->year)
                                         ->where('invoice_period_month', $period->month)->first();
                        
