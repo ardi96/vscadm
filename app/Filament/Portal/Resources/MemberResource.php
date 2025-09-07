@@ -129,8 +129,9 @@ class MemberResource extends Resource
                         ->suffix('IDR')
                         ->numeric()
                         ->required()
-                        ->default(250000)
-                        ->readOnly()
+                        ->minValue(0)
+                        // ->default(250000)
+                        // ->readOnly()
                         //->mask(RawJs::make('$money($input,\',\',\'.\')'))
                         ,
                 
