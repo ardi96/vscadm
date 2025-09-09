@@ -292,4 +292,24 @@ class Member extends Model
 
         return $carried_forward;
     }
+
+    public function getIsLeaveAttribute() : bool
+    {
+        $is_leave = false;
+
+        $today = Date::now()->format('Y-m-d');
+
+        $leave = Leave::where('member_id', $this->id)
+                ->where('start_date', '<=', $today)
+                ->where('end_date', '>=', $today)
+                ->where('status', 1) // approved
+                ->first();
+
+        if ( $leave != null )
+        {
+            $is_leave = true;
+        }
+
+        return $is_leave;
+    }
 }

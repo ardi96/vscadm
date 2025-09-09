@@ -24,7 +24,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Blade;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\MemberResource;
+use App\Models\Leave;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 
@@ -114,11 +116,25 @@ class MemberInvoices extends ManageRelatedRecords
                                         ->whereNot('status','void')
                                         ->where('invoice_period_year', $period->year)
                                         ->where('invoice_period_month', $period->month)->first();
-                       
-                        if ( !$invoice )
+
+                        $leaves = Leave::where('member_id', $this->getRecord()->id)
+                                    ->where('status', 1)
+                                    ->where('start_date', '<=', $period)
+                                    ->where('end_date', '>=', $period)
+                                    ->first();
+
+                        if ( !$invoice  && !$leaves )
                         {
                             InvoiceService::generate($this->getRecord(), $period);
                         }
+                        else
+                        {
+                            Notification::make()
+                                ->title('Gagal Generate Invoice')
+                                ->body('Terdapat invoice aktif pada periode yang dipilih atau member sedang cuti. Silakan void invoice terlebih dahulu sebelum mengenerate invoice baru.')
+                                ->danger()
+                                ->send();
+                       }
                     })
                     ->requiresConfirmation()
             ])

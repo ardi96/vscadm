@@ -38,7 +38,8 @@ class ViewMember extends ViewRecord
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist->schema([
-            TextEntry::make('name')->label('Nama Lengkap'),
+            TextEntry::make('name')->label('Nama Lengkap')
+                ->formatStateUsing(fn($record) => $record->name . ($record->IsLeave ? ' - Cuti' : '') ),
             TextEntry::make('gender')->label('Jenis Kelamin'),
             TextEntry::make('school_name')->label('Nama Sekolah'),
             TextEntry::make('parent_name')->label('Nama Orang Tua'),
