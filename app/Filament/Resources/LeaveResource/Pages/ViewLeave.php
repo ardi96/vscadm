@@ -51,7 +51,7 @@ class ViewLeave extends ViewRecord
                 
                 })
                 ->requiresConfirmation()
-                ->visible(fn() => $this->getRecord()->status == 0) // Only show if status is 'pending'
+                ->visible(fn() => $this->getRecord()->status == 0 && auth()->user()->can('approve leave')) // Only show if status is 'pending'
                 ->after(fn() => $this->refreshFormData(['status', 'approver'])),
             Actions\Action::make('reject')
                 ->label('Reject Cuti')
@@ -63,7 +63,7 @@ class ViewLeave extends ViewRecord
                     $this->getRecord()->save();
                 })
                 ->requiresConfirmation()
-                ->visible(fn() => $this->getRecord()->status == 0) // Only show if status is 'pending'
+                ->visible(fn() => $this->getRecord()->status == 0 && auth()->user()->can('approve leave')) // Only show if status is 'pending'
                 ->after(fn() => $this->refreshFormData(['status', 'approver'])),
         ];
     }
