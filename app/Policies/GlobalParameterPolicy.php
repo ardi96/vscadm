@@ -21,7 +21,7 @@ class GlobalParameterPolicy
      */
     public function view(User $user, GlobalParameter $globalParameter): bool
     {
-        $user->can('view global parameter');
+        return $user->can('view global parameter');
 
     }
 
@@ -30,7 +30,7 @@ class GlobalParameterPolicy
      */
     public function create(User $user): bool
     {
-        $user->can('create global parameter');
+        return $user->can('create global parameter');
     }
 
     /**
