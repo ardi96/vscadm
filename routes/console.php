@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\InvoiceService;
+use App\Services\ProcessResignation;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use App\Services\GenerateMonthlyInvoice;
@@ -14,9 +15,8 @@ Artisan::command('inspire', function () {
 
 Schedule::call(new GenerateMonthlyInvoice())->monthlyOn(26,'18:00');
 
+Schedule::call(new ProcessResignation())->dailyAt('00:10');
 
-
-// This command is to generate previous period. 
 // The package price can be different, so we don't retrieve
 // the package price from master data, instead we define in this 
 // function directly.

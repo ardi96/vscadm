@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Portal\Resources\LeaveResource\Pages;
 use App\Filament\Portal\Resources\LeaveResource\RelationManagers;
 use App\Models\GlobalParameter;
+use App\Services\PeriodDropdownService;
 use Filament\Notifications\Notification;
 
 class LeaveResource extends Resource
@@ -43,17 +44,30 @@ class LeaveResource extends Resource
                     ->label('Nama Member')
                     ->relationship('member', 'name')
                     ->options(Member::where('parent_id', auth()->user()->id)->pluck('name', 'id'))
-                    ->required(),
-                DatePicker::make('start_date')
+                    ->required()
+                    ->rules([new \App\Rules\InvoiceOutstanding()]),
+                Select::make('start_date')
                     ->label('Periode Cuti')
-                    ->afterOrEqual(now()->format('Y-m-d'))
-                    ->rules([new FirstOfMonth()])
-                    ->required(),
-                DatePicker::make('end_date')
+                    ->options(PeriodDropdownService::getPeriodOptions(-1, GlobalParameter::where('parameter_key', 'MAX_CUTI_PER_TAHUN')->first()->int_value))
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
+                        $start_date = $get('start_date');
+                        $end_date = $get('end_date');
+                        $total_biaya = LeaveResource::getBiayaCuti($start_date, $end_date);
+                        $set('biaya', $total_biaya);
+                    }),
+                Select::make('end_date')
                     ->label('Sampai Dengan')
-                    ->rules([ new EndOfMonth()])
-                    ->after('start_date')
-                    ->required(),
+                    ->options(PeriodDropdownService::getPeriodOptions(-1, GlobalParameter::where('parameter_key', 'MAX_CUTI_PER_TAHUN')->first()->int_value))
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
+                        $start_date = $get('start_date');
+                        $end_date = $get('end_date');
+                        $total_biaya = LeaveResource::getBiayaCuti($start_date, $end_date);
+                        $set('biaya', $total_biaya);
+                    }),
                 Forms\Components\TextInput::make('biaya')
                     ->label('Biaya')
                     ->numeric()
@@ -64,41 +78,10 @@ class LeaveResource extends Resource
                             ->icon('heroicon-o-calculator')
                             ->label('Hitung Biaya')
                             ->action(function (Forms\Get $get, Forms\Set $set) {
-
                                 $start_date = $get('start_date');
-
                                 $end_date = $get('end_date');
-
-                                if ($start_date && $end_date) {
-
-                                    $start = \Carbon\Carbon::parse($start_date);
-
-                                    $end = \Carbon\Carbon::parse($end_date);
-                                
-
-                                    if ( $start->dayOfMonth() != 1 || !$end->isLastOfMonth() ) {
-                                        
-                                        Notification::make()
-                                            ->title('Period cuti salah')
-                                            ->body('Period cuti harus dari awal bulan sampai akhir bulan')
-                                            ->send();
-
-                                        $set('biaya', 0);
-                                    }
-                                    else 
-                                    {
-                                        $end = $end->addDay();
-
-                                        $months = $start->diffInMonths($end);
-                                    
-                                        $biaya_per_bulan = GlobalParameter::where('parameter_key', 'BIAYA_CUTI_PER_BULAN')->first()->decimal_value;
-                                        $total_biaya = $months * $biaya_per_bulan;
-                                        $set('biaya', $total_biaya);
-
-                                    }
-                                } else {
-                                    $set('biaya', 0);
-                                }
+                                $total_biaya = LeaveResource::getBiayaCuti($start_date, $end_date);
+                                $set('biaya', $total_biaya);
                             })
                     ),
                 Forms\Components\FileUpload::make('file_name')
@@ -116,8 +99,8 @@ class LeaveResource extends Resource
             ->columns([
                 TextColumn::make('member.id')->label('ID')->formatStateUsing(fn($state) => 'VSC' . str_pad($state, 4, '0', STR_PAD_LEFT))->sortable(),
                 TextColumn::make('member.name')->label('Nama Member')->searchable()->sortable(),
-                TextColumn::make('start_date')->label('Periode Cuti')->date()->sortable(),
-                TextColumn::make('end_date')->label('Sampai')->date()->sortable(),
+                TextColumn::make('start_date')->label('Periode Cuti')->date('M-Y')->sortable(),
+                TextColumn::make('end_date')->label('Sampai')->date('M-Y')->sortable(),
                 TextColumn::make('biaya')->label('Biaya')->money('IDR', true)->sortable(),
                 TextColumn::make('created_at')->label('Dibuat Pada')->dateTime()->sortable(),
                 TextColumn::make('status')->label('Status')->formatStateUsing(function ($state) {
@@ -163,5 +146,25 @@ class LeaveResource extends Resource
             'edit' => Pages\EditLeave::route('/{record}/edit'),
             'view' => Pages\ViewLeave::route('/{record}')
         ];
+    }
+
+    public static function getBiayaCuti($start_date, $end_date)
+    {
+        if ($start_date && $end_date) {
+     
+            $start = \Carbon\Carbon::parse($start_date);
+
+            $end = \Carbon\Carbon::parse($end_date);
+
+            $months = $start->diffInMonths($end) + 1;
+
+            $biaya_per_bulan = GlobalParameter::where('parameter_key', 'BIAYA_CUTI_PER_BULAN')->first()->decimal_value;
+     
+            $total_biaya = $months * $biaya_per_bulan;
+
+            return $total_biaya;
+        }
+
+        return 0;
     }
 }

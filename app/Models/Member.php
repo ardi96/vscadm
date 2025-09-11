@@ -312,4 +312,9 @@ class Member extends Model
 
         return $is_leave;
     }
+
+    public function resignations() : HasMany
+    {
+        return $this->hasMany(Resignation::class,'member_id');
+    }
 }

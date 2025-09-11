@@ -28,9 +28,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Columns\BooleanColumn;
 use Filament\Forms\Components\CheckboxList;
 use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\MemberResource\Pages;
+use Filament\Tables\Columns\IconColumn;
 
 class MemberResource extends Resource
 {
@@ -103,7 +105,7 @@ class MemberResource extends Resource
                 TextColumn::make('id')->label('Member ID')->searchable()->sortable()
                     ->formatStateUsing(fn ($record) => 'VSC' . str_pad($record->id, 4, '0', STR_PAD_LEFT)),
                 TextColumn::make('name')->label('Nama Lengkap')->searchable()->sortable(),
-                TextColumn::make('IsLeave')->label('Cuti')->formatStateUsing(fn($state) => $state ? 'Y' : 'N')->alignCenter(),
+                IconColumn::make('IsLeave')->label('Cuti')->boolean(),
                 TextColumn::make('gender')->label('J/K')->alignCenter()->searchable()->sortable(),
                 TextColumn::make('date_of_birth')->label('Tanggal Lahir')->date('d-M-Y')->searchable()->sortable(),
                 TextColumn::make('school_name')->label('Asal Sekolah')->searchable()->sortable(),

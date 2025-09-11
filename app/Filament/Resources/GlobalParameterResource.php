@@ -29,6 +29,7 @@ class GlobalParameterResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('parameter_key')
                     ->required()
+                    ->readOnlyOn('edit')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('description')
                     ->maxLength(255),

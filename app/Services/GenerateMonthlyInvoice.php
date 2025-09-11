@@ -13,7 +13,7 @@ class GenerateMonthlyInvoice
 {
     public function __invoke()
     {
-        $members = Member::whereNot('status','inactive')->get();
+        $members = Member::whereNot('status','inactive')->whereNot('status','resigned')->get();
 
         $period = Date::now()->startOfMonth()->addMonth();
 

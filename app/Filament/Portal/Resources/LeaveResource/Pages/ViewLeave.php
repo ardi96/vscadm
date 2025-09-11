@@ -22,10 +22,10 @@ class ViewLeave extends ViewRecord
                 ->label('Nama Member'),
             TextEntry::make('start_date')
                 ->label('Periode Cuti')
-                ->date(),
+                ->date('M-Y'),
             TextEntry::make('end_date')
                 ->label('Sampai Dengan')
-                ->date(),
+                ->date('M-Y'),
             TextEntry::make('biaya')
                 ->label('Biaya')
                 ->money('idr', true),
