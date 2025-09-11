@@ -99,10 +99,9 @@ class LeaveResource extends Resource
             ->columns([
                 TextColumn::make('member.id')->label('ID')->formatStateUsing(fn($state) => 'VSC' . str_pad($state, 4, '0', STR_PAD_LEFT))->sortable(),
                 TextColumn::make('member.name')->label('Nama Member')->searchable()->sortable(),
-                TextColumn::make('start_date')->label('Periode Cuti')->date()->sortable(),
-                TextColumn::make('end_date')->label('Sampai')->date()->sortable(),
+                TextColumn::make('start_date')->label('Periode Cuti')->date('M-Y')->sortable(),
+                TextColumn::make('end_date')->label('Sampai')->date('M-Y')->sortable(),
                 TextColumn::make('biaya')->label('Biaya')->money('IDR', true)->sortable(),
-                // TextColumn::make('user.name')->label('Dibuat Oleh')->sortable(),
                 TextColumn::make('created_at')->label('Dibuat Pada')->dateTime()->sortable(),
                 TextColumn::make('status')->label('Status')->formatStateUsing(function ($state) {
                     return match ($state) {

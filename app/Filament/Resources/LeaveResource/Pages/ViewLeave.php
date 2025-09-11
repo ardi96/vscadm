@@ -77,8 +77,8 @@ class ViewLeave extends ViewRecord
                     ->columns(3)
                     ->schema([
                         TextEntry::make('member.name')->label('Nama Member'),
-                        TextEntry::make('start_date')->label('Period Cuti')->date(),
-                        TextEntry::make('end_date')->label('Sampai Dengan')->date(),
+                        TextEntry::make('start_date')->label('Period Cuti')->date('M-Y'),
+                        TextEntry::make('end_date')->label('Sampai Dengan')->date('M-Y'),
                         TextEntry::make('biaya')->label('Biaya')->money('IDR', true),
                         TextEntry::make('user.name')->label('Dibuat Oleh'),
                         TextEntry::make('created_at')->label('Dibuat Pada')->dateTime(),
