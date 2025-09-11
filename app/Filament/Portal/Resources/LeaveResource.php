@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Portal\Resources\LeaveResource\Pages;
 use App\Filament\Portal\Resources\LeaveResource\RelationManagers;
+use App\Models\GlobalParameter;
+use Filament\Notifications\Notification;
 
 class LeaveResource extends Resource
 {
@@ -56,7 +58,49 @@ class LeaveResource extends Resource
                     ->label('Biaya')
                     ->numeric()
                     ->default(0)
-                    ->required(),
+                    ->required()
+                    ->suffixAction(
+                        Forms\Components\Actions\Action::make('hitung_biaya')
+                            ->icon('heroicon-o-calculator')
+                            ->label('Hitung Biaya')
+                            ->action(function (Forms\Get $get, Forms\Set $set) {
+
+                                $start_date = $get('start_date');
+
+                                $end_date = $get('end_date');
+
+                                if ($start_date && $end_date) {
+
+                                    $start = \Carbon\Carbon::parse($start_date);
+
+                                    $end = \Carbon\Carbon::parse($end_date);
+                                
+
+                                    if ( $start->dayOfMonth() != 1 || !$end->isLastOfMonth() ) {
+                                        
+                                        Notification::make()
+                                            ->title('Period cuti salah')
+                                            ->body('Period cuti harus dari awal bulan sampai akhir bulan')
+                                            ->send();
+
+                                        $set('biaya', 0);
+                                    }
+                                    else 
+                                    {
+                                        $end = $end->addDay();
+
+                                        $months = $start->diffInMonths($end);
+                                    
+                                        $biaya_per_bulan = GlobalParameter::where('parameter_key', 'BIAYA_CUTI_PER_BULAN')->first()->decimal_value;
+                                        $total_biaya = $months * $biaya_per_bulan;
+                                        $set('biaya', $total_biaya);
+
+                                    }
+                                } else {
+                                    $set('biaya', 0);
+                                }
+                            })
+                    ),
                 Forms\Components\FileUpload::make('file_name')
                     ->label('Bukti Bayar')
                     ->required()
