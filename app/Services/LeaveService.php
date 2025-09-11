@@ -6,6 +6,7 @@ use App\Models\Member;
 use App\Models\Invoice;
 use App\Models\Payment;
 use Illuminate\Support\Carbon;
+use App\Models\GlobalParameter;
 
 class LeaveService
 {
@@ -81,5 +82,25 @@ class LeaveService
         $invoice->payNow();
 
         return $invoice;
+    }
+
+    public static function getBiayaCuti($start_date, $end_date)
+    {
+        if ($start_date && $end_date) {
+     
+            $start = \Carbon\Carbon::parse($start_date);
+
+            $end = \Carbon\Carbon::parse($end_date);
+
+            $months = $start->diffInMonths($end) + 1;
+
+            $biaya_per_bulan = GlobalParameter::where('parameter_key', 'BIAYA_CUTI_PER_BULAN')->first()->decimal_value;
+     
+            $total_biaya = $months * $biaya_per_bulan;
+
+            return $total_biaya;
+        }
+
+        return 0;
     }
 }

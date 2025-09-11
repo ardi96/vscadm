@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Portal\Resources\LeaveResource\Pages;
 use App\Filament\Portal\Resources\LeaveResource\RelationManagers;
 use App\Models\GlobalParameter;
+use App\Services\LeaveService;
 use App\Services\PeriodDropdownService;
 use Filament\Notifications\Notification;
 
@@ -54,7 +55,7 @@ class LeaveResource extends Resource
                     ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
                         $start_date = $get('start_date');
                         $end_date = $get('end_date');
-                        $total_biaya = LeaveResource::getBiayaCuti($start_date, $end_date);
+                        $total_biaya = LeaveService::getBiayaCuti($start_date, $end_date);
                         $set('biaya', $total_biaya);
                     }),
                 Select::make('end_date')
@@ -65,7 +66,7 @@ class LeaveResource extends Resource
                     ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
                         $start_date = $get('start_date');
                         $end_date = $get('end_date');
-                        $total_biaya = LeaveResource::getBiayaCuti($start_date, $end_date);
+                        $total_biaya = LeaveService::getBiayaCuti($start_date, $end_date);
                         $set('biaya', $total_biaya);
                     }),
                 Forms\Components\TextInput::make('biaya')
@@ -80,7 +81,7 @@ class LeaveResource extends Resource
                             ->action(function (Forms\Get $get, Forms\Set $set) {
                                 $start_date = $get('start_date');
                                 $end_date = $get('end_date');
-                                $total_biaya = LeaveResource::getBiayaCuti($start_date, $end_date);
+                                $total_biaya = LeaveService::getBiayaCuti($start_date, $end_date);
                                 $set('biaya', $total_biaya);
                             })
                     ),
@@ -148,23 +149,4 @@ class LeaveResource extends Resource
         ];
     }
 
-    public static function getBiayaCuti($start_date, $end_date)
-    {
-        if ($start_date && $end_date) {
-     
-            $start = \Carbon\Carbon::parse($start_date);
-
-            $end = \Carbon\Carbon::parse($end_date);
-
-            $months = $start->diffInMonths($end) + 1;
-
-            $biaya_per_bulan = GlobalParameter::where('parameter_key', 'BIAYA_CUTI_PER_BULAN')->first()->decimal_value;
-     
-            $total_biaya = $months * $biaya_per_bulan;
-
-            return $total_biaya;
-        }
-
-        return 0;
-    }
 }

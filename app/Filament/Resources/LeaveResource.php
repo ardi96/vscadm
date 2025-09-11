@@ -12,6 +12,7 @@ use App\Rules\FirstOfMonth;
 use App\Models\GlobalParameter;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
+use App\Services\PeriodDropdownService;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\DatePicker;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\LeaveResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\LeaveResource\RelationManagers;
+use App\Services\LeaveService;
 
 class LeaveResource extends Resource
 {
@@ -43,16 +45,28 @@ class LeaveResource extends Resource
                     ->relationship('member', 'name')
                     ->searchable()
                     ->required(),
-                DatePicker::make('start_date')
+                Select::make('start_date')
                     ->label('Periode Cuti')
-                    ->afterOrEqual(now()->format('Y-m-d'))
-                    ->rules([new FirstOfMonth()])
-                    ->required(),
-                DatePicker::make('end_date')
+                    ->options(PeriodDropdownService::getPeriodOptions(-1, GlobalParameter::where('parameter_key', 'MAX_CUTI_PER_TAHUN')->first()->int_value))
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
+                        $start_date = $get('start_date');
+                        $end_date = $get('end_date');
+                        $total_biaya = LeaveService::getBiayaCuti($start_date, $end_date);
+                        $set('biaya', $total_biaya);
+                    }),
+                Select::make('end_date')
                     ->label('Sampai Dengan')
-                    ->rules([ new EndOfMonth()])
-                    ->after('start_date')
-                    ->required(),
+                    ->options(PeriodDropdownService::getPeriodOptions(-1, GlobalParameter::where('parameter_key', 'MAX_CUTI_PER_TAHUN')->first()->int_value))
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
+                        $start_date = $get('start_date');
+                        $end_date = $get('end_date');
+                        $total_biaya = LeaveService::getBiayaCuti($start_date, $end_date);
+                        $set('biaya', $total_biaya);
+                    }),
                 Forms\Components\TextInput::make('biaya')
                     ->label('Biaya')
                     ->numeric()
@@ -65,39 +79,9 @@ class LeaveResource extends Resource
                             ->action(function (Forms\Get $get, Forms\Set $set) {
 
                                 $start_date = $get('start_date');
-
                                 $end_date = $get('end_date');
-
-                                if ($start_date && $end_date) {
-
-                                    $start = \Carbon\Carbon::parse($start_date);
-
-                                    $end = \Carbon\Carbon::parse($end_date);
-                                
-
-                                    if ( $start->dayOfMonth() != 1 || !$end->isLastOfMonth() ) {
-                                        
-                                        Notification::make()
-                                            ->title('Period cuti salah')
-                                            ->body('Period cuti harus dari awal bulan sampai akhir bulan')
-                                            ->send();
-
-                                        $set('biaya', 0);
-                                    }
-                                    else 
-                                    {
-                                        $end = $end->addDay();
-
-                                        $months = $start->diffInMonths($end);
-                                    
-                                        $biaya_per_bulan = GlobalParameter::where('parameter_key', 'BIAYA_CUTI_PER_BULAN')->first()->decimal_value;
-                                        $total_biaya = $months * $biaya_per_bulan;
-                                        $set('biaya', $total_biaya);
-
-                                    }
-                                } else {
-                                    $set('biaya', 0);
-                                }
+                                $total_biaya = LeaveService::getBiayaCuti($start_date, $end_date);
+                                $set('biaya', $total_biaya);
                             })
                     ),
                 Forms\Components\FileUpload::make('file_name')
