@@ -25,7 +25,7 @@ class CreateResignation extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['parent_id'] = auth()->user()->id;
-        $data['resination_date'] = now()->endOfMonth()->addDay();
+        $data['resignation_date'] = now()->endOfMonth()->addDay();
         $data['status'] = 0;
         return $data;
     }

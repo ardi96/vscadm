@@ -177,7 +177,19 @@ class MemberResource extends Resource
             Tables\Actions\ActionGroup::make([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                // Tables\Actions\EditAction::make()->visible(fn($record) => $record->status == 'pending'),
+                Tables\Actions\Action::make('reactivate')
+                    ->label('Reaktivasi')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->visible(fn($record) => $record->status == 'resigned')
+                    ->action(function (Member $record, Livewire $livewire) {
+                        
+                        $record->status = 'active';
+                        $record->save();
+
+                        $livewire->notify('success', 'Member diaktifkan kembali');
+                    }),
             ])
         ])
         ->bulkActions([

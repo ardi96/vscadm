@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Portal\Resources\ResignationResource\Pages;
 use App\Filament\Portal\Resources\ResignationResource\RelationManagers;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Tables\Columns\TextColumn;
 
 class ResignationResource extends Resource
@@ -32,6 +35,27 @@ class ResignationResource extends Resource
     protected static ?string $navigationLabel = 'Pengunduran Diri';
 
     protected static ?int $navigationSort = 90;
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist->schema([
+            TextEntry::make('member.name')->label('Nama Member'),
+            TextEntry::make('resignation_date')->label('Tanggal Efektif')->date(),
+            TextEntry::make('reason')->label('Alasan Pengunduran Diri'),
+            TextEntry::make('status')->label('Status')->formatStateUsing(function ($state) {
+                return match ($state) {
+                    0 => 'Pending',
+                    1 => 'Approved',
+                    2 => 'Rejected',
+                    default => 'Unknown',
+                };
+            })->colors([
+                'warning' => 0,
+                'success' => 1,     
+                'danger' => 2,
+            ])->badge(),
+        ]);
+    }
 
     public static function form(Form $form): Form
     {
@@ -77,6 +101,7 @@ class ResignationResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
