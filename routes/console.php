@@ -13,7 +13,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 
-Schedule::call(new GenerateMonthlyInvoice())->monthlyOn(26,'18:00');
+Schedule::call(new GenerateMonthlyInvoice())->monthlyOn(25,'21:00');
 
 Schedule::call(new ProcessResignation())->dailyAt('00:10');
 
