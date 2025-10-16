@@ -297,7 +297,7 @@ class Member extends Model
     {
         $is_leave = false;
 
-        $today = Date::now()->format('Y-m-d');
+        $today = Date::now()->format('Y-m-01');
 
         $leave = Leave::where('member_id', $this->id)
                 ->where('start_date', '<=', $today)
