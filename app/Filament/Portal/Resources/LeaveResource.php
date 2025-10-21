@@ -49,7 +49,7 @@ class LeaveResource extends Resource
                     ->rules([new \App\Rules\InvoiceOutstanding()]),
                 Select::make('start_date')
                     ->label('Periode Cuti')
-                    ->options(PeriodDropdownService::getPeriodOptions(-1, GlobalParameter::where('parameter_key', 'MAX_CUTI_PER_TAHUN')->first()->int_value))
+                    ->options(PeriodDropdownService::getPeriodOptions(0, GlobalParameter::where('parameter_key', 'MAX_CUTI_PER_TAHUN')->first()->int_value))
                     ->required()
                     ->live()
                     ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
@@ -60,7 +60,7 @@ class LeaveResource extends Resource
                     }),
                 Select::make('end_date')
                     ->label('Sampai Dengan')
-                    ->options(PeriodDropdownService::getPeriodOptions(-1, GlobalParameter::where('parameter_key', 'MAX_CUTI_PER_TAHUN')->first()->int_value))
+                    ->options(PeriodDropdownService::getPeriodOptions(0, GlobalParameter::where('parameter_key', 'MAX_CUTI_PER_TAHUN')->first()->int_value))
                     ->required()
                     ->live()
                     ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {

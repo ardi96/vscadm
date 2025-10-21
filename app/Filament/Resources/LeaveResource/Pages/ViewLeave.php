@@ -31,10 +31,11 @@ class ViewLeave extends ViewRecord
 
                     $member = $this->getRecord()->member;
 
-                    $invoice = \App\Models\Invoice::where('invoice_period_year', $from_year)
-                        ->where('invoice_period_month', $from_month)
+                    // 19/10/2025 : 
+                    // cuti dadakan masih boleh selama tidak ada tunggukan bulan sebelumnya. 
+                    $invoice = \App\Models\Invoice::whereRaw('STR_TO_DATE(CONCAT(invoice_period_year, \'-\', invoice_period_month, \'-01\'), \'%Y-%m-%d\') <= ?', [$this->getRecord()->start_date])
                         ->where('member_id', $this->getRecord()->member_id)
-                        ->whereNot('status', 'void')
+                        ->where('status', 'unpaid')
                         ->first();
                     
                     if (!$invoice && $member->balance == 0) {
@@ -44,7 +45,7 @@ class ViewLeave extends ViewRecord
                     {
                         Notification::make()
                             ->title('Gagal Approve Cuti')
-                            ->body('Terdapat invoice aktif pada periode cuti yang diajukan, atau member masih ada outstanding balance.')
+                            ->body('Terdapat invoice bulan sebelumnya yang belum lunas atau saldo member tidak nol.')
                             ->danger()
                             ->send();
                     }

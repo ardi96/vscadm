@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use App\Models\Leave;
 use App\Models\Member;
 use App\Models\Invoice;
 use App\Models\Payment;
 use Illuminate\Support\Carbon;
 use App\Models\GlobalParameter;
+use Illuminate\Support\Facades\DB;
 
 class LeaveService
 {
@@ -25,14 +27,77 @@ class LeaveService
         return $leave;
     }
 
+    public static function checkPaidMembershipFee(Leave $leave)
+    {
+        // check if customer has paid membership fee for the leave month
+        // we check from invoice table instead of payment table 
+        // if exist, we update the invoice status to 'void'
+
+        $paidMembership =  \App\Models\Invoice::where('member_id', $leave->member_id)
+            ->where('type', 'membership')
+            ->whereRaw('STR_TO_DATE(CONCAT(invoice_period_year, \'-\', invoice_period_month, \'-01\'), \'%Y-%m-%d\') = ?', [$leave->start_date])
+            ->where('status', 'paid')
+            ->first();
+
+        if ($paidMembership) {
+                $paidMembership->status = 'void';
+                $paidMembership->save();
+        }
+
+    }
+
+    public static function checkUnpaidMembershipFee(Leave $leave)
+    {
+        // check if customer invoice membership fee for the leave month
+        // we check from invoice table instead of payment table 
+        // if exist, we update the invoice status to 'void' and update the balance
+
+        $unpaidMembership =  \App\Models\Invoice::where('member_id', $leave->member_id)
+            ->where('type', 'membership')
+            ->whereRaw('STR_TO_DATE(CONCAT(invoice_period_year, \'-\', invoice_period_month, \'-01\'), \'%Y-%m-%d\') = ?', [$leave->start_date])
+            ->where('status', 'unpaid')
+            ->first();
+
+        if ($unpaidMembership) {
+            
+            $unpaidMembership->status = 'void';
+            $unpaidMembership->save();
+            
+            // update member balance
+            $amount = $unpaidMembership->amount;
+            $member = $leave->member;
+            $member->balance -= $amount;
+            $member->save();
+        }
+    }
+
     public static function approveLeave(\App\Models\Leave $leave, int $approvedBy) : bool
     {
-        
-        $leave->status = 1; // approved
-        $leave->approved_by = $approvedBy;
-        $leave->save();
+        try
+        {
+            DB::beginTransaction();
 
-        static::createLeaveInvoice($leave);
+            // Update leave status
+            $leave->status = 1; // approved
+            $leave->approved_by = $approvedBy;
+            $leave->save();
+
+            // Create invoice for leave
+            static::createLeaveInvoice($leave);
+
+            // Check if membership fee for the leave month is paid
+            static::checkPaidMembershipFee($leave);
+
+            // Check if membership fee for the leave month is unpaid
+            static::checkUnpaidMembershipFee($leave);
+            
+            DB::commit();
+        } 
+        catch (\Exception $e) 
+        {
+            DB::rollBack();
+            throw $e;
+        }
 
         return true;
     }
