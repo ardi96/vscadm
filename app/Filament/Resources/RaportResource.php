@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Grade;
+use App\Models\Kelas;
 use App\Models\Member;
 use App\Models\Grading;
 use Filament\Forms\Form;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Livewire\Component as Livewire;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -88,13 +90,15 @@ class RaportResource extends Resource
                             'grade_id' => $record->grade_id,
                             'year' => date('Y'),
                             'month' => date('n'),   
-                            'decision' => 1,
                         ])
                         ->action(function (array $data, Member $record) {
                          
                             $grading = $record->gradings()->where('year', $data['year'])->where('month', $data['month'])->first();
 
+                            $member = Member::find( $record->id );
+
                             if ($grading == null) {
+
                                 Grading::create([
                                     'member_id' => $record->id,
                                     'notes' => 'N/A',
@@ -106,19 +110,41 @@ class RaportResource extends Resource
                                     'raport_file' => $data['raport_file'] ?? null,
                                 ]);
 
+                                
+                                $kelas = Kelas::find( $data['kelas_id'] );
+                            
+                                if ( $kelas)
+                                {
+                                    $member->kelas_id = $data['kelas_id'];
+                                    $member->grade_id = $kelas->grade_id;
+                                    $member->save();
+                                }
+
                                 Notification::make('Success')
                                     ->title('Record Created')
                                     ->body('Raport berhasil diupload')
                                     ->send();
 
                             } else {
-                                $grading->raport_file = $data['raport_file'] ?? null;
-                                $grading->save();
+
+                                $grading->update([
+                                    'decision' => $data['decision'],
+                                    'raport_file' => $data['raport_file'] ?? $grading->raport_file,
+                                ]);
+
+                                $kelas = Kelas::find( $data['kelas_id'] );
+                            
+                                if ( $kelas)
+                                {
+                                    $member->kelas_id = $data['kelas_id'];
+                                    $member->grade_id = $kelas->grade_id;
+                                    $member->save();
+                                }
                                 
-                                    Notification::make('Success')
-                                        ->title('Record Updated')
-                                        ->body('Raport berhasil diupdate')
-                                    ->send();
+                                Notification::make('Success')
+                                    ->title('Record Updated')
+                                    ->body('Raport berhasil diupdate')
+                                ->send();
                             }
                         })
                         ,
@@ -182,6 +208,8 @@ class RaportResource extends Resource
                                     'mark' => $item['mark']
                                 ]);
                             }
+
+                           
 
                         } 
                         else 
@@ -272,13 +300,66 @@ class RaportResource extends Resource
                     ->required(),
                 Select::make('decision')
                     ->label('Keputusan')
-                    ->selectablePlaceholder(false)
+                    ->live()
                     ->options([
                         1 => 'Naik',
                         0 => 'Tidak Naik'
                     ])
-                    ->required(),
-            ])->columns(3),
+                    ->required()
+                    ->afterStateUpdated( function (Forms\Set $set, Forms\Get $get, $state) {
+                        
+                        $member = Member::find( $get('member_id') );
+                        
+                        if ( $member && $member->kelas_id  && $state == 1 )
+                        {
+                            $kelas = Kelas::find( $member->kelas_id );
+                        
+                            if ( $kelas && $kelas->grade )
+                            {
+                                $next_grade = Grade::where('id','>',$kelas->grade->id)->orderBy('id','asc')->first();
+
+                                if ( $next_grade )
+                                {
+                                    $next_kelas = Kelas::where('grade_id',$next_grade->id)->first();
+                                    if ( $next_kelas )
+                                    {
+                                        $set('kelas_id', $next_kelas->id);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            $set('kelas_id', $member->kelas_id);
+                        }
+                        
+
+                    }),
+                Select::make('kelas_id')
+                        ->label('Naik Ke Kelas')
+                        ->options(Kelas::pluck('name','id'))
+                        ->default(function(Forms\Get $get) {
+                            $member = Member::find( $get('member_id') );
+                            if ( $member && $member->kelas_id )
+                            {
+                                $kelas = Kelas::find( $member->kelas_id );
+                                if ( $kelas && $kelas->grade )
+                                {
+                                    $next_grade = Grade::where('id','>',$kelas->grade->id)->orderBy('id','asc')->first();
+                                    if ( $next_grade )
+                                    {
+                                        $next_kelas = Kelas::where('grade_id',$next_grade->id)->first();
+                                        if ( $next_kelas )
+                                        {
+                                            return $next_kelas->id;
+                                        }
+                                    }
+                                }
+                            }
+                            return null;
+                        })
+                        ->required(),
+            ])->columns(4),
             FileUpload::make('raport_file')
                 ->label('File Raport')
                 ->acceptedFileTypes(['application/pdf'])

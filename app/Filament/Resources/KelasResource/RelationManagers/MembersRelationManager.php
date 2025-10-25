@@ -72,7 +72,24 @@ class MembersRelationManager extends RelationManager
 
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([]),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('pindah_kelas')
+                    ->label('Pindah Kelas')
+                    ->icon('heroicon-m-arrow-path-rounded-square')
+                    ->form([
+                        Select::make('kelas_tujuan_id')->options(Kelas::pluck('name','id'))
+                            ->label('Pindah ke Kelas')
+                    ])
+                    ->action(function(array $data, Collection $selectedRecords) {
+                        $kelas_id = $data['kelas_tujuan_id'];
+                        foreach ($selectedRecords as $record) {
+                            $member = Member::find( $record->id );
+                            $member->update([
+                                'kelas_id' => $kelas_id
+                            ]);
+                        }
+                    }),
+                ]),
             ]);
     }
 }
