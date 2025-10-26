@@ -66,7 +66,8 @@ class MembersRelationManager extends RelationManager
                         
                         $member = Member::find( $member_id );
                         $member->update([
-                            'kelas_id' => $kelas_id
+                            'kelas_id' => $kelas_id,
+                            'grade_id' => Kelas::find($kelas_id)->grade_id,
                         ]);
                 }),
 
@@ -85,7 +86,8 @@ class MembersRelationManager extends RelationManager
                         foreach ($selectedRecords as $record) {
                             $member = Member::find( $record->id );
                             $member->update([
-                                'kelas_id' => $kelas_id
+                                'kelas_id' => $kelas_id,
+                                'grade_id' => Kelas::find($kelas_id)->grade_id,
                             ]);
                         }
                     }),
