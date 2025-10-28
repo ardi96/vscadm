@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Portal\Resources\InvoiceResource\Pages;
 use App\Filament\Portal\Resources\InvoiceResource\RelationManagers;
+use App\Services\MidtransService;
 
 class InvoiceResource extends Resource
 {
@@ -77,7 +78,36 @@ class InvoiceResource extends Resource
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('Bayar')->icon('heroicon-m-banknotes')->label('Bayar')
                         ->url(PaymentResource\Pages\CreatePayment::getUrl())
-                        ->visible(fn($record) => $record->status == 'unpaid')
+                        ->visible(fn($record) => $record->status == 'unpaid'),
+                    Tables\Actions\Action::make('Pay')->icon('heroicon-m-banknotes')->label('Pay')
+                        ->modalHeading('Dont Pay - This is Demo')
+                        ->modalSubmitAction(false)
+                        ->slideOver()
+                        ->modalWidth('2xl')
+                        ->modalContent(function ($record) {
+                            $payment_url = MidtransService::checkout(
+                                $record->member,
+                                [
+                                    'order_id' => rand(100000, 999999),
+                                    'gross_amount' => $record->amount,
+                                ],
+                                [
+                                    [
+                                        'id' => $record->id,
+                                        'price' => $record->amount,
+                                        'quantity' => 1,
+                                        'name' => $record->item_description,
+                                    ]
+                                ],
+                                [
+                                    'first_name' => $record->member->name,
+                                    'email' => $record->member->email,
+                                    'phone' => $record->member->phone,
+                                ]
+                            );
+
+                            return view('filament.portal.pages.checkout-page', ['url' => $payment_url]);
+                        })
                 ]),
             ])
             ->bulkActions([
