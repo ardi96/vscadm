@@ -103,7 +103,10 @@ class PaymentResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    // Tables\Actions\EditAction::make(),
+                    Tables\Actions\Action::make('payment_link')->label('Link Pembayaran')->icon('heroicon-m-credit-card')
+                    ->url(fn(Payment $record):string => $record->payment_url? : '#')
+                        ->openUrlInNewTab(),
+                    // Tables\Actions\EditAction::make(),   
                     Tables\Actions\ViewAction::make(),
                     
                     Tables\Actions\Action::make('lihat attachment')->icon('heroicon-m-arrow-top-right-on-square')
@@ -118,6 +121,7 @@ class PaymentResource extends Resource
                     // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
+            ->defaultSort('id','desc')
             ->modifyQueryUsing(fn (Builder $query) => $query->where('user_id', Auth::user()->id));
     }
 

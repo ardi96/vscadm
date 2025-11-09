@@ -69,6 +69,18 @@ class MemberInvoices extends ManageRelatedRecords
             ->columns([
                 TextColumn::make('invoice_no')->label('No. Invoice')->alignCenter()->sortable()->searchable(),
                 TextColumn::make('type')->label('Tipe Invoice')->searchable()->sortable(),
+                TextColumn::make('invoice_period_year')->label('Periode')->searchable()->sortable()->alignCenter()
+                    ->formatStateUsing(function (Invoice $record)  {
+
+                        if ( !$record->invoice_period_year || !$record->invoice_period_month ) {
+                            return '-';
+                        }
+
+                        $period = Date::createFromFormat('Y-m-d', $record->invoice_period_year.'-'.$record->invoice_period_month.'-01')
+                            ->format('M-Y');
+                        
+                        return $period;
+                    }),
                 TextColumn::make('invoice_date')->date('d-M-Y')->label('Tanggal Invoice')->searchable()->sortable(),
                 TextColumn::make('description')->label('Judul Invoice')->searchable()->sortable()->wrap(),
                 TextColumn::make('item_description')->label('Paket')->searchable()->sortable(),
@@ -101,21 +113,49 @@ class MemberInvoices extends ManageRelatedRecords
 
                 Tables\Actions\Action::make('Generate Monthly Invoice')
                     ->form([
-                        Forms\Components\DatePicker::make('period')
-                            ->label('Periode Invoice')
-                            ->helperText('Pilih tanggal mana saja untuk periode bulan & tahun invoice ini')
-                            ->default(Date::now()->startOfMonth()->addMonth())
+                        Forms\Components\Select::make('month')
+                            ->label('Bulan')
+                            ->options([
+                                1 => 'Januari',
+                                2 => 'Februari',
+                                3 => 'Maret',
+                                4 => 'April',
+                                5 => 'Mei',
+                                6 => 'Juni',
+                                7 => 'Juli',
+                                8 => 'Agustus',
+                                9 => 'September',
+                                10 => 'Oktober',
+                                11 => 'November',
+                                12 => 'Desember',
+                            ])
                             ->required(),
+                        Forms\Components\Select::make('year')
+                            ->label('Tahun')
+                            ->options(function() {
+                                $currentYear = Date::now()->year;
+                                return [
+                                    $currentYear - 1 => $currentYear - 1,
+                                    $currentYear => $currentYear,
+                                    $currentYear + 1 => $currentYear + 1,
+                                ];
+                            })
+                            ->required(),
+                        // Forms\Components\DatePicker::make('period')
+                        //     ->label('Periode Invoice')
+                        //     ->helperText('Pilih tanggal mana saja untuk periode bulan & tahun invoice ini')
+                        //     ->default(Date::now()->startOfMonth()->addMonth())
+                        //     ->required(),
                     ])
                     ->action(function( array $data ) {
 
-                       $period = Date::createFromFormat('Y-m-d', $data['period']);
+                       $period = Date::createFromFormat('Y-m-d', $data['year'].'-'.$data['month'].'-01');
 
                        $invoice = Invoice::where('member_id', $this->getRecord()->id)
                                         ->where('type', 'membership')
                                         ->whereNot('status','void')
-                                        ->where('invoice_period_year', $period->year)
-                                        ->where('invoice_period_month', $period->month)->first();
+                                        ->where('invoice_period_year', $data['year'])
+                                        ->where('invoice_period_month', $data['month'])->first();
 
                         $leaves = Leave::where('member_id', $this->getRecord()->id)
                                     ->where('status', 1)
