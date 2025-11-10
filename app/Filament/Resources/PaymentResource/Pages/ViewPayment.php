@@ -101,6 +101,7 @@ class ViewPayment extends ViewRecord
                     'pending' => 'heroicon-m-question-mark-circle',
                     'rejected' => 'heroicon-m-x-circle',
                 }),
+            TextEntry::make('order_id')->label('Order ID'),
             RepeatableEntry::make('invoices')
                 ->label('')
                 ->schema([

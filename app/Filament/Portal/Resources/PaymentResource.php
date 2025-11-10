@@ -8,7 +8,10 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Doctrine\DBAL\Schema\Column;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Awcodes\TableRepeater\Header;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -19,12 +22,14 @@ use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\View\TablesRenderHook;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Infolists\Components\TextEntry;
+use Awcodes\TableRepeater\Components\TableRepeater;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Portal\Resources\PaymentResource\Pages;
 use App\Filament\Portal\Resources\PaymentResource\RelationManagers;
-use Awcodes\TableRepeater\Components\TableRepeater;
-use Awcodes\TableRepeater\Header;
-use Doctrine\DBAL\Schema\Column;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\ViewEntry;
+use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 
 class PaymentResource extends Resource
 {
@@ -39,6 +44,26 @@ class PaymentResource extends Resource
 
     // protected static ?string $label = 'Pembayaran';
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                TextEntry::make('payment_date')->label('Tanggal Pembayaran')->formatStateUsing(fn ($state) => date_format(date_create($state), 'd-M-Y')),
+                TextEntry::make('bank')->label('Nama Bank'),
+                TextEntry::make('amount')->label('Jumlah Pembayaran')->formatStateUsing(fn ($state) => number_format($state, 0, ',', '.').' Rupiah'),
+                TextEntry::make('notes')->label('Keterangan'),
+                TextEntry::make('order_id')->label('Order Reference (online payment)'),
+                TextEntry::make('status')->label('Status'),
+                TableRepeatableEntry::make('invoices')
+                    ->label('Untuk Pembayaran Invoice')
+                    ->schema([
+                        TextEntry::make('invoice_no')->label('No. Invoice'),
+                        TextEntry::make('description')->label('Keterangan'),
+                        TextEntry::make('amount')->label('Jumlah')->money('IDR'),
+                    ])->columnSpanFull(),
+                ImageEntry::make('file_name')->label('Bukti Pembayaran')->disk('public'),
+            ]);
+    }
     
     public static function form(Form $form): Form
     {
@@ -138,7 +163,7 @@ class PaymentResource extends Resource
             'index' => Pages\ListPayments::route('/'),
             'create' => Pages\CreatePayment::route('/create'),
             // 'edit' => Pages\EditPayment::route('/{record}/edit'),
-            // 'edit' => Pages\EditPayment::route('/{record}'),
+            // 'view' => Pages\ViewPayment::route('/{record}'),
         ];
     }
 }

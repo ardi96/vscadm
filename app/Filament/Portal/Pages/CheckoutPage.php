@@ -129,7 +129,7 @@ class CheckoutPage extends Page implements HasTable, HasForms
             'amount' => $this->total_amount,
             'status' => 'pending',
             'bank' => 'Midtrans',
-            'notes' => 'Payment for Order ID: ' . $order_id,
+            'notes' => 'Online Payment',
             'user_id' => Auth::user()->id,
         ]);
 
