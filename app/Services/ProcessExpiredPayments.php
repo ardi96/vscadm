@@ -10,27 +10,35 @@ class ProcessExpiredPayments
 {
     public function __invoke()
     {
-        Log::info('Starting ProcessExpiredPayments job');
-
         $expiredPayments = Payment::where('status', 'pending')->where('is_online', true)
             ->get();
 
         foreach ($expiredPayments as $payment) {
 
-            $status = MidtransService::inquiryPaymentStatus( $payment->order_id );
-
-            if ( $status != 'expire' ) {
-                continue;
-            }   
-
-            $payment->status = 'rejected';
-            $payment->rejection_note = 'Payment expired automatically';
-            $payment->save();
-
-            foreach( $payment->invoices as $invoice)
+            try
             {
-                $invoice->cancelPayment();
+                $status = MidtransService::inquiryPaymentStatus( $payment->order_id );
+
+                if ( $status != 'expire' ) {
+                    continue;
+                }   
+
+                $payment->status = 'rejected';
+                $payment->rejection_note = 'Payment expired automatically';
+                $payment->save();
+
+                foreach( $payment->invoices as $invoice)
+                {
+                    $invoice->cancelPayment();
+                }
             }
+            catch ( \Exception $e )
+            {
+                Log::error('Error processing payment ID ' . $payment->id . ': ' . $e->getMessage() );
+                continue;
+            }
+
+            
         }
     }
 }
