@@ -130,7 +130,8 @@ class PaymentResource extends Resource
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('payment_link')->label('Link Pembayaran')->icon('heroicon-m-credit-card')
                     ->url(fn(Payment $record):string => $record->payment_url? : '#')
-                        ->openUrlInNewTab()->visible(fn($record) => $record->is_online && $record->status == 'pending'),
+                    ->openUrlInNewTab()
+                    ->visible(fn($record) => $record->is_online && $record->status == 'pending'),
                     // Tables\Actions\EditAction::make(),   
                     Tables\Actions\ViewAction::make(),
                     

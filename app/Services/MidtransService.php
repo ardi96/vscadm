@@ -69,4 +69,34 @@ class MidtransService
         return 'VSC'.date('ymdHis').rand(10,99);
     }
 
+    public static function restartPayment(Payment $payment)
+    {
+        $order_id  = $payment->order_id;
+        $invoices = $payment->invoices;
+        $items = [];
+
+        foreach ( $invoices as $invoice ) {
+            $items[] = MidtransService::ConvertInvoicetoItem($invoice);
+        }
+        
+        $transaction_details = [
+            'order_id' => $order_id,
+            'gross_amount' => $payment->amount,
+        ];
+
+        $customer_details = [
+            'first_name' => $payment->user->name,
+            'email' => $payment->user->email,
+        ];  
+        
+        $payment_url = MidtransService::checkout(
+            null,
+            $transaction_details,
+            $items,
+            $customer_details
+        );
+
+        return $payment_url;
+    }
+
 }

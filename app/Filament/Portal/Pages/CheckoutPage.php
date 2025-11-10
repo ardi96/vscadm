@@ -52,7 +52,7 @@ class CheckoutPage extends Page implements HasTable, HasForms
             
             $this->total_amount = Invoice::whereIn('id', $this->invoice_ids)->where('parent_id', Auth::user()->id)->sum('amount');
 
-            $this->invoice_arr = Invoice::whereIn('id', $this->invoice_ids)->where('parent_id', Auth::user()->id)->get()->pluck('id')->toArray();
+            $this->invoice_arr = Invoice::whereIn('id', $this->invoice_ids)->where('status','unpaid')->where('parent_id', Auth::user()->id)->get()->pluck('id')->toArray();
 
             $this->form->fill( ['invoice_ids' => $this->invoice_arr] );
 
@@ -71,7 +71,7 @@ class CheckoutPage extends Page implements HasTable, HasForms
     public function table(Table $table): Table
     {
         return $table
-            ->query(Invoice::query()->whereIn('id', $this->invoice_ids)->where('parent_id', Auth::user()->id))
+            ->query(Invoice::query()->whereIn('id', $this->invoice_ids)->where('status','unpaid')->where('parent_id', Auth::user()->id))
             ->columns([
                 TextColumn::make('invoice_no')->label('No. Invoice'),
                 TextColumn::make('member.name')->label('Atas Nama'),

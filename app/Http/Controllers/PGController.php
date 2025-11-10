@@ -31,6 +31,8 @@ class PGController extends Controller
 
         if ($payment) {
 
+            Log::info('Payment Notification Received', $request->all());
+
             if ( $request->transaction_status == 'settlement' || $request->transaction_status == 'capture' ) {
                 // Payment is successful
                 // Update payment status to accepted
