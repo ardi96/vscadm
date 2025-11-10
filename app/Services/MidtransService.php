@@ -71,6 +71,7 @@ class MidtransService
 
     public static function restartPayment(Payment $payment)
     {
+        
         $order_id  = $payment->order_id;
         $invoices = $payment->invoices;
         $items = [];
@@ -97,6 +98,18 @@ class MidtransService
         );
 
         return $payment_url;
+    }
+
+    public static function inquiryPaymentStatus( $order_id )
+    {
+        Config::$serverKey = config('payment.midtrans.server_key');
+        Config::$isProduction = config('payment.midtrans.is_production', false);
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+
+        $status = \Midtrans\Transaction::status($order_id);
+
+        return $status['transaction_status'];
     }
 
 }

@@ -16,6 +16,7 @@ use Filament\Infolists\Components\RepeatableEntry;
 use App\Infolists\Components\ViewPaymentAttachment;
 use App\Jobs\SendPaymentRejectionEmail;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 
 class ViewPayment extends ViewRecord
 {
@@ -77,6 +78,16 @@ class ViewPayment extends ViewRecord
                 ->icon('heroicon-m-check-circle')
                 ->requiresConfirmation()
                 ->after(fn() => $this->refreshFormData(['status'])),
+            Actions\Action::make('inquiry')->label('Inquiry Online Payment Status')
+                ->action(function() {
+                    $payment = $this->getRecord();
+                    $status = \App\Services\MidtransService::inquiryPaymentStatus( $payment->order_id );
+                    Notification::make('info')
+                        ->title('Status Pembayaran di Midtrans')
+                        ->body('Status pembayaran di Midtrans: ' . $status)
+                        ->send();
+                })
+                ->icon('heroicon-m-information-circle'),
         ];
     }
 
