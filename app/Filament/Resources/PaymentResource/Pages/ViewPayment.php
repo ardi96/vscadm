@@ -87,6 +87,8 @@ class ViewPayment extends ViewRecord
                         ->body('Status pembayaran di Midtrans: ' . $status)
                         ->send();
                 })
+                ->color('gray')
+                ->visible(fn() => $this->getRecord()->is_online)
                 ->icon('heroicon-m-information-circle'),
         ];
     }
