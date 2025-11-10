@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 use App\Models\GlobalParameter;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MidtransService
 {
@@ -109,7 +110,9 @@ class MidtransService
 
         $status = \Midtrans\Transaction::status($order_id);
 
-        return $status['transaction_status'];
+        Log::info('Midtrans Inquiry Status for Order ID ' . $order_id . ': ' . json_encode($status));
+        
+        return $status->transaction_status;
     }
 
 }
