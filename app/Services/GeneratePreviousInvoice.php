@@ -50,7 +50,7 @@ class GeneratePreviousInvoice
                         'parent_id' => $member->parent->id,
                         'amount' => $price[$member->package->id] ?? 0,
                         'invoice_date' => Date::now(),
-                        'invoice_no' => env('INVOICE_PREFIX','VSC') . InvoiceService::getNextNumber(),
+                        'invoice_no' => config('payment.invoice_prefix','VSC') . InvoiceService::getNextNumber(),
                         'description' => 'Membership Fee '. $invoicePeriod->format('M-Y'),
                         'item_description' => $member->package->name,
                         'status' => 'unpaid',

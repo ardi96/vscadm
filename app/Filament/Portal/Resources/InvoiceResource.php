@@ -86,7 +86,7 @@ class InvoiceResource extends Resource
                     Tables\Actions\Action::make('pay_online')->icon('heroicon-m-banknotes')->label('Bayar Secara Online')
                         ->url(function($record) {
                             return '/portal/checkout-page?id='.$record->id;
-                        })->visible(fn($record) => $record->status == 'unpaid' && env('ONLINE_PAYMENT_ENABLED',false)),
+                        })->visible(fn($record) => $record->status == 'unpaid' && config('payment.online_payment_enabled')),
                 ]),
             ])
             ->bulkActions([
@@ -106,7 +106,7 @@ class InvoiceResource extends Resource
                     // Tables\Actions\DeleteBulkAction::make(),
                 ])->label('Actions'),
             ])
-            ->checkIfRecordIsSelectableUsing(fn (Invoice $record): bool => $record->status == 'unpaid' && env('ONLINE_PAYMENT_ENABLED',false))
+            ->checkIfRecordIsSelectableUsing(fn (Invoice $record): bool => $record->status == 'unpaid' && config('payment.online_payment_enabled', false))
             ->defaultSort('invoice_no','desc')
             ->modifyQueryUsing(function (Builder $query) {
 

@@ -56,7 +56,7 @@ class MemberInvoices extends ManageRelatedRecords
                     ->addActionLabel('Tambah Item')
                     , 
                 Forms\Components\Hidden::make('parent_id')->default($this->getRecord()->parent_id),
-                Forms\Components\Hidden::make('invoice_no')->default(env('INVOICE_PREFIX','VSC') . InvoiceService::getNextNumber()),
+                Forms\Components\Hidden::make('invoice_no')->default(config('payment.invoice_prefix','VSC') . InvoiceService::getNextNumber()),
                 Forms\Components\Hidden::make('type')->default('other'),
                 Forms\Components\Hidden::make('status')->default('unpaid'),
                 Forms\Components\Hidden::make('invoice_date')->default(Date::now()),

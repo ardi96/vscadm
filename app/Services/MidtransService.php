@@ -31,9 +31,9 @@ class MidtransService
     public static function checkout(?Member $member, array $transactionDetails, array $itemDetails, array $customerDetails)
     {
         // Implement Midtrans checkout process here
-        
-        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-        Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);   
+
+        Config::$serverKey = config('payment.midtrans.server_key');
+        Config::$isProduction = config('payment.midtrans.is_production', false);
         Config::$isSanitized = true;
         
         
@@ -45,7 +45,7 @@ class MidtransService
             'item_details' => $itemDetails,
             'customer_details' => $customerDetails,
             'callbacks' => [
-                'finish' => env('APP_URL') . '/portal/payment/received',
+                'finish' => config('app.url') . '/portal/payment/received',
             ]
         ];
 

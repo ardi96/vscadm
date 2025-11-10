@@ -18,7 +18,7 @@ class PGController extends Controller
         // Update the payment status in the database
         // Send confirmation email to the user
 
-        $server_key = env('MIDTRANS_SERVER_KEY');
+        $server_key = config('payment.midtrans.server_key');
 
         $hashed = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $server_key);
  

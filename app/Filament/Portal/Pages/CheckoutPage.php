@@ -157,7 +157,7 @@ class CheckoutPage extends Page implements HasTable, HasForms
                 ->button()
                 ->color('primary')
                 ->submit('proceedToPayment')
-                ->visible(env('ONLINE_PAYMENT_ENABLED', false)),
+                ->visible(config('payment.online_payment_enabled')),
 
                 Action::make('cancel')
             ->label(__('filament-panels::resources/pages/edit-record.form.actions.cancel.label'))
