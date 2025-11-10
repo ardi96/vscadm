@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Services;
+
+use Midtrans\Config;
+use App\Models\Payment;
+
+class ProcessExpiredPayments
+{
+    public function __invoke()
+    {
+
+        $expiredPayments = Payment::where('status', 'pending')->where('is_online', true)
+            ->get();
+
+        foreach ($expiredPayments as $payment) {
+
+            $status = MidtransService::inquiryPaymentStatus( $payment->order_id );
+
+            if ( $status != 'expire' ) {
+                continue;
+            }   
+
+            $payment->status = 'rejected';
+            $payment->rejection_note = 'Payment expired automatically';
+            $payment->save();
+
+            foreach( $payment->invoices as $invoice)
+            {
+                $invoice->cancelPayment();
+            }
+        }
+    }
+}

@@ -5,6 +5,7 @@ use App\Services\ProcessResignation;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use App\Services\GenerateMonthlyInvoice;
+use App\Services\ProcessExpiredPayments;
 use Illuminate\Support\Facades\Schedule;
 use App\Services\GeneratePreviousInvoice;
 
@@ -16,6 +17,8 @@ Artisan::command('inspire', function () {
 Schedule::call(new GenerateMonthlyInvoice())->monthlyOn(24,'05:00');
 
 Schedule::call(new ProcessResignation())->dailyAt('00:10');
+
+Schedule::call(new ProcessExpiredPayments())->everyFiveMinutes();
 
 // The package price can be different, so we don't retrieve
 // the package price from master data, instead we define in this 
