@@ -83,7 +83,7 @@ class InvoiceResource extends Resource
                         ->url(PaymentResource\Pages\CreatePayment::getUrl())
                         ->visible(fn($record) => $record->status == 'unpaid'),
                     
-                    Tables\Actions\Action::make('pay_online')->icon('heroicon-m-banknotes')->label('Bayar Secara Online')
+                    Tables\Actions\Action::make('pay_online')->icon('heroicon-m-qr-code')->label('Bayar Secara Online')
                         ->url(function($record) {
                             return '/portal/checkout-page?id='.$record->id;
                         })->visible(fn($record) => $record->status == 'unpaid' && config('payment.online_payment_enabled')),
@@ -102,7 +102,7 @@ class InvoiceResource extends Resource
                             return redirect('/portal/checkout-page?id='.$ids_string);
                         })
                         ->color('success')
-                        ->icon('heroicon-m-check-circle'),
+                        ->icon('heroicon-m-qr-code'),
                     // Tables\Actions\DeleteBulkAction::make(),
                 ])->label('Actions'),
             ])

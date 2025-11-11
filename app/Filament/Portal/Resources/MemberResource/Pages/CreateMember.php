@@ -19,6 +19,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\PaymentResource;
 use App\Filament\Portal\Resources\MemberResource;
+use App\Models\GlobalParameter;
 use Filament\Notifications\Actions\Action as ActionsAction;
 
 class CreateMember extends CreateRecord
@@ -46,10 +47,17 @@ class CreateMember extends CreateRecord
 
     protected function getRedirectUrl(): string
     {
-        $resource = static::getResource();
+        // $resource = static::getResource();
 
-        return $resource::getUrl('index');
+        $member = $this->getRecord();
+
+        $invoice = $member->invoices()->where('status','unpaid')->where('type','registration')->first();
+
+        return '/portal/checkout-page?id=' . $invoice->id;
+
+        // return $resource::getUrl('index');
     }
+
 
 
     /**
@@ -81,56 +89,68 @@ class CreateMember extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
 
-        $payment_date = $data['payment_date'];
-        $bank = $data['bank'];
-        $notes = $data['notes'];
+        // kalau user memilih untuk pembayaran online maka 
+        // payment amount, date, bank, dan notes digenerate
+        // oleh system. 
+
+        // $payment_date = $data['payment_date'];
+        // $bank = $data['bank'];
+        // $notes = $data['notes'];
         
-        unset($data['bank']);
-        unset($data['payment_date']);
-        unset($data['notes']);
+        // unset($data['bank']);
+        // unset($data['payment_date']);
+        // unset($data['notes']);
 
         //insert the member information
+        
         $record =  static::getModel()::create($data);
 
+        // if ( $data['is_online'] ) {
+        
+        // }
         
         // Create a new payment
-        $payment = new Payment();
-        $payment->amount = $data['payment_amount'];
-        $payment->payment_date = $payment_date;
-        $payment->bank = $bank;
-        $payment->notes  = $notes;
-        $payment->user_id = $data['parent_id'];
-        $payment->file_name = $record->payment_file_name;
+        
+        // $payment = new Payment();
+        // $payment->amount = $data['payment_amount'];
+        // $payment->payment_date = $payment_date;
+        // $payment->bank = $bank;
+        // $payment->notes  = $notes;
+        // $payment->user_id = $data['parent_id'];
+        // $payment->file_name = $record->payment_file_name;
 
-        // link the member_id with this payment
-        $payment->member_id = $record->id;
+        // // link the member_id with this payment
+        // $payment->member_id = $record->id;
 
-        // Save the payment model to insert the data
-        $payment->save();
+        // // Save the payment model to insert the data
+        // $payment->save();
 
         // generate invoice for registration fee
-        $invoice = InvoiceService::generateRegistrationInvoice($record , $payment);
+        $registration_fee = GlobalParameter::where('parameter_key','BIAYA_REGISTRASI')->first()->decimal_value;
+        
+        $invoice = InvoiceService::generateRegistrationInvoice2($record , $registration_fee);
 
-        PaymentInvoice::create([
-            'invoice_id' => $invoice->id,
-            'payment_id' => $payment->id 
-        ]);
-
+        // PaymentInvoice::create([
+        //     'invoice_id' => $invoice->id,
+        //     'payment_id' => $payment->id 
+        // ]);
 
         // here we want to send notification to the users whose permission to "approve payment"
-        $users = User::permission('approve payment')->get();
 
-        foreach( $users as $user)
-        {
+        // $users = User::permission('approve payment')->get();
 
-            Notification::make()
-                ->body('Payment receipt has been uploaded by the member')
-                ->actions([
-                    ActionsAction::make('view')->label('View')->url(PaymentResource::getUrl(name: 'view', parameters: ['record' => $payment->id ], panel : 'admin'))
-                ])
-                ->sendToDatabase( $user );
+        // foreach( $users as $user)
+        // {
+
+        //     Notification::make()
+        //         ->body('Payment receipt has been uploaded by the member')
+        //         ->actions([
+        //             ActionsAction::make('view')->label('View')->url(PaymentResource::getUrl(name: 'view', parameters: ['record' => $payment->id ], panel : 'admin'))
+        //         ])
+        //         ->sendToDatabase( $user );
               
-        }
+        // }
+        
         
         return $record;
     }

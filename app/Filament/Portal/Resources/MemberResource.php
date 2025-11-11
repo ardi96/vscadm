@@ -7,9 +7,10 @@ use Filament\Tables;
 use App\Models\Grade;
 use App\Models\Kelas;
 use App\Models\Member;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 // use Filament\Support\RawJs;
+use Filament\Tables\Table;
 use App\Models\CostumeSize;
 use App\Models\ClassPackage;
 use App\Models\ClassSchedule;
@@ -26,6 +27,7 @@ use App\Rules\MemberUniqueValidation;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
@@ -37,7 +39,8 @@ use Filament\Forms\Components\Actions\Action;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Portal\Resources\MemberResource\Pages;
 use App\Filament\Portal\Resources\MemberResource\RelationManagers;
-
+use App\Models\GlobalParameter;
+use Filament\Forms\Components\Placeholder;
 
 class MemberResource extends Resource
 {
@@ -123,23 +126,44 @@ class MemberResource extends Resource
                 ])
                 ->columns(4)
                 ->columnSpanFull(),
-
-                Wizard\Step::make('Kirim Bukti Pembayaran')->schema([
+                Wizard\Step::make('Instruksi Pembayaran')->schema([
+                    Placeholder::make('Instruksi_pembayaran')->label('')
+                    ->content( function() { return new HtmlString('
+                        <p class=\'font-bold\'>Instruksi Pembayaran</p>
+                        <ul>
+                            <li>Biaya pendaftaran adalah Rp '. number_format(GlobalParameter::where('parameter_key','BIAYA_REGISTRASI')->first()->decimal_value,0,',','.') .' </li>
+                            <li>Klik tombol Kirim Data Registrasi, sistem akan mengarahkan Anda ke halaman checkout</li>
+                            <li>Selesaikan pembayaran dalam waktu 60 menit</li>
+                        </ul>
+                    ');} )
+                ]),
+                Wizard\Step::make('Pembayaran')->schema([
+                    Select::make('payment_mode')->label('Pilih metode pembayaran')
+                        ->options([
+                            1 => 'Online Payment',
+                            0 => 'Manual (upload bukti bayar)'
+                        ])
+                        ->default(0)
+                        ->required()
+                        ->live()
+                        ->selectablePlaceholder(false),
                     TextInput::make('payment_amount')->label('Jumlah')
                         ->suffix('IDR')
                         ->numeric()
                         ->required()
                         ->minValue(0)
+                        ->visible(function(Get $get) { return $get('payment_mode') == 0;})
                         // ->default(250000)
                         // ->readOnly()
                         //->mask(RawJs::make('$money($input,\',\',\'.\')'))
                         ,
                 
-                    TextInput::make('bank')->label('Bank')->required(),
-                    TextInput::make('notes')->label('Keterangan')->required(),
-                    DatePicker::make('payment_date')->label('Tanggal Transfer')->required()->default(Date::now()),
+                    TextInput::make('bank')->label('Bank')->required()->visible(function(Get $get) { return $get('payment_mode') == 0;}),
+                    TextInput::make('notes')->label('Keterangan')->required()->visible(function(Get $get) { return $get('payment_mode') == 0;}),
+                    DatePicker::make('payment_date')->label('Tanggal Transfer')->required()->default(Date::now())->visible(function(Get $get) { return $get('payment_mode') == 0;}),
 
                     FileUpload::make('payment_file_name')->label('Upload File')
+                            ->visible(function(Get $get) { return $get('payment_mode') == 0;})
                             ->acceptedFileTypes(['image/jpeg','image/png','application/pdf'])
                             ->maxSize(1024*2)
                             ->required()
@@ -152,7 +176,7 @@ class MemberResource extends Resource
                                     ->icon('heroicon-o-question-mark-circle')
                                     ->tooltip('Petunjuk Pembayaran')
                             ),
-                ])->visibleOn('create')
+                ])->visibleOn([])
             ])->columnSpanFull(),
         ])->inlineLabel();
     }
@@ -161,6 +185,7 @@ class MemberResource extends Resource
     {
         return $table
         ->columns([
+            TextColumn::make('id')->label('ID')->searchable()->sortable()->formatStateUsing(fn($state) : string => Member::formatMemberId($state)),
             TextColumn::make('name')->label('Nama Lengkap')->searchable()->sortable(),
             TextColumn::make('gender')->label('J/K')->alignCenter()->searchable()->sortable(),
             TextColumn::make('date_of_birth')->label('Tanggal Lahir')->date('d-M-Y')->searchable()->sortable(),
@@ -197,7 +222,8 @@ class MemberResource extends Resource
             ]),
         ])
         ->emptyStateHeading('Anda belum mendaftar. Silakan klik tombol Registrasi Baru di kanan atas')
-        ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', Auth::user()->id));
+        ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', Auth::user()->id))
+        ->defaultSort('id','desc');
     }
 
     public static function getRelations(): array

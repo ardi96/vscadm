@@ -317,4 +317,9 @@ class Member extends Model
     {
         return $this->hasMany(Resignation::class,'member_id');
     }
+
+   public static function formatMemberId(int $state) : string
+   {
+        return 'VSC' . str_pad($state, 4, '0', STR_PAD_LEFT);
+   }
 }

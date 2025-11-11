@@ -184,4 +184,33 @@ class InvoiceService
         return $invoice;
     }
 
+    public static function generateRegistrationInvoice2(Member $member, int $amount) : ?Invoice
+    {
+
+        $invoice = Invoice::create([
+            'member_id' => $member->id,
+            'type' => 'registration',
+            'parent_id' => $member->parent->id,
+            'amount' => $amount,
+            'invoice_date' => Date::now(),
+            'invoice_no' => config('payment.invoice_prefix','VSC') . InvoiceService::getNextNumber(),
+            'description' => 'Registration Fee',
+            'item_description' => $member->package->name,
+            'status' => 'unpaid'
+        ]);
+
+        $member->balance = $member->balance + $amount;
+        $member->last_invoice_date = Date::now();
+        $member->save();
+
+        $invoice->items()->create([
+            'description' => 'Registration Fee',
+            'amount' => $amount
+        ]);
+
+        SendInvoiceMail::dispatch($invoice);
+        
+        return $invoice;
+    }
+
 }
