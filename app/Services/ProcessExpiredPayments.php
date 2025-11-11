@@ -14,13 +14,24 @@ class ProcessExpiredPayments
             ->get();
 
         foreach ($expiredPayments as $payment) {
-
             try
             {
                 $status = MidtransService::inquiryPaymentStatus( $payment->order_id );
 
                 if ( $status != 'expire' ) {
+
+                    if ( $status == 'settlement' ) {
+                        $payment->status = 'accepted';
+                        $payment->save();
+
+                        foreach( $payment->invoices as $invoice)
+                        {
+                            $invoice->payNow();
+                        }
+                    }
+
                     continue;
+
                 }   
 
                 $payment->status = 'rejected';
@@ -37,8 +48,6 @@ class ProcessExpiredPayments
                 Log::error('Error processing payment ID ' . $payment->id . ': ' . $e->getMessage() );
                 continue;
             }
-
-            
         }
     }
 }
