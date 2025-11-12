@@ -87,7 +87,7 @@ class LeaveResource extends Resource
                     ),
                 Forms\Components\FileUpload::make('file_name')
                     ->label('Bukti Bayar')
-                    ->required()
+                    // ->required()
                     ->disk('public')
                     ->directory('leave_files')
                     ->columnSpan(3)
@@ -121,7 +121,7 @@ class LeaveResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->visible(fn($record) => $record->status == 0),
+                // Tables\Actions\EditAction::make()->visible(fn($record) => $record->status == 0),
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
@@ -129,6 +129,7 @@ class LeaveResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
+            ->defaultSort('id','desc')
             ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('member_id', Member::where('parent_id', auth()->user()->id)->pluck('id')));
     }
 
@@ -144,7 +145,7 @@ class LeaveResource extends Resource
         return [
             'index' => Pages\ListLeaves::route('/'),
             'create' => Pages\CreateLeave::route('/create'),
-            'edit' => Pages\EditLeave::route('/{record}/edit'),
+            // 'edit' => Pages\EditLeave::route('/{record}/edit'),
             'view' => Pages\ViewLeave::route('/{record}')
         ];
     }

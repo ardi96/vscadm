@@ -83,7 +83,7 @@ class LeaveService
             $leave->save();
 
             // Create invoice for leave
-            static::createLeaveInvoice($leave);
+            static::createLeaveInvoice($leave,false);
 
             // Check if membership fee for the leave month is paid
             static::checkPaidMembershipFee($leave);
@@ -112,7 +112,7 @@ class LeaveService
  
     }
 
-    public static function createLeaveInvoice(\App\Models\Leave $leave) : ?Invoice
+    public static function createLeaveInvoice(\App\Models\Leave $leave, bool $isOnline = false) : ?Invoice
     {
         if ($leave->biaya <= 0) {
             return null;
@@ -130,21 +130,26 @@ class LeaveService
             $leave->biaya,
             Carbon::now()->toDateString(),
             $description,
-            $itemDescription
+            $itemDescription,
+            'leave'
         );
 
-        $invoice->payment()->create([
-            'payment_date' => Carbon::now()->toDateString(),
-            'amount' => $leave->biaya,
-            'bank' => 'other',
-            'notes' => 'Pembayaran otomatis biaya cuti oleh sistem',
-            'file_name' => $leave->file_name,
-            'status' => 'accepted',
-            'user_id' => $leave->created_by,
-            'member_id' => $member->id,
-        ]);
+        if ( !$isOnline )
+        {
 
-        $invoice->payNow();
+            $invoice->payment()->create([
+                'payment_date' => Carbon::now()->toDateString(),
+                'amount' => $leave->biaya,
+                'bank' => 'other',
+                'notes' => 'Pembayaran otomatis biaya cuti oleh sistem',
+                'file_name' => $leave->file_name,
+                'status' => 'accepted',
+                'user_id' => $leave->created_by,
+                'member_id' => $member->id,
+            ]);
+            
+            $invoice->payNow();
+        }
 
         return $invoice;
     }

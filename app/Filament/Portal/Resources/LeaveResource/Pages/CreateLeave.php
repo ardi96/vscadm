@@ -2,9 +2,12 @@
 
 namespace App\Filament\Portal\Resources\LeaveResource\Pages;
 
-use App\Filament\Portal\Resources\LeaveResource;
 use Filament\Actions;
+use App\Models\Invoice;
+use App\Services\LeaveService;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Portal\Resources\LeaveResource;
 
 class CreateLeave extends CreateRecord
 {
@@ -23,10 +26,25 @@ class CreateLeave extends CreateRecord
         return $data;
     }
 
+    protected function handleRecordCreation(array $data): Model
+    {
+        $leave = parent::handleRecordCreation($data);
+
+        LeaveService::createLeaveInvoice( $leave , true);
+
+        return $leave;
+    }
+
     public function getRedirectUrl(): string
     {
-        $resource = static::getResource();
+        // $resource = static::getResource();
 
-        return $resource::getUrl('index');
+        $leave = $this->getRecord();
+
+        $invoice = Invoice::where('type','leave')->where('member_id',$leave->member->id)->get()->last();
+        
+        return '/portal/checkout-page?id=' . $invoice->id; 
+
+        // return $resource::getUrl('index');
     }
 }

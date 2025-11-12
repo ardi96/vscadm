@@ -24,11 +24,11 @@ class InvoiceService
 
 
     public static function createInvoice(Member $member, Float $amount, string $invoiceDate, 
-        string $description, string $itemDescription) : Invoice
+        string $description, string $itemDescription, string $invoiceType='other') : Invoice
     {
         $invoice = Invoice::create([
             'member_id' => $member->id,
-            'type' => 'other',
+            'type' => $invoiceType,
             'parent_id' => $member->parent->id,
             'amount' => $amount,
             'invoice_date' => $invoiceDate,
