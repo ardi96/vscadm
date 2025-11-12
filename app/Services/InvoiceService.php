@@ -2,12 +2,15 @@
 
 namespace App\Services;
 
+use App\Models\User;
+use App\Models\Leave;
 use App\Models\Member;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Jobs\SendInvoiceMail;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
+use App\Notifications\MemberAccepted;
 use Illuminate\Support\Facades\DateTime;
 
 class InvoiceService
@@ -213,4 +216,26 @@ class InvoiceService
         return $invoice;
     }
 
+    public static function handlePostPayment( Invoice $invoice)
+    {
+        if ( $invoice->type == 'registration')
+            {
+                $member = $invoice->member;
+
+                $member->status = 'active';
+                $member->save();
+
+                $user = User::find($member->parent_id);
+                $user->notify(new MemberAccepted( $member ));    
+            }
+            elseif ( $invoice->type == 'leave')
+            {
+                $member = $invoice->member;
+
+                $leave = Leave::where('member_id', $member->id)->where('status','pending')->get()->last();
+                $leave->status = 1;
+                $leave->save();
+                
+            }
+    }
 }

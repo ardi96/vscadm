@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Dompdf\FrameDecorator\Page;
 use Illuminate\Support\Facades\Log;
 use App\Notifications\MemberAccepted;
+use App\Services\InvoiceService;
 
 class PGController extends Controller
 {
@@ -128,25 +129,7 @@ class PGController extends Controller
             // if it's registraion fee, activate the user account, etc.
             // if it's a leave request, approve the leave, etc.
 
-            if ( $invoice->type == 'registration')
-            {
-                $member = $invoice->member;
-
-                $member->status = 'active';
-                $member->save();
-
-                $user = User::find($member->parent_id);
-                $user->notify(new MemberAccepted( $member ));    
-            }
-            elseif ( $invoice->type == 'leave')
-            {
-                $member = $invoice->member;
-
-                $leave = Leave::where('member_id', $member->id)->where('status','pending')->get()->last();
-                $leave->status = 1;
-                $leave->save();
-                
-            }
+            InvoiceService::handlePostPayment( $invoice );
 
         }
 

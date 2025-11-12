@@ -27,6 +27,8 @@ class ProcessExpiredPayments
                         foreach( $payment->invoices as $invoice)
                         {
                             $invoice->payNow();
+
+                            InvoiceService::handlePostPayment( $invoice );
                         }
                     }
 

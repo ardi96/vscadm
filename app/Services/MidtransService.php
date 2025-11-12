@@ -61,7 +61,7 @@ class MidtransService
             'id' => $invoice->invoice_no,
             'price' => $invoice->amount,
             'quantity' => 1,
-            'name' => $invoice->item_description .' - ' . $invoice->member->name,
+            'name' => $invoice->invoice_no .' - '. $invoice->item_description .'. a.n. ' . $invoice->member->name,
         ];
     }
 
