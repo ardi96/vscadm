@@ -173,7 +173,7 @@ class MemberResource extends Resource
             'edit' => Pages\EditMember::route('/{record}/edit'),
             'view' => Pages\ViewMember::route('/{record}'),
             'invoices' => Pages\MemberInvoices::route('/{record}/invoices'),
-            'iuran_bulanan' => Pages\IuranBulananMember::route('/{record}/iuran-bulanan'),
+            // 'iuran_bulanan' => Pages\IuranBulananMember::route('/{record}/iuran-bulanan'),
         ];
     }
 
@@ -182,7 +182,7 @@ class MemberResource extends Resource
         return $page->generateNavigationItems([
             Pages\ViewMember::class,
             Pages\MemberInvoices::class,
-            Pages\IuranBulananMember::class,
+            // Pages\IuranBulananMember::class,
         ]);
     }
 }
