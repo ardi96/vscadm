@@ -65,32 +65,37 @@ class InvoiceService
      */
     public static function generate(Member $member, Carbon $invoicePeriod) : ?Invoice
     {
-        // $from = date_create( Date::now()->format('Y-m-01') );
-
-        // $to = date_sub( $from, date_interval_create_from_date_string("1 day") );
         
-        // $from = date_create( $to->format('Y-m-01') );
+        $amount = $member->package->price;
+
+        $status = 'unpaid';
+
+        $beasiswa = $member->beasiswas()
+                        ->where('start_date', '<=', $invoicePeriod->format('Y-m-01'))
+                        ->where('end_date', '>=', $invoicePeriod->format('Y-m-01'))
+                        ->where('status', 1) // approved
+                        ->latest()->first();
         
-        // logger('From: ' . $from->format('Y-m-d'));
+        if ( $beasiswa != null )
+        {
+            $amount = $beasiswa->biaya;
 
-        // logger('To: ' . $to->format('Y-m-d'));
-        
-        // create Invoice Header
-
-        // $invoicePeriod = date_create( Date::now()->format('Y-m-t') );
-
-        // $invoicePeriod = date_add($invoicePeriod, date_interval_create_from_date_string("1 day"));
+            if ( $amount == 0 )
+            {
+                $status = 'paid';
+            } 
+        }
 
         $invoice = Invoice::create([
             'member_id' => $member->id,
             'type' => 'membership',
             'parent_id' => $member->parent->id,
-            'amount' => $member->package->price,
+            'amount' => $amount,
             'invoice_date' => Date::now(),
             'invoice_no' => config('payment.invoice_prefix','VSC') . InvoiceService::getNextNumber(),
             'description' => 'Membership Fee '. $invoicePeriod->format('M-Y'),
             'item_description' => $member->package->name,
-            'status' => 'unpaid',
+            'status' => $status,
             'invoice_period_year' => $invoicePeriod->year,
             'invoice_period_month' => $invoicePeriod->month,
 
@@ -103,7 +108,7 @@ class InvoiceService
         // create invoice item 
         $invoice->items()->create([
             'description' => 'Membership Fee Bulan '. $invoicePeriod->format('M-Y'),
-            'amount' => $member->package->price
+            'amount' => $amount
         ]);
 
 
@@ -113,56 +118,8 @@ class InvoiceService
         $iuran->invoice_id = $invoice->id;
         $iuran->period_year = $invoicePeriod->year;
         $iuran->period_month = $invoicePeriod->month;
-        $iuran->status = 'unpaid';
+        $iuran->status = $status;
         $iuran->save();
-        
-        // if Flat Rate, we don't calculate additional session fee
-        //
-        // if ( $member->package->is_flat ) {
-         
-        //     return $invoice;
-        
-        // }
-
-        /* 23/8/2025 : we implement Flat Rate based on Om Ade Whatsapp */
-
-        // $kehadiran = $member->getAttendanceCount($from->format('Y-m-d'), $to->format('Y-m-d') );
-
-        // logger('Kehadiran: ' . $kehadiran ."\r\n");
-
-        // $last_month_from = date_sub($from, date_interval_create_from_date_string("1 month"));
-        
-        // $last_month_to = date_create( $last_month_from->format('Y-m-t') );  
-
-        // $carried_forward = $member->getCarriedForwardHoliday($last_month_from->format('Y-m-d'), $last_month_to->format('Y-m-d'));
-        
-        // logger('Carried Forward: ' . $carried_forward  ."\r\n");
-
-
-        /* 23/8/2025 : we implement Flat Rate based on Om Ade Whatsapp */
-
-
-        // if(( $kehadiran - $carried_forward ) > $member->package->session_per_week)
-        // {
-            
-        //     $additional = $kehadiran - $carried_forward - $member->package->session_per_week;
-
-        //     $additional_amount = $additional * $member->package->price_per_session;
-            
-        //     $invoice->items()->create([
-        //         'description' => $additional . ' sesi tambahan ' . $to->format('M-Y'),
-        //         'amount' => $additional_amount
-        //     ]);
-
-        //     $invoice->amount = $invoice->amount + $additional_amount;
-
-        //     $invoice->save();
-
-        //     $member->balance = $member->balance + $additional_amount;
-        //     $member->save();
-        // }
-
-        // SendInvoiceMail::dispatch($invoice);
         
         return $invoice;
     }

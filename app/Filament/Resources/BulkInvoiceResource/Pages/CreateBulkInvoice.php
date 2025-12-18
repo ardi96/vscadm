@@ -27,9 +27,9 @@ class CreateBulkInvoice extends CreateRecord
         //     return $resource::getUrl('view', ['record' => $this->getRecord(), ...$this->getRedirectUrlParameters()]);
         // }
 
-        if ($resource::hasPage('edit') && $resource::canEdit($this->getRecord())) {
-            return $resource::getUrl('edit', ['record' => $this->getRecord(), ...$this->getRedirectUrlParameters()]);
-        }
+        // if ($resource::hasPage('edit') && $resource::canEdit($this->getRecord())) {
+        //     return $resource::getUrl('edit', ['record' => $this->getRecord(), ...$this->getRedirectUrlParameters()]);
+        // }
 
         return $resource::getUrl('index');
     }

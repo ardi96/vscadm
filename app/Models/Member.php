@@ -327,4 +327,9 @@ class Member extends Model
    {
         return $this->hasMany(IuranBulananMember::class,'member_id');
    }
+
+   public function beasiswas() : HasMany
+   {
+        return $this->hasMany(Beasiswa::class,'member_id');
+   }
 }
