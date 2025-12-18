@@ -322,4 +322,9 @@ class Member extends Model
    {
         return 'VSC' . str_pad($state, 4, '0', STR_PAD_LEFT);
    }
+
+   public function iuranBulananMembers() : HasMany
+   {
+        return $this->hasMany(IuranBulananMember::class,'member_id');
+   }
 }

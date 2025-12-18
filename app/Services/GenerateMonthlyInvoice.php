@@ -6,6 +6,7 @@ use Exception;
 use App\Models\Leave;
 use App\Models\Member;
 use App\Models\Invoice;
+use App\Models\IuranBulananMember;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Date;
 
@@ -36,7 +37,13 @@ class GenerateMonthlyInvoice
                         ->where('invoice_period_year', $invoice_period_year)
                         ->where('invoice_period_month', $invoice_period_month)->first();
 
-            if ( !$invoice && !$leaves )
+            $iuranBulananMember = IuranBulananMember::where('member_id', $member->id)
+                        ->where('period_year', $invoice_period_year)
+                        ->where('period_month', $invoice_period_month)
+                        ->whereNot('status', 'void')
+                        ->first();
+
+            if ( !$invoice && !$leaves && !$iuranBulananMember )
             {
                 try
                 {

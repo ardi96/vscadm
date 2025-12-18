@@ -107,13 +107,22 @@ class InvoiceService
         ]);
 
 
+        // create record in IuranBulananMember
+        $iuran = new \App\Models\IuranBulananMember();
+        $iuran->member_id = $member->id;
+        $iuran->invoice_id = $invoice->id;
+        $iuran->period_year = $invoicePeriod->year;
+        $iuran->period_month = $invoicePeriod->month;
+        $iuran->status = 'unpaid';
+        $iuran->save();
+        
         // if Flat Rate, we don't calculate additional session fee
         //
-        if ( $member->package->is_flat ) {
+        // if ( $member->package->is_flat ) {
          
-            return $invoice;
+        //     return $invoice;
         
-        }
+        // }
 
         /* 23/8/2025 : we implement Flat Rate based on Om Ade Whatsapp */
 

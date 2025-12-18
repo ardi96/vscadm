@@ -4,6 +4,7 @@ namespace App\Filament\Resources\MemberResource\Pages;
 
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\Leave;
 use Filament\Actions;
 use App\Models\Invoice;
 use Filament\Forms\Form;
@@ -16,6 +17,7 @@ use Forms\Components\TextInput;
 use App\Jobs\GenerateInvoiceJob;
 use App\Services\InvoiceService;
 use Filament\Infolists\Infolist;
+use App\Models\IuranBulananMember;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\FormsComponent;
@@ -23,10 +25,9 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Blade;
 use Filament\Tables\Columns\TextColumn;
-use App\Filament\Resources\MemberResource;
-use App\Models\Leave;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
+use App\Filament\Resources\MemberResource;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 
@@ -157,13 +158,19 @@ class MemberInvoices extends ManageRelatedRecords
                                         ->where('invoice_period_year', $data['year'])
                                         ->where('invoice_period_month', $data['month'])->first();
 
+                        $iuranBulananMember = IuranBulananMember::where('member_id', $this->getRecord()->id)
+                                        ->where('period_year', $data['year'])
+                                        ->where('period_month', $data['month'])
+                                        ->whereNot('status', 'void')
+                                        ->first();
+
                         $leaves = Leave::where('member_id', $this->getRecord()->id)
                                     ->where('status', 1)
                                     ->where('start_date', '<=', $period)
                                     ->where('end_date', '>=', $period)
                                     ->first();
 
-                        if ( !$invoice  && !$leaves )
+                        if ( !$invoice  && !$leaves && !$iuranBulananMember )
                         {
                             InvoiceService::generate($this->getRecord(), $period);
                         }
