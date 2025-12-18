@@ -35,6 +35,14 @@ class Invoice extends Model
         $this->member->balance = $this->member->balance - $this->amount;
         $this->member->last_payment_date = Date::now();
         $this->member->save();
+
+        $iuranBulananMember = IuranBulananMember::where('invoice_id',$this->id)->first();
+        
+        if( $iuranBulananMember ) 
+        {
+            $iuranBulananMember->status = 'paid';
+            $iuranBulananMember->save();    
+        }
                        
     }
 
