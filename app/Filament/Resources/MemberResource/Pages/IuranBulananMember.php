@@ -46,7 +46,7 @@ class IuranBulananMember extends ManageRelatedRecords
                     ->label('Periode')
                     ->formatStateUsing(fn($record) => date('M-Y', strtotime($record->period_year . '-' . $record->period_month . '-01'))  ),
                 Tables\Columns\TextColumn::make('invoice.invoice_no')->label('Nomor Invoice'),
-                Tables\Columns\TextColumn::make('status')->badge(),
+                Tables\Columns\TextColumn::make('invoice.status')->badge(),
 
             ])
             ->filters([
