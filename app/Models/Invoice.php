@@ -65,6 +65,13 @@ class Invoice extends Model
 
         $this->member->balance = $this->member->balance - $this->amount;
         $this->member->save();
+
+        $iuranBulananMember = IuranBulananMember::where('invoice_id',$this->id)->first();
+        
+        if( $iuranBulananMember ) 
+        {
+            $iuranBulananMember->delete();
+        }
     }
 
     public function payment() : BelongsToMany
