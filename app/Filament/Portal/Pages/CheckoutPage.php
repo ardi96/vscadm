@@ -141,8 +141,8 @@ class CheckoutPage extends Page implements HasTable, HasForms
                 'invoice_id' => $invoice->id,
             ]);
 
-            $invoice->status = 'pending';
-            $invoice->save();
+            // $invoice->status = 'pending';
+            // $invoice->save();
             
         }
         

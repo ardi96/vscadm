@@ -102,16 +102,20 @@ class PGController extends Controller
     public function cancelPayment(Payment $payment)
     {
         // Handle payment cancellation logic
+        
         $payment->update([
             'status' => 'rejected',
             'payment_date' => now(),
         ]);
 
-        $invoices = $payment->invoices;
+        // since we don't update invoice to pending where creating payment record,
+        // we don't need to revert invoice status here. 
 
-        foreach ( $invoices as $invoice ) {            
-            $invoice->cancelPayment();
-        }
+        // $invoices = $payment->invoices;
+
+        // foreach ( $invoices as $invoice ) {            
+        //     $invoice->cancelPayment();
+        // }
 
     }
 

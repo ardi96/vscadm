@@ -148,7 +148,14 @@ class PaymentResource extends Resource
                 ]),
             ])
             ->defaultSort('id','desc')
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('user_id', Auth::user()->id));
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('user_id', Auth::user()->id)
+                ->where( function ($query) {
+                    $query->where('is_online', false)
+                          ->orWhere(function ($query) {
+                              $query->where('is_online', true)
+                                    ->where('status', 'accepted');
+                          });
+                }));
     }
 
     public static function getRelations(): array
