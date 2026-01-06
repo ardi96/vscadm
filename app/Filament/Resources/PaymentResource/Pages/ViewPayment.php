@@ -27,7 +27,7 @@ class ViewPayment extends ViewRecord
         return [
             Actions\Action::make('reject')->label('Reject Pembayaran')
                 ->color('danger')
-                ->visible(fn() => $this->getRecord()->status == 'pending')
+                ->visible(fn() => $this->getRecord()->status == 'pending' && !$this->getRecord()->is_online)
                 ->action(function($data) {
                     $this->getRecord()->status = 'rejected';
                     $this->getRecord()->rejection_note = $data['rejection_note'];
@@ -49,7 +49,7 @@ class ViewPayment extends ViewRecord
                 ->after(fn() => $this->refreshFormData(['status'])),
 
             Actions\Action::make('accept')->label('Terima Pembayaran')
-                ->visible(fn() => $this->getRecord()->status == 'pending')
+                ->visible(fn() => $this->getRecord()->status == 'pending' && !$this->getRecord()->is_online)
                 ->action(function() {
                     $this->getRecord()->status = 'accepted';
                     $this->getRecord()->save();
