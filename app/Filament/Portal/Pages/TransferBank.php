@@ -104,7 +104,7 @@ class TransferBank extends Page implements HasTable, HasForms
                     ->maxSize(1024*2),
     
                 Placeholder::make('instruction')->label('')->columnSpanFull()
-                    ->content(new HtmlString('<b>BRI</b> 043901001248566 a.n. VEINS SKATING CLUB<br><b>BCA</b> 3429243999 a.n. PERKUMPULAN VEINS SKATING')),
+                    ->content(new HtmlString('<b>BRI</b> 043901001248565 a.n. VEINS SKATING CLUB<br><b>BCA</b> 3429243999 a.n. PERKUMPULAN VEINS SKATING')),
                 
                 Placeholder::make('note')->label('')->columnSpanFull()
                     ->content(new HtmlString('Mohon mention berita/keterangan nama ananda di pembayaran anda.')),
