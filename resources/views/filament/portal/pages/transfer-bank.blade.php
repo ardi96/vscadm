@@ -1,4 +1,5 @@
 <x-filament-panels::page>
+
     {{ $this->table }}
 
     <div class="justify-end mt-4">
@@ -15,7 +16,7 @@
 
         @if( $total_amount > 0 )
 
-        <div class="mt-4">
+        <div class="mt-2">
         
             <x-filament-panels::form wire:submit="proceedToPayment">
         

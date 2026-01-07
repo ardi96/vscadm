@@ -13,6 +13,7 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Awcodes\TableRepeater\Header;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Filament\Tables\Columns\TextColumn;
@@ -20,15 +21,16 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Placeholder;
 use Filament\Tables\View\TablesRenderHook;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
+use Filament\Infolists\Components\ImageEntry;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Portal\Resources\PaymentResource\Pages;
 use App\Filament\Portal\Resources\PaymentResource\RelationManagers;
-use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Components\ViewEntry;
 use Icetalker\FilamentTableRepeatableEntry\Infolists\Components\TableRepeatableEntry;
 
 class PaymentResource extends Resource
@@ -65,39 +67,32 @@ class PaymentResource extends Resource
             ]);
     }
     
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('amount')->label('Jumlah Pembayaran')
-                    ->numeric()->suffix('Rupiah'
-                    )->required()->default(
-                        Invoice::where('parent_id',Auth::user()->id)
-                                ->where('status','unpaid')->sum('amount')
-                    ),
-                DatePicker::make('payment_date')->label('Tanggal Pembayaran')->required()->default(Date::now()),
-                TextInput::make('bank')->label('Nama Bank Anda')->required(),
-                Textinput::make('notes')->label('Keterangan')->required(),
-                CheckboxList::make('invoices')
-                ->columnSpanFull()
-                ->bulkToggleable()
-                ->required()
-                ->label('Pembayaran untuk invoice')
-                ->relationship('invoices','invoice_no')
-                ->options(
-                    DB::table('invoices')
-                        ->join('members','invoices.member_id','=','members.id')
-                        // ->select('invoices.id, invoices.no_incoive, invoices.amount, invoices.item_description, members.name')
-                        ->where('invoices.parent_id',Auth::user()->id)
-                        ->where('invoices.status','unpaid')
-                        ->select(DB::raw(' concat( \'No. Invoice: \', invoices.invoice_no, \' , Nominal : \', format(invoices.amount,2), \', Keterangan: \', invoices.item_description, \', Atas Nama: \', members.name) as no, invoices.id as id '))
-                        ->pluck('no','id')),
-
+                Placeholder::make('info')->label('')
+                    ->content(new HtmlString()),
+                    
                 FileUpload::make('file_name')->label('Upload Bukti Pembayaran')
                     ->required()
+                    ->columnSpanFull()
                     ->acceptedFileTypes(['image/jpeg','image/png','application/pdf'])
                     ->maxSize(1024*2),
-            ]);
+    
+                Placeholder::make('instruction')->label('')->columnSpanFull()
+                    ->content(new HtmlString('<b>BRI</b> 043901001248566 a.n. VEINS SKATING CLUB<br><b>BCA</b> 3429243999 a.n. PERKUMPULAN VEINS SKATING')),
+                
+                Placeholder::make('note')->label('')->columnSpanFull()
+                    ->content(new HtmlString('Mohon mention berita/keterangan nama ananda di pembayaran anda.')),
+                
+                TextInput::make('bank')->label('Nama Bank Anda')->required(),
+                
+                DatePicker::make('payment_date')->label('Tanggal Pembayaran')->required()->default(Date::now()),
+                
+                Textinput::make('notes')->label('Keterangan')->required(),
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -171,7 +166,7 @@ class PaymentResource extends Resource
             'index' => Pages\ListPayments::route('/'),
             'create' => Pages\CreatePayment::route('/create'),
             // 'edit' => Pages\EditPayment::route('/{record}/edit'),
-            // 'view' => Pages\ViewPayment::route('/{record}'),
+            'view' => Pages\ViewPayment::route('/{record}'),
         ];
     }
 }

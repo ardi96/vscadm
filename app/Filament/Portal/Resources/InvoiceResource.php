@@ -11,7 +11,9 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use App\Services\MidtransService;
+use Filament\Tables\Actions\Action;
 use Illuminate\Support\Facades\Auth;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -45,12 +47,12 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('invoice_no')->label('No. Invoice')->sortable()->searchable()
-                    ->description(fn($record) => date_format(date_create($record->invoice_date),'d-M-Y') ),
+                TextColumn::make('invoice_no')->label('No. Invoice')->sortable()->searchable(),
+                    // ->description(fn($record) => date_format(date_create($record->invoice_date),'d-M-Y') ),
                 // TextColumn::make('invoice_date')->label('Tgl. Invoice')->date('d-M-Y')->searchable()->sortable(),
-                TextColumn::make('member.name')->label('Atas Nama')->searchable()->sortable(),
-                TextColumn::make('description')->label('Keterangan')->searchable()->sortable(),
-                TextColumn::make('item_description')->label('Nama Paket')->searchable()->sortable(),
+                TextColumn::make('member.name')->label('Atas Nama')->searchable(),
+                TextColumn::make('description')->label('Deskripsi')->searchable(),
+                TextColumn::make('item_description')->label('Keterangan')->searchable()->wrap(),
                 TextColumn::make('amount')->label('Jumlah')->money('IDR')->searchable()->sortable(),
                 TextColumn::make('status')->label('Status')->searchable()->sortable()
                     ->badge()
@@ -77,34 +79,51 @@ class InvoiceResource extends Resource
                 ])
             ])
             ->actions([
-                Tables\Actions\ActionGroup::make([
+                Action::make('bayar')
+                    ->label('Bayar')
+                    ->button()
+                    ->url(fn(Invoice $record) => '/portal/checkout-page?id='.$record->id)
+                    ->color('success')
+                    ->visible(fn(Invoice $record) => $record->status == 'unpaid' && config('payment.online_payment_enabled')),
+                // Tables\Actions\ActionGroup::make([
 
-                    Tables\Actions\Action::make('upload_payment_proof')->icon('heroicon-m-banknotes')->label('Upload Bukti Bayar')
-                        ->url(PaymentResource\Pages\CreatePayment::getUrl())
-                        ->visible(fn($record) => $record->status == 'unpaid'),
+                //     Tables\Actions\Action::make('upload_payment_proof')->icon('heroicon-m-banknotes')->label('Upload Bukti Bayar')
+                //         ->url(PaymentResource\Pages\CreatePayment::getUrl())
+                //         ->visible(fn($record) => $record->status == 'unpaid'),
                     
-                    Tables\Actions\Action::make('pay_online')->icon('heroicon-m-qr-code')->label('Bayar Secara Online')
-                        ->url(function($record) {
-                            return '/portal/checkout-page?id='.$record->id;
-                        })->visible(fn($record) => $record->status == 'unpaid' && config('payment.online_payment_enabled')),
-                ]),
+                //     Tables\Actions\Action::make('pay_online')->icon('heroicon-m-qr-code')->label('Bayar Secara Online')
+                //         ->url(function($record) {
+                //             return '/portal/checkout-page?id='.$record->id;
+                //         })->visible(fn($record) => $record->status == 'unpaid' && config('payment.online_payment_enabled')),
+                // ]),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                BulkAction::make('Bayar')->label('Bayar Tagihan')
+                    ->action(function (Collection $records) {
+                        $ids = [];
+                        foreach ($records as $record) {
+                            $ids[] = $record->id;
+                        }
+                        $ids_string = implode(',', $ids);
+                        return redirect('/portal/checkout-page?id='.$ids_string);
+                    })
+                    ->color('success')
+                    ->deselectRecordsAfterCompletion(true),
+                // Tables\Actions\BulkActionGroup::make([
 
-                    Tables\Actions\BulkAction::make('Bayar Secara Online')
-                        ->action(function (Collection $records) {
-                            $ids = [];
-                            foreach ($records as $record) {
-                                $ids[] = $record->id;
-                            }
-                            $ids_string = implode(',', $ids);
-                            return redirect('/portal/checkout-page?id='.$ids_string);
-                        })
-                        ->color('success')
-                        ->icon('heroicon-m-qr-code'),
-                    // Tables\Actions\DeleteBulkAction::make(),
-                ])->label('Actions'),
+                //     Tables\Actions\BulkAction::make('Bayar Secara Online')
+                //         ->action(function (Collection $records) {
+                //             $ids = [];
+                //             foreach ($records as $record) {
+                //                 $ids[] = $record->id;
+                //             }
+                //             $ids_string = implode(',', $ids);
+                //             return redirect('/portal/checkout-page?id='.$ids_string);
+                //         })
+                //         ->color('success')
+                //         ->icon('heroicon-m-qr-code'),
+                //     // Tables\Actions\DeleteBulkAction::make(),
+                // ])->label('Actions'),
             ])
             ->checkIfRecordIsSelectableUsing(fn (Invoice $record): bool => $record->status == 'unpaid' && config('payment.online_payment_enabled', false))
             ->defaultSort('invoice_no','desc')

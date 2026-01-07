@@ -13,6 +13,7 @@ use Filament\Actions\Action;
 use App\Services\MidtransService;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -24,6 +25,7 @@ class CheckoutPage extends Page implements HasTable, HasForms
     use \Filament\Tables\Concerns\InteractsWithTable;
     use \Filament\Forms\Concerns\InteractsWithForms;
     
+    protected static ?string $title = 'Pembayaran Tagihan';
 
     protected static string $view = 'filament.portal.pages.checkout-page';
 
@@ -40,6 +42,12 @@ class CheckoutPage extends Page implements HasTable, HasForms
     public ?array $data = []; 
 
     public ?array $invoice_arr = [];
+
+    public ?string $payment_method = null;
+
+    protected $queryString = [
+        'payment_method' => ['except' => null],
+    ];
 
     public function mount()
     {
@@ -65,13 +73,32 @@ class CheckoutPage extends Page implements HasTable, HasForms
         return $form
             ->schema([
                 Hidden::make('invoice_ids'),
+
+                Radio::make('payment_method')
+                    ->label('Metode Pembayaran')
+                    ->options([
+                        'online' => 'Pembayaran Instant (Online)',
+                        'offline' => 'Transfer Bank (Upload Bukti)',
+                    ])
+                    ->descriptions([
+                        'online' => 'Status otomatis lunas',
+                        'offline' => 'Verifikasi max 2x24 jam.',
+                    ])
+                    ->required()
+                    ->default('online')
+                    ->reactive()    
+                    ->columns(2),
+
             ])->statePath('data');
     }
 
     public function table(Table $table): Table
     {
+        // $this->invoice_id = request()->get('id');
+        $invoice_ids = $this->form->getRawState()['invoice_ids'];
+
         return $table
-            ->query(Invoice::query()->whereIn('id', $this->invoice_ids)->where('status','unpaid')->where('parent_id', Auth::user()->id))
+            ->query(Invoice::query()->whereIn('id', $invoice_ids)->where('status','unpaid')->where('parent_id', Auth::user()->id))
             ->columns([
                 TextColumn::make('invoice_no')->label('No. Invoice'),
                 TextColumn::make('member.name')->label('Atas Nama'),
@@ -84,6 +111,19 @@ class CheckoutPage extends Page implements HasTable, HasForms
     }
 
     public function proceedToPayment()
+    {
+        $data = $this->form->getState();
+
+        if ( $this->data['payment_method'] == 'online' ) {
+            return $this->onlinePayment();
+        } else {
+            // redirect to upload payment proof page with invoice ids as query parameter
+            $ids_string = implode(',', $this->invoice_arr);
+            return redirect('/portal/transfer-bank?id='.$ids_string);
+        }
+    }
+
+    public function onlinePayment()
     {
         $invoices = Invoice::whereIn('id', $this->data['invoice_ids'])->where('parent_id', Auth::user()->id)->get();
         
@@ -152,17 +192,19 @@ class CheckoutPage extends Page implements HasTable, HasForms
     protected function getFormActions(): array
     {
         return [
+            Action::make('cancel')
+                ->label('Kembali')
+                // ->label(__('filament-panels::resources/pages/edit-record.form.actions.cancel.label'))
+                ->alpineClickHandler('window.history.back()')
+                ->color('gray'),
+
             Action::make('proceedToPayment')
-                ->label('Lanjut ke Pembayaran')
+                ->label('Bayar Tagihan')
                 ->button()
                 ->color('primary')
                 ->submit('proceedToPayment')
                 ->visible(config('payment.online_payment_enabled')),
 
-                Action::make('cancel')
-            ->label(__('filament-panels::resources/pages/edit-record.form.actions.cancel.label'))
-            ->alpineClickHandler('window.history.back()')
-            ->color('gray')
         ];
     }
 }

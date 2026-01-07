@@ -25,10 +25,10 @@ class ListInvoices extends ListRecords
     protected function getHeaderActions(): array
     {
        return [
-            Actions\Action::make('upload_payment_proof')->label('Upload Bukti Pembayaran')
-                ->visible(true)
-                ->icon('heroicon-o-plus-circle')
-                ->url(PaymentResource::getUrl('create'))
+            // Actions\Action::make('upload_payment_proof')->label('Upload Bukti Pembayaran')
+            //     ->visible(true)
+            //     ->icon('heroicon-o-plus-circle')
+            //     ->url(PaymentResource::getUrl('create'))
         ];
     }
 
