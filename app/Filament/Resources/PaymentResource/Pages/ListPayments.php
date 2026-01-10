@@ -37,13 +37,20 @@ class ListPayments extends ListRecords
                         ->modifyQueryUsing(fn(Builder $query) => $query->where('status','accepted'))
                         ->badge(Payment::where('status','accepted')->count()),
             'pending' => Tab::make()
-                        ->modifyQueryUsing(fn(Builder $query) => $query->where('status','pending'))
-                        ->badge(Payment::where('status','pending')->count()),
+                        ->modifyQueryUsing(fn(Builder $query) => $query->where('status','pending')->where('is_online', false))
+                        ->badge(Payment::where('status','pending')->where('is_online', false)->count()),
             'rejected' => Tab::make()
-                        ->modifyQueryUsing(fn(Builder $query) => $query->where('status','rejected'))
-                        ->badge(Payment::where('status','rejected')->count()),
+                        ->modifyQueryUsing(fn(Builder $query) => $query->where('status','rejected')->where('is_online', false))
+                        ->badge(Payment::where('status','rejected')->where('is_online', false)->count()),
             'all' => Tab::make()
-                        ->badge(Payment::count()),
+                        ->modifyQueryUsing(fn(Builder $query) => $query->where('is_online', false)->orWhere(function ($query) {
+                            $query->where('is_online', true)
+                                  ->where('status', 'accepted');
+                        }))
+                        ->badge(Payment::where('is_online', false)->orWhere(function ($query) {
+                            $query->where('is_online', true)
+                                  ->where('status', 'accepted');
+                        })->count()),
         ];
     }
 }

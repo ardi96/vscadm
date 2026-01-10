@@ -77,12 +77,7 @@ class PaymentResource extends Resource
                     // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])->defaultSort('id','desc')
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('is_online', false)
-                          ->orWhere(function ($query) {
-                              $query->where('is_online', true)
-                                    ->where('status', 'accepted');
-                          })
-            );
+            ;
     }
 
     public static function getRelations(): array
